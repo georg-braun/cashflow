@@ -24,4 +24,4 @@ jobs:
         context: ./backend/
         file: ./Dockerfile
         push: false
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/schlemmerservice-backend:latest
+        tags: velox1992/budget-backend:latest
