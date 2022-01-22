@@ -1,4 +1,4 @@
-name: backend continuous delivery
+name: backend - continuous delivery
 
 on:
   #push:
