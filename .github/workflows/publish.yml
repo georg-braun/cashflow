@@ -31,4 +31,4 @@ jobs:
         context: ./backend/
         file: ./backend/Dockerfile
         push: true
-        tags: velox1992/budget-backend:$(date +%s)
+        tags: velox1992/budget-backend:latest
