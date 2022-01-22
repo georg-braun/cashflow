@@ -15,6 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build ./backend --file Dockerfile --tag budget-backend:$(date +%s)
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v2
+      with:
+        context: ./backend/
+        file: ./Dockerfile
+        push: false
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/schlemmerservice-backend:latest
