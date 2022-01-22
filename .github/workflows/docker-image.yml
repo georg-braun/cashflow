@@ -22,6 +22,6 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./backend/
-        file: ./Dockerfile
+        file: ./backend/Dockerfile
         push: false
         tags: velox1992/budget-backend:latest
