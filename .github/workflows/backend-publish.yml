@@ -8,6 +8,9 @@ on:
   # trigger manually
   workflow_dispatch:
 
+env:
+  DOTNET_VERSION: '6.0' # The .NET SDK version to use
+
 jobs:
 
   backend-build-and-test:
