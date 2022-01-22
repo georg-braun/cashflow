@@ -1,2 +1,3 @@
-# budget
-System for managing personal financial budget
+# Budget system
+
+A system for managing personal finance with budgets. 
