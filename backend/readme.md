@@ -1,3 +1,11 @@
+# Notes
+
+# Deployment
+
+Main branch changed
+--> Github Action: build image
+--> Github Action: publish image to image repository
+
 # Docker
 
 Run image
