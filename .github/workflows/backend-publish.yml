@@ -1,8 +1,8 @@
 name: backend - continuous delivery
 
 on:
-  #push:
-    #branches: [ main ]
+  push:
+    branches: [ release ]
   #pull_request:
     #branches: [ main ]
   # trigger manually
