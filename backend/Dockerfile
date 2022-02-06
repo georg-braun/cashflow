@@ -10,6 +10,7 @@ WORKDIR /src
 COPY ["budget-backend/budget-backend.csproj", "budget-backend/"]
 RUN dotnet restore "budget-backend/budget-backend.csproj"
 COPY . .
+RUN dotnet test
 WORKDIR "/src/budget-backend"
 RUN dotnet build "budget-backend.csproj" -c Release -o /app/build
 
