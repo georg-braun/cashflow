@@ -1,12 +1,6 @@
 name: backend - continuous integration
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  # trigger manually
-  workflow_dispatch:
+on: push
 
 env:
   DOTNET_VERSION: '6.0' # The .NET SDK version to use
