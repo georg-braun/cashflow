@@ -9,6 +9,7 @@ public class WeatherForecastTests : IntegrationTest
     public async Task Get_ReturnsSomeDate()
     {
         // Arrange
+        
         // Act
         var result = await client.GetAsync("/weatherforecast");
         
