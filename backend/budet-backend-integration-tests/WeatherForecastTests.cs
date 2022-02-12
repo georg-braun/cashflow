@@ -11,7 +11,7 @@ public class WeatherForecastTests : IntegrationTest
         // Arrange
         
         // Act
-        var result = await client.GetAsync("/weatherforecast");
+        var result = await client.GetAsync("/account");
         
         // Assert
         Assert.True(result.IsSuccessStatusCode);
