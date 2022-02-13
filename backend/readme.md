@@ -26,8 +26,3 @@ Run image
 *background: https://minikube.sigs.k8s.io/docs/handbook/accessing/*
 
 
-# Continuous Deployment
-
-Main branch changed
---> Github Action: build image
---> Github Action: publish image to image repository

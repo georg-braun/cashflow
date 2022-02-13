@@ -1,4 +1,5 @@
 using budget_backend.data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<DataContext>();
+builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
+    builder.Configuration["ConnectionStrings:Database"]));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
