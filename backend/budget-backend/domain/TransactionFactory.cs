@@ -7,6 +7,4 @@ public static class TransactionFactory
         var id = new Guid();
         return new Transaction(id, timestamp, amount);
     }
-
-    
 }

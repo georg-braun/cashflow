@@ -17,12 +17,11 @@ public class AccountTests
         account.AddTransaction(TransactionFactory.Create(DateTime.Now, 50));
         account.AddTransaction(TransactionFactory.Create(DateTime.Now, 50));
         account.AddTransaction(TransactionFactory.Create(DateTime.Now, -20));
-        
+
         // Act
         var totalBalance = account.Balance;
-        
+
         // Assert
         totalBalance.Should().Be(80);
     }
-
 }

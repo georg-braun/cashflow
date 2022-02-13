@@ -1,5 +1,3 @@
-using System.Collections.ObjectModel;
-
 namespace budget_backend.domain;
 
 public class Account
