@@ -1,22 +1,32 @@
+using AutoMapper;
+using budget_backend.data;
+
 namespace budget_backend.domain;
 
-public class AccountService
+public interface IAccountService
 {
-    private const string cDefaultAccountName = "default account";
-    private readonly List<Account> _accounts = new() {AccountFactory.Create(cDefaultAccountName)};
+    Task AddAsync(Account account);
+}
 
-    public void Add(string name)
+public class AccountService : IAccountService
+{
+    private readonly DataContext _dataContext;
+    private readonly IMapper _mapper;
+
+    public AccountService(DataContext dataContext, IMapper mapper)
     {
-        var account = AccountFactory.Create(name);
-        _accounts.Add(account);
+        _dataContext = dataContext;
+        _mapper = mapper;
     }
 
-    private Account GetDefaultAccount()
+    public async Task AddAsync(Account account)
     {
-        TryGet(cDefaultAccountName, out var defaultAccount);
-        return defaultAccount;
+        var dtoAccount = _mapper.Map<data.dbDto.Account>(account);
+        await _dataContext.Accounts.AddAsync(dtoAccount);
+        await _dataContext.SaveChangesAsync();
     }
-
+    
+/*
     public bool TryGet(Guid id, out Account account)
     {
         var foundAccount = _accounts.FirstOrDefault(_ => _.Id.Equals(id));
@@ -41,6 +51,7 @@ public class AccountService
     {
         _accounts.RemoveAll(_ => _.Id.Equals(account.Id));
     }
+    */
 }
 
 public static class AccountFactory

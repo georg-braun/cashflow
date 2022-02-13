@@ -11,9 +11,7 @@ public class AccountTests
     public void Balance_WithMultipleTransactions_ReturnCorrectBalance()
     {
         // Arrange
-        var accountService = new AccountService();
-        accountService.Add("Cash");
-        accountService.TryGet("Cash", out var account);
+        var account = AccountFactory.Create("DKB");
         account.AddTransaction(TransactionFactory.Create(DateTime.Now, 50));
         account.AddTransaction(TransactionFactory.Create(DateTime.Now, 50));
         account.AddTransaction(TransactionFactory.Create(DateTime.Now, -20));
@@ -23,5 +21,6 @@ public class AccountTests
 
         // Assert
         totalBalance.Should().Be(80);
+        
     }
 }
