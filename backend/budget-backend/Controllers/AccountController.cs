@@ -22,6 +22,7 @@ namespace budget_backend.Controllers
         {
             var accountDbDto = new Account() {Id = new Guid(), Name = "Cash"};
             await _dataContext.Accounts.AddAsync(accountDbDto);
+            var result = _dataContext.Accounts.FirstOrDefault();
             await _dataContext.SaveChangesAsync();
             return Accepted();
         }
