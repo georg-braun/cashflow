@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace budet_backend_integration_tests;
 
-public class WeatherForecastTests : IntegrationTest
+public class AccountApiTests : IntegrationTest
 {
     [Fact]
     public async Task Get_ReturnsSomeDate()
@@ -12,8 +13,9 @@ public class WeatherForecastTests : IntegrationTest
 
         // Act
         var result = await client.GetAsync("/account");
+        var content = await result.Content.ReadAsStringAsync();
 
         // Assert
-        Assert.True(result.IsSuccessStatusCode);
+        content.Should().NotBeEmpty();
     }
 }

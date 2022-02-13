@@ -18,12 +18,13 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet(Name = "GetAccounts")]
-    public async Task<IActionResult> Get()
+    public async Task<apiDto.Account> Get()
     {
         var accountDbDto = new Account {Id = new Guid(), Name = "Cash"};
         await _dataContext.Accounts.AddAsync(accountDbDto);
         await _dataContext.SaveChangesAsync();
         var result = _dataContext.Accounts.FirstOrDefault();
-        return Accepted();
+        
+        return new apiDto.Account() { Name = "Test-Account"};
     }
 }
