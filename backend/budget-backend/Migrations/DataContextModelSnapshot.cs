@@ -36,6 +36,26 @@ namespace budget_backend.Migrations
 
                     b.ToTable("Accounts");
                 });
+
+            modelBuilder.Entity("budget_backend.data.dbDto.Transaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Transactions");
+                });
 #pragma warning restore 612, 618
         }
     }

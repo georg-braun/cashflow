@@ -23,11 +23,9 @@ public class AccountController : ControllerBase
     {
         //var accountDbDto = new domain.Account {Id = new Guid(), Name = "Cash"};
         var account = AccountFactory.Create("Cash");
-        await _accountService.AddAsync(account);
-        /*
-        await _dataContext.SaveChangesAsync();
-        var result = _dataContext.Accounts.FirstOrDefault();
-        */
+        account.AddTransaction(DateOnly.FromDateTime(DateTime.Now), 30);
+        await _accountService.AddAccountAsync(account);
+
         return new apiDto.Account() { Name = "Test-Account"};
     }
 }

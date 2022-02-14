@@ -1,4 +1,5 @@
 using System;
+using budget_backend;
 using budget_backend.domain;
 using FluentAssertions;
 using Xunit;
@@ -12,9 +13,9 @@ public class AccountTests
     {
         // Arrange
         var account = AccountFactory.Create("DKB");
-        account.AddTransaction(TransactionFactory.Create(DateTime.Now, 50));
-        account.AddTransaction(TransactionFactory.Create(DateTime.Now, 50));
-        account.AddTransaction(TransactionFactory.Create(DateTime.Now, -20));
+        account.AddTransaction(DateOnlyExtensions.Today(), 50);
+        account.AddTransaction(DateOnlyExtensions.Today(), 50);
+        account.AddTransaction(DateOnlyExtensions.Today(), -20);
 
         // Act
         var totalBalance = account.Balance;

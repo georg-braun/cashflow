@@ -5,25 +5,21 @@ namespace budget_backend.domain;
 
 public interface IAccountService
 {
-    Task AddAsync(Account account);
+    Task AddAccountAsync(Account account);
 }
 
 public class AccountService : IAccountService
 {
     private readonly DataContext _dataContext;
-    private readonly IMapper _mapper;
 
-    public AccountService(DataContext dataContext, IMapper mapper)
+    public AccountService(DataContext dataContext)
     {
         _dataContext = dataContext;
-        _mapper = mapper;
     }
 
-    public async Task AddAsync(Account account)
+    public async Task AddAccountAsync(Account account)
     {
-        var dtoAccount = _mapper.Map<data.dbDto.Account>(account);
-        await _dataContext.Accounts.AddAsync(dtoAccount);
-        await _dataContext.SaveChangesAsync();
+        await _dataContext.AddAccountAsync(account);
     }
     
 /*
@@ -58,7 +54,7 @@ public static class AccountFactory
 {
     public static Account Create(string name)
     {
-        var id = new Guid();
+        var id = Guid.NewGuid();
         return new Account(id, name);
     }
 }

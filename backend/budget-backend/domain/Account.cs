@@ -16,13 +16,20 @@ public class Account
 
     private List<Transaction> Transactions { get; } = new();
 
-    public void AddTransaction(Transaction transaction)
+  
+    public void AddTransaction(DateOnly timestamp, double amount)
     {
+        var transaction = TransactionFactory.Create(timestamp, amount, this);
         Transactions.Add(transaction);
     }
 
     public void DeleteTransaction(Guid id)
     {
         Transactions.RemoveAll(_ => _.Id.Equals(id));
+    }
+
+    public IEnumerable<Transaction> GetTransactions()
+    {
+        return Transactions.ToList();
     }
 }

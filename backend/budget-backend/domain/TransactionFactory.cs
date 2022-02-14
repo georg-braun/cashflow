@@ -2,9 +2,10 @@ namespace budget_backend.domain;
 
 public static class TransactionFactory
 {
-    public static Transaction Create(DateTime timestamp, double amount)
+    public static Transaction Create(DateOnly timestamp, double amount, Account account)
     {
-        var id = new Guid();
-        return new Transaction(id, timestamp, amount);
-    }
+        var id = Guid.NewGuid();
+        return new Transaction(id, timestamp, amount, account);
+    }   
+    
 }
