@@ -22,7 +22,7 @@ namespace budget_backend.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("budget_backend.data.dbDto.Account", b =>
+            modelBuilder.Entity("budget_backend.data.dbDto.AccountDto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,7 +37,7 @@ namespace budget_backend.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("budget_backend.data.dbDto.Transaction", b =>
+            modelBuilder.Entity("budget_backend.data.dbDto.TransactionDto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,8 +49,8 @@ namespace budget_backend.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("double precision");
 
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("Timestamp")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 

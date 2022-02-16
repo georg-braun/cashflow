@@ -1,4 +1,3 @@
-using AutoMapper;
 using budget_backend.data.dbDto;
 using budget_backend.domain;
 using Microsoft.EntityFrameworkCore;
@@ -7,23 +6,20 @@ namespace budget_backend.data;
 
 public class DataContext : DbContext
 {
-    private readonly IMapper _mapper;
-
-    public DataContext(DbContextOptions options, IMapper mapper) : base(options)
+    public DataContext(DbContextOptions options) : base(options)
     {
-        _mapper = mapper;
     }
 
     private DbSet<AccountDto> Accounts { get; set; }
     
     private DbSet<TransactionDto> Transactions { get; set; }
 
-    public async Task AddAccountAsync(domain.Account account)
+    public async Task AddAccountAsync(Account account)
     {
-        var dtoAccount = _mapper.Map<data.dbDto.AccountDto>(account);
+        var dtoAccount = account.ToDbDto(); 
         
         var transactions = account.GetTransactions();
-        var dtoTransactions = _mapper.Map<IEnumerable<data.dbDto.TransactionDto>>(transactions);
+        var dtoTransactions = transactions.Select(_ => _.ToDbDto());
 
         await Accounts.AddAsync(dtoAccount);
         await Transactions.AddRangeAsync(dtoTransactions);
@@ -33,13 +29,15 @@ public class DataContext : DbContext
     public Task<bool> GetAccountAsync(string accountName, out Account? account)
     {
         account = null;
-        var dtoAccount = Accounts.FirstOrDefault(_ => _.Name.Equals(accountName));
-        if (dtoAccount is null)
+        var accountDto = Accounts.FirstOrDefault(_ => _.Name.Equals(accountName));
+        if (accountDto is null)
         {
             return Task.FromResult(true);
         }
-        
-        account = _mapper.Map<AccountDto, Account>(dtoAccount);
+
+        var transactionDtos = Transactions.Where(_ => _.AccountId.Equals(accountDto.Id));
+
+        account = accountDto.ToDomain(transactionDtos);
         return Task.FromResult(account is not null);
     }
 }

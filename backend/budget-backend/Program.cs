@@ -12,10 +12,6 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
     builder.Configuration["ConnectionStrings:Database"]));
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
-
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

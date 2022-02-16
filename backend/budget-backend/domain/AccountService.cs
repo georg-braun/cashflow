@@ -1,6 +1,4 @@
-using AutoMapper;
 using budget_backend.data;
-
 namespace budget_backend.domain;
 
 public interface IAccountService
@@ -63,6 +61,12 @@ public static class AccountFactory
     public static Account Create(string name)
     {
         var id = Guid.NewGuid();
+        return Create(id, name);
+    }
+
+    public static Account Create(Guid id, string name)
+    {
         return new Account(id, name);
     }
+ 
 }

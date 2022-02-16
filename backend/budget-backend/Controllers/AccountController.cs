@@ -19,8 +19,18 @@ public class AccountController : ControllerBase
     [HttpGet(Name = "GetAccounts")]
     public async Task<apiDto.Account> Get()
     {
-        var accountFound =_accountService.GetAccountAsync("Cash", out var account);
+        var accountFound =_accountService.GetAccountAsync("DKB", out var account);
         return new apiDto.Account() { Name = "Test-Account"};
+    }
+    
+    [HttpPost(Name = "AddAccount")]
+    public async Task<IActionResult> Post([FromBody] string name)
+    {
+        var account = AccountFactory.Create(name);
+        account.AddTransaction(DateOnlyExtensions.Today(), 40.50);
+        await _accountService.AddAccountAsync(account);
+        
+        return Created("fillUrl", new apiDto.Account());
     }
     
     /*

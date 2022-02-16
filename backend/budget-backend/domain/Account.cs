@@ -23,6 +23,11 @@ public class Account
         Transactions.Add(transaction);
     }
 
+    public void AddTransaction(Transaction transaction)
+    {
+        Transactions.Add(transaction);
+    }
+
     public void DeleteTransaction(Guid id)
     {
         Transactions.RemoveAll(_ => _.Id.Equals(id));
