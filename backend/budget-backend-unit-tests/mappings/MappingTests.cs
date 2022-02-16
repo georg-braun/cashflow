@@ -13,7 +13,7 @@ public class MappingTests
     public void Test_AccountToAccountDbDto_Mapping()
     {
         var configuration = new MapperConfiguration(cfg =>
-            cfg.CreateMap<Account, budget_backend.data.dbDto.Account>());
+            cfg.CreateMap<Account, budget_backend.data.dbDto.AccountDto>());
 
         configuration.AssertConfigurationIsValid();
     }
@@ -22,7 +22,7 @@ public class MappingTests
     public void Test_TransactionToTransactionDbDto_Mapping()
     {
         var configuration = new MapperConfiguration(cfg =>
-            cfg.CreateMap<Transaction, budget_backend.data.dbDto.Transaction>());
+            cfg.CreateMap<Transaction, budget_backend.data.dbDto.TransactionDto>());
         
         configuration.AssertConfigurationIsValid();
     }
@@ -36,12 +36,12 @@ public class MappingTests
         var transaction = account.GetTransactions().First();
 
         var configuration = new MapperConfiguration(cfg =>
-            cfg.CreateMap<Transaction, budget_backend.data.dbDto.Transaction>());
+            cfg.CreateMap<Transaction, budget_backend.data.dbDto.TransactionDto>());
 
         var mapper = configuration.CreateMapper();
 
         // Act
-        var transactionDto = mapper.Map<Transaction, budget_backend.data.dbDto.Transaction>(transaction);
+        var transactionDto = mapper.Map<Transaction, budget_backend.data.dbDto.TransactionDto>(transaction);
         
         // Assert
         transactionDto.AccountId.Should().Be(account.Id);

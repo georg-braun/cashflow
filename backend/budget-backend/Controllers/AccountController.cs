@@ -1,7 +1,5 @@
-using budget_backend.data;
 using budget_backend.domain;
 using Microsoft.AspNetCore.Mvc;
-using Account = budget_backend.data.dbDto.Account;
 
 namespace budget_backend.Controllers;
 
@@ -21,6 +19,14 @@ public class AccountController : ControllerBase
     [HttpGet(Name = "GetAccounts")]
     public async Task<apiDto.Account> Get()
     {
+        var accountFound =_accountService.GetAccountAsync("Cash", out var account);
+        return new apiDto.Account() { Name = "Test-Account"};
+    }
+    
+    /*
+    [HttpPost(Name = "AddAccount")]
+    public async Task<apiDto.Account> Get()
+    {
         //var accountDbDto = new domain.Account {Id = new Guid(), Name = "Cash"};
         var account = AccountFactory.Create("Cash");
         account.AddTransaction(DateOnly.FromDateTime(DateTime.Now), 30);
@@ -28,4 +34,5 @@ public class AccountController : ControllerBase
 
         return new apiDto.Account() { Name = "Test-Account"};
     }
+    */
 }

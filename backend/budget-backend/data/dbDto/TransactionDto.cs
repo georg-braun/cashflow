@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace budget_backend.data.dbDto;
 
-public class Transaction
+public class TransactionDto
 {
     [Key]
     public Guid Id { get; set; }

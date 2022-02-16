@@ -6,6 +6,7 @@ namespace budget_backend.domain;
 public interface IAccountService
 {
     Task AddAccountAsync(Account account);
+    Task<bool> GetAccountAsync(string accountName, out Account? account);
 }
 
 public class AccountService : IAccountService
@@ -21,8 +22,15 @@ public class AccountService : IAccountService
     {
         await _dataContext.AddAccountAsync(account);
     }
-    
-/*
+
+    public Task<bool> GetAccountAsync(string accountName, out Account? account)
+    {
+        var result = _dataContext.GetAccountAsync(accountName, out var repoAccount);
+        account = repoAccount;
+        return result;
+    }
+
+    /*
     public bool TryGet(Guid id, out Account account)
     {
         var foundAccount = _accounts.FirstOrDefault(_ => _.Id.Equals(id));
