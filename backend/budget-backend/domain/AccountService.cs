@@ -3,8 +3,8 @@ namespace budget_backend.domain;
 
 public interface IAccountService
 {
-    Task AddAccountAsync(Account account);
-    Task<bool> GetAccountAsync(string accountName, out Account? account);
+    Task AddNewAccount(Account account);
+    Task<Account> GetAccountAsync(string accountName);
 }
 
 public class AccountService : IAccountService
@@ -16,44 +16,17 @@ public class AccountService : IAccountService
         _dataContext = dataContext;
     }
 
-    public async Task AddAccountAsync(Account account)
+    public async Task AddNewAccount(Account account)
     {
         await _dataContext.AddAccountAsync(account);
     }
 
-    public Task<bool> GetAccountAsync(string accountName, out Account? account)
+    public Task<Account> GetAccountAsync(string accountName)
     {
-        var result = _dataContext.GetAccountAsync(accountName, out var repoAccount);
-        account = repoAccount;
-        return result;
+        return _dataContext.GetAccountAsync(accountName);
+        
     }
 
-    /*
-    public bool TryGet(Guid id, out Account account)
-    {
-        var foundAccount = _accounts.FirstOrDefault(_ => _.Id.Equals(id));
-        account = foundAccount ?? GetDefaultAccount();
-        return foundAccount != null;
-    }
-
-    public bool TryGet(string accountName, out Account account)
-    {
-        var foundAccount = _accounts.FirstOrDefault(_ => _.Name.Equals(accountName));
-        account = foundAccount ?? GetDefaultAccount();
-        return foundAccount != null;
-    }
-
-    public void Update(Account account)
-    {
-        Delete(account);
-        _accounts.Add(account);
-    }
-
-    public void Delete(Account account)
-    {
-        _accounts.RemoveAll(_ => _.Id.Equals(account.Id));
-    }
-    */
 }
 
 public static class AccountFactory
@@ -68,5 +41,10 @@ public static class AccountFactory
     {
         return new Account(id, name);
     }
- 
+
+    public static AccountEntry CreateEntry(Account account, double amount, DateOnly timestamp)
+    {
+        var id = Guid.NewGuid();
+        return new AccountEntry(id, account, amount, timestamp);
+    }
 }

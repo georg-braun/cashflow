@@ -11,33 +11,38 @@ public class DataContext : DbContext
     }
 
     private DbSet<AccountDto> Accounts { get; set; }
+    private DbSet<AccountEntryDto> AccountEntries { get; set; }
     
-    private DbSet<TransactionDto> Transactions { get; set; }
+    //private DbSet<AccountTransactionDto> AccountTransactions { get; set; }
+
 
     public async Task AddAccountAsync(Account account)
     {
-        var dtoAccount = account.ToDbDto(); 
-        
-        var transactions = account.GetTransactions();
-        var dtoTransactions = transactions.Select(_ => _.ToDbDto());
+        var accountDto = account.ToDbDto();
+        await Accounts.AddAsync(accountDto);
 
-        await Accounts.AddAsync(dtoAccount);
-        await Transactions.AddRangeAsync(dtoTransactions);
+        var accountEntries = account.GetEntries().Select(_ => _.ToDbDto());
+        await AccountEntries.AddRangeAsync(accountEntries);
+        
         await SaveChangesAsync();
     }
 
-    public Task<bool> GetAccountAsync(string accountName, out Account? account)
+    public async Task<Account> GetAccountAsync(string accountName)
     {
-        account = null;
+        //var accountDto = await Accounts.FindAsync(new[] {id});
+   
         var accountDto = Accounts.FirstOrDefault(_ => _.Name.Equals(accountName));
         if (accountDto is null)
         {
-            return Task.FromResult(true);
+            return null;
         }
+        
+        var accountEntryDtos = AccountEntries.Where(_ => _.AccountId.Equals(accountDto.Id));
 
-        var transactionDtos = Transactions.Where(_ => _.AccountId.Equals(accountDto.Id));
+        var account = accountDto.ToDomain();
+        var accountEntries = accountEntryDtos.Select(_ => _.ToDomain(account));
+        account.AddEntries(accountEntries);
 
-        account = accountDto.ToDomain(transactionDtos);
-        return Task.FromResult(account is not null);
+        return account;
     }
 }

@@ -37,7 +37,7 @@ namespace budget_backend.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("budget_backend.data.dbDto.TransactionDto", b =>
+            modelBuilder.Entity("budget_backend.data.dbDto.AccountEntryDto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,7 +54,7 @@ namespace budget_backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("AccountEntries");
                 });
 #pragma warning restore 612, 618
         }

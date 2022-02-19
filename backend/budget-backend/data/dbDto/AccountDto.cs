@@ -22,16 +22,8 @@ public static class AccountDtoExtensions
         };
     }
 
-    public static Account ToDomain(this AccountDto accountDto, IEnumerable<TransactionDto> transactionDtos)
+    public static Account ToDomain(this AccountDto accountDto)
     {
-        var account = AccountFactory.Create(accountDto.Id, accountDto.Name);
-        foreach (var transactionDto in transactionDtos)
-        {
-            var transaction = TransactionFactory.Create(transactionDto.Id, transactionDto.Timestamp,
-                transactionDto.Amount, account);
-            account.AddTransaction(transaction);
-        }
-
-        return account;
+        return new Account(accountDto.Id, accountDto.Name);
     }
 }
