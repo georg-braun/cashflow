@@ -1,20 +1,18 @@
-using budget_backend.domain.budget;
-
-namespace budget_backend.domain;
+namespace budget_backend.domain.account;
 
 
 public class AccountEntry
 {
-    public AccountEntry(Guid id, Account account, double amount, DateOnly timestamp)
+    public AccountEntry(Guid id, Guid accountId, double amount, DateOnly timestamp)
     {
         Id = id;
         Amount = amount;
         Timestamp = timestamp;
-        Account = account;
+        AccountId = accountId;
     }
 
     public Guid Id { get; }
     public double Amount { get; }
     public DateOnly Timestamp { get; }
-    public Account Account { get; }
+    public Guid AccountId { get; }
 }

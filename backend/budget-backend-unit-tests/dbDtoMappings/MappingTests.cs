@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using budget_backend;
+using budget_backend.application;
 using budget_backend.data.dbDto;
 using budget_backend.domain;
 using FluentAssertions;

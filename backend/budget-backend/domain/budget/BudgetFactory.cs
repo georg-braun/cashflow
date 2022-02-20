@@ -7,10 +7,20 @@ public static class BudgetFactory
         var id = Guid.NewGuid();
         return new BudgetaryItem(id, name);
     }
-
-    public static BudgetChange CreateBudgetChange(BudgetaryItem budgetaryItem, double amount, DateOnly today)
+    
+    public static BudgetChange CreateBudgetChange(Guid budgetaryItemId, double amount, DateOnly today)
     {
         var id = Guid.NewGuid();
-        return new BudgetChange(id, budgetaryItem, today, amount);
+        return new BudgetChange(id, budgetaryItemId, today, amount);
+    }
+    public static Spending CreateSpending(Guid accountId, Guid accountEntryId, Guid budgetaryItemId)
+    {
+        var id = Guid.NewGuid();
+        return new Spending()
+        {
+            AccountId = accountId,
+            AccountEntryId = accountEntryId,
+            BudgetaryItemId = budgetaryItemId
+        };
     }
 }

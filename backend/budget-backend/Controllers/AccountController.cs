@@ -1,3 +1,4 @@
+using budget_backend.application;
 using budget_backend.domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,10 +27,7 @@ public class AccountController : ControllerBase
     [HttpPost(Name = "AddAccount")]
     public async Task<IActionResult> Post([FromBody] string name)
     {
-        var account = AccountFactory.Create(name);
-        account.AddEntry(40.50,DateOnlyExtensions.Today());
-        account.AddEntry(60,DateOnlyExtensions.Today());
-        await _accountService.AddNewAccount(account);
+        await _accountService.AddNewAccountAsync(name);
         
         return Created("fillUrl", new apiDto.Account());
     }

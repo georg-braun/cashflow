@@ -1,20 +1,24 @@
-using budget_backend.domain.budget;
-
-namespace budget_backend.domain;
+namespace budget_backend.domain.account;
 
 
 
 
 public class AccountTransaction
 {
-    public AccountTransaction(Guid id, AccountEntry from, AccountEntry to)
+    public AccountTransaction(Guid id, Guid fromAccountId, Guid fromAccountEntryId, Guid toAccountId, Guid toAccountEntryId)
     {
         Id = id;
-        From = from;
-        To = to;
+        FromAccountId = fromAccountId;
+        FromAccountEntryId = fromAccountEntryId;
+        ToAccountId = toAccountId;
+        ToAccountEntryId = toAccountEntryId;
     }
 
+    public Guid ToAccountEntryId { get; set; }
+
+    public Guid FromAccountEntryId { get; set; }
+
     public Guid Id { get; }
-    public AccountEntry From { get; }
-    public AccountEntry To { get; }
+    public Guid FromAccountId { get; }
+    public Guid ToAccountId { get; }
 }

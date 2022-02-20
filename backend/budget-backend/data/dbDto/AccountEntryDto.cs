@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using budget_backend.domain;
+using budget_backend.domain.account;
 
 namespace budget_backend.data.dbDto;
 
@@ -22,14 +23,14 @@ public static class AccountEntryDtoExtensions
         return new AccountEntryDto()
         {
             Id = accountEntry.Id,
-            AccountId = accountEntry.Account.Id,
+            AccountId = accountEntry.AccountId,
             Amount = accountEntry.Amount,
             Timestamp = accountEntry.Timestamp
         };
     }
 
-    public static AccountEntry ToDomain(this AccountEntryDto accountEntryDto, Account account)
+    public static AccountEntry ToDomain(this AccountEntryDto accountEntryDto)
     {
-        return new AccountEntry(accountEntryDto.Id, account, accountEntryDto.Amount, accountEntryDto.Timestamp);
+        return new AccountEntry(accountEntryDto.Id, accountEntryDto.AccountId, accountEntryDto.Amount, accountEntryDto.Timestamp);
     }
 }

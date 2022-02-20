@@ -1,3 +1,4 @@
+using budget_backend.application;
 using budget_backend.data;
 using budget_backend.domain;
 using Microsoft.EntityFrameworkCore;

@@ -2,17 +2,17 @@ namespace budget_backend.domain.budget;
 
 public class BudgetChange
 {
-    public BudgetChange(Guid id, BudgetaryItem budgetaryItem, DateOnly timestamp, double amount)
+    public BudgetChange(Guid id, Guid budgetaryItemId, DateOnly timestamp, double amount)
     {
         Id = id;
-        BudgetaryItem = budgetaryItem;
+        BudgetaryItemId = budgetaryItemId;
         Timestamp = timestamp;
         Amount = amount;
     }
 
     public Guid Id { get; }
 
-    public BudgetaryItem BudgetaryItem { get; }
+    public Guid BudgetaryItemId { get; }
     
     public DateOnly Timestamp { get; }
     

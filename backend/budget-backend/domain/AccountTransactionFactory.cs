@@ -1,3 +1,4 @@
+using budget_backend.domain.account;
 using budget_backend.domain.budget;
 
 namespace budget_backend.domain;
@@ -11,16 +12,10 @@ public static class AccountTransactionFactory
         return Create(id, from, to);
     }
 
-    public static AccountTransaction Create(Guid id, AccountEntry from, AccountEntry to)
+    public static AccountTransaction Create(Guid id, AccountEntry fromEntry, AccountEntry toEntry)
     {
-        return new AccountTransaction(id, from, to);
+        return new AccountTransaction(id, fromEntry.AccountId, fromEntry.Id, toEntry.AccountId, toEntry.Id);
     }
 
-    // todo: I think this should be a service and not a factory because it modifies the accounts.
-    public static AccountTransaction Create(Account from, Account to, double amount, DateOnly timestamp)
-    {
-        var fromAccountEntry = from.AddEntry(-amount, timestamp);
-        var toAccountEntry = to.AddEntry(amount, timestamp);
-        return Create(fromAccountEntry, toAccountEntry);
-    }
+
 }
