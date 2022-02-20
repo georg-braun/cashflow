@@ -7,7 +7,7 @@ namespace budget_backend.application;
 
 public interface IAccountService
 {
-    Task AddNewAccountAsync(string accountName);
+    Task<Account> AddNewAccountAsync(string accountName);
     Task<Account> GetAccountAsync(string accountName);
     Task<AccountEntry> AddIncomeAsync(Guid accountId, double amount, DateOnly timestamp);
 
@@ -20,6 +20,7 @@ public interface IAccountService
     Task<BudgetChange> AddBudgetChangeAsync(Guid budgetaryItemId, double amount, DateOnly timestamp);
     Task DeleteBudgetChangeAsync(Guid budgetChangeId);
     IEnumerable<Account> GetAccounts();
+    IEnumerable<AccountEntry> GetAccountEntries(Guid accountId);
 }
 
 /// <summary>
@@ -34,10 +35,11 @@ public class AccountService : IAccountService
         _dataContext = dataContext;
     }
 
-    public async Task AddNewAccountAsync(string accountName)
+    public async Task<Account> AddNewAccountAsync(string accountName)
     {
         var account = AccountFactory.Create(accountName);
         await _dataContext.AddAccountAsync(account);
+        return account;
     }
 
     public Task<Account> GetAccountAsync(string accountName)
@@ -88,6 +90,11 @@ public class AccountService : IAccountService
     public IEnumerable<Account> GetAccounts()
     {
         return _dataContext.GetAccounts();
+    }
+
+    public IEnumerable<AccountEntry> GetAccountEntries(Guid accountId)
+    {
+        return _dataContext.GetAccountEntries(accountId);
     }
 }
 

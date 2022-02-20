@@ -25,7 +25,7 @@ public static class AccountEntryDtoExtensions
             Id = accountEntry.Id,
             AccountId = accountEntry.AccountId,
             Amount = accountEntry.Amount,
-            Timestamp = accountEntry.Timestamp
+            Timestamp = accountEntry.Date
         };
     }
 

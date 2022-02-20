@@ -1,4 +1,4 @@
-namespace budget_backend.Controllers.apiDto;
+namespace budget_backend.Controllers.apiDto.commands;
 
 public record AddNewAccountDto
 {

@@ -41,7 +41,7 @@ public class DataContext : DbContext
     public async Task AddAccountEntryAsync(AccountEntry accountEntry)
     {
         var accountEntryDto = accountEntry.ToDbDto();
-        AccountEntries.Update(accountEntryDto);
+        await AccountEntries.AddAsync(accountEntryDto);
         await SaveChangesAsync();
     }
 
@@ -68,5 +68,11 @@ public class DataContext : DbContext
     public IEnumerable<Account> GetAccounts()
     {
         return Accounts.Select(_ => _.ToDomain());
+    }
+
+    public IEnumerable<AccountEntry> GetAccountEntries(Guid accountId)
+    {
+        var accountEntryDtos = AccountEntries.Where(_ => _.AccountId.Equals(accountId));
+        return accountEntryDtos.Select(_ => _.ToDomain());
     }
 }

@@ -1,5 +1,6 @@
 using budget_backend.application;
 using budget_backend.Controllers.apiDto;
+using budget_backend.Controllers.apiDto.commands;
 using budget_backend.domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,20 +19,38 @@ public class AccountController : ControllerBase
         _accountService = accountService;
     }
 
-    [HttpGet(Name = "GetAllAccounts")]
-    public IEnumerable<AccountApiDto> Get()
+    [HttpGet(Route.GetAllAccounts)]
+    public IEnumerable<AccountApiDto> GetAllAccounts()
     {
         var accounts =_accountService.GetAccounts();
         return accounts.Select(_ => _.ToApiDto());
 
     }
     
-    [HttpPost(Name = "AddAccount")]
-    public async Task<IActionResult> Post([FromBody] AddNewAccountDto addNewAccountDto)
+    [HttpGet(Route.GetAccountEntriesOfAccount)]
+    public IEnumerable<AccountEntryApiDto> GetAccountEntriesOfAccount(string accountId)
     {
-        await _accountService.AddNewAccountAsync(addNewAccountDto.Name);
-        return Created("fillUrl", new AccountApiDto());
+        var accountGuid = Guid.Parse(accountId);
+        var accountEntries =_accountService.GetAccountEntries(accountGuid);
+        return accountEntries.Select(_ => _.ToApiDto());
     }
+    
+    [HttpPost(Route.AddIncome)]
+    public async Task<IActionResult> AddIncomeMethod([FromBody] AddIncomeDto addIncomeDto)
+    {
+        var date = new DateOnly(addIncomeDto.Timestamp.Year, addIncomeDto.Timestamp.Month, addIncomeDto.Timestamp.Day);
+        var accountEntry = await _accountService.AddIncomeAsync(addIncomeDto.AccountId, addIncomeDto.Amount, date);
+        return Created("fillUrl", accountEntry.ToApiDto());
+    }
+    
+    [HttpPost(Route.AddAccount)]
+    public async Task<IActionResult> AddAccount([FromBody] AddNewAccountDto addNewAccountDto)
+    {
+        var account = await _accountService.AddNewAccountAsync(addNewAccountDto.Name);
+        return Created("fillUrl", account.ToApiDto());
+    }
+    
+
     
 
 }
