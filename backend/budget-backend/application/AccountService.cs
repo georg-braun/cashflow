@@ -19,6 +19,7 @@ public interface IAccountService
     Task<BudgetaryItem> AddBudgetaryItemAsync(string budgetName);
     Task<BudgetChange> AddBudgetChangeAsync(Guid budgetaryItemId, double amount, DateOnly timestamp);
     Task DeleteBudgetChangeAsync(Guid budgetChangeId);
+    IEnumerable<Account> GetAccounts();
 }
 
 /// <summary>
@@ -41,7 +42,7 @@ public class AccountService : IAccountService
 
     public Task<Account> GetAccountAsync(string accountName)
     {
-        return _dataContext.GetAccountAsync(accountName);
+        return _dataContext.GetAccount(accountName);
     }
 
     public async Task<AccountEntry> AddIncomeAsync(Guid accountId, double amount, DateOnly timestamp)
@@ -83,10 +84,11 @@ public class AccountService : IAccountService
     {
         await _dataContext.DeleteBudgetChangeAsync(budgetChangeId);
     }
-    
-    
-    
 
+    public IEnumerable<Account> GetAccounts()
+    {
+        return _dataContext.GetAccounts();
+    }
 }
 
 public static class AccountFactory

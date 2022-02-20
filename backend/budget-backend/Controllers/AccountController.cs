@@ -1,4 +1,5 @@
 using budget_backend.application;
+using budget_backend.Controllers.apiDto;
 using budget_backend.domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,31 +18,20 @@ public class AccountController : ControllerBase
         _accountService = accountService;
     }
 
-    [HttpGet(Name = "GetAccounts")]
-    public async Task<apiDto.Account> Get()
+    [HttpGet(Name = "GetAllAccounts")]
+    public IEnumerable<AccountApiDto> Get()
     {
-        var account =_accountService.GetAccountAsync("string");
-        return new apiDto.Account() { Name = "Test-Account"};
-    }
-    
-    [HttpPost(Name = "AddAccount")]
-    public async Task<IActionResult> Post([FromBody] string name)
-    {
-        await _accountService.AddNewAccountAsync(name);
-        
-        return Created("fillUrl", new apiDto.Account());
-    }
-    
-    /*
-    [HttpPost(Name = "AddAccount")]
-    public async Task<apiDto.Account> Get()
-    {
-        //var accountDbDto = new domain.Account {Id = new Guid(), Name = "Cash"};
-        var account = AccountFactory.Create("Cash");
-        account.AddTransaction(DateOnly.FromDateTime(DateTime.Now), 30);
-        await _accountService.AddAccountAsync(account);
+        var accounts =_accountService.GetAccounts();
+        return accounts.Select(_ => _.ToApiDto());
 
-        return new apiDto.Account() { Name = "Test-Account"};
     }
-    */
+    
+    [HttpPost(Name = "AddAccount")]
+    public async Task<IActionResult> Post([FromBody] AddNewAccountDto addNewAccountDto)
+    {
+        await _accountService.AddNewAccountAsync(addNewAccountDto.Name);
+        return Created("fillUrl", new AccountApiDto());
+    }
+    
+
 }

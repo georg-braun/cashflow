@@ -26,16 +26,16 @@ public class DataContext : DbContext
         await SaveChangesAsync();
     }
 
-    public async Task<Account> GetAccountAsync(string accountName)
+    public Task<Account> GetAccount(string accountName)
     {
         var accountDto = Accounts.FirstOrDefault(_ => _.Name.Equals(accountName));
         if (accountDto is null)
         {
-            return null;
+            return Task.FromResult<Account>(null);
         }
         
         var account = accountDto.ToDomain();
-        return account;
+        return Task.FromResult(account);
     }
 
     public async Task AddAccountEntryAsync(AccountEntry accountEntry)
@@ -63,5 +63,10 @@ public class DataContext : DbContext
     public async Task DeleteBudgetChangeAsync(Guid budgetChangeId)
     {
         throw new NotImplementedException();
+    }
+
+    public IEnumerable<Account> GetAccounts()
+    {
+        return Accounts.Select(_ => _.ToDomain());
     }
 }
