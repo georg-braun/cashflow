@@ -24,7 +24,6 @@ public class AccountController : ControllerBase
     {
         var accounts =_accountService.GetAccounts();
         return accounts.Select(_ => _.ToApiDto());
-
     }
     
     [HttpGet(Route.GetAccountEntriesOfAccount)]
@@ -50,7 +49,16 @@ public class AccountController : ControllerBase
         return Created("fillUrl", account.ToApiDto());
     }
     
-
+    [HttpPost(Route.AddBudgetaryItem)]
+    public async Task<IActionResult> AddBudgetaryItem([FromBody] AddNewBudgetaryItemDto newBudgetaryItemDto)
+    {
+        var budgetaryItem = await _accountService.AddBudgetaryItemAsync(newBudgetaryItemDto.Name);
+        return Created("fillUrl", budgetaryItem.ToApiDto());
+    }
     
+    [HttpGet(Route.GetAllBudgetaryItems)]
+    public IEnumerable<BudgetaryItemDto> GetAllBudgetaryItems() => _accountService.GetBudgetaryItems().Select(_ => _.ToApiDto());
+
+
 
 }

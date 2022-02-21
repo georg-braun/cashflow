@@ -46,6 +46,37 @@ public class AccountApiTests : IntegrationTest
         accountEntries.Should().HaveCount(1);
         accountEntries.First().Amount.Should().Be(35.50);
     }
+    
+    [Fact]
+    public async Task CreateAndGet_OfBudgetaryItem_IsCorrect()
+    {
+        // Arrange + Act
+        await AddNewBudgetaryItemAsync("groceries");
+        await AddNewBudgetaryItemAsync("car insurance");
+        var budgetaryItems = await GetAllBudgetaryItemsAsync();
+        var budgetaryItemDtos = budgetaryItems.ToList();
+        
+        // Assert
+        budgetaryItemDtos.Should().HaveCount(2);
+        budgetaryItemDtos.Should().Contain(_ => _.Name.Equals("groceries"));
+        budgetaryItemDtos.Should().Contain(_ => _.Name.Equals("car insurance"));
+    }
+
+
+    private async Task<IEnumerable<BudgetaryItemDto>> GetAllBudgetaryItemsAsync()
+    {
+        var getAccountResult = await client.GetAsync(Route.GetAllBudgetaryItems);
+        var accountsJson = await getAccountResult.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetaryItemDto[]>(accountsJson);
+    }
+
+    private async Task AddNewBudgetaryItemAsync(string name)
+    {
+        var newBudgetaryItem = new AddNewBudgetaryItemDto(name);
+        var json = JsonConvert.SerializeObject(newBudgetaryItem);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        await client.PostAsync(Route.AddBudgetaryItem, data);
+    }
 
     private async Task AddIncomeAsync(Guid accountId, double amount, DateOnly date)
     {
@@ -84,6 +115,5 @@ public class AccountApiTests : IntegrationTest
         var json = JsonConvert.SerializeObject(newAccount);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         await client.PostAsync(Route.AddAccount, data);
-
     }
 }
