@@ -17,8 +17,9 @@ public class DataContext : DbContext
     private DbSet<AccountEntryDto> AccountEntries { get; set; }
     
     private DbSet<AccountTransactionDto> AccountTransactions { get; set; }
-    
     private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; }
+    
+    private DbSet<BudgetChangeDto> BudgetChanges { get; set; }
 
 
     public async Task AddAccountAsync(Account account)
@@ -63,8 +64,13 @@ public class DataContext : DbContext
 
     public async Task AddBudgetChangeAsync(BudgetChange budgetChange)
     {
-        throw new NotImplementedException();
+        var budgetChangeDto = budgetChange.ToDbDto();
+        await BudgetChanges.AddAsync(budgetChangeDto);
+        await SaveChangesAsync();
     }
+
+    public IEnumerable<BudgetChange> GetBudgetChanges(Guid budgetaryItemId) => BudgetChanges
+        .Where(_ => _.BudgetaryItemId.Equals(budgetaryItemId)).Select(_ => _.ToDomain());
 
     public async Task DeleteBudgetChangeAsync(Guid budgetChangeId)
     {

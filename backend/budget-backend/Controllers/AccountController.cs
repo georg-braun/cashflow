@@ -1,7 +1,6 @@
 using budget_backend.application;
 using budget_backend.Controllers.apiDto;
 using budget_backend.Controllers.apiDto.commands;
-using budget_backend.domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace budget_backend.Controllers;
@@ -58,7 +57,21 @@ public class AccountController : ControllerBase
     
     [HttpGet(Route.GetAllBudgetaryItems)]
     public IEnumerable<BudgetaryItemDto> GetAllBudgetaryItems() => _accountService.GetBudgetaryItems().Select(_ => _.ToApiDto());
+    
+    [HttpGet(Route.GetBudgetChanges)]
+    public IEnumerable<BudgetChangeApiDto> GetBudgetChanges(string budgetaryItemId)
+    {
+        var budgetaryItemGuid = Guid.Parse(budgetaryItemId);
+        return _accountService.GetBudgetChanges(budgetaryItemGuid).Select(_ => _.ToApiDto());
+    }
 
 
+    [HttpPost(Route.AddBudgetChange)]
+    public async Task<IActionResult> AddBudgetChange([FromBody] AddBudgetChangeDto addBudgetChangeDto)
+    {
+        var date = new DateOnly(addBudgetChangeDto.Date.Year, addBudgetChangeDto.Date.Month, addBudgetChangeDto.Date.Day);
+        var budgetChange = await _accountService.AddBudgetChangeAsync(addBudgetChangeDto.BudgetaryItemId, addBudgetChangeDto.Amount, date);
+        return Created("fillUrl", budgetChange.ToApiDto());
+    }
 
 }

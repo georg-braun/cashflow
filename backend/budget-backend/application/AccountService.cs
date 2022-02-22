@@ -24,6 +24,7 @@ public interface IAccountService
     Task DeleteBudgetChangeAsync(Guid budgetChangeId);
     IEnumerable<Account> GetAccounts();
     IEnumerable<AccountEntry> GetAccountEntries(Guid accountId);
+    IEnumerable<BudgetChange> GetBudgetChanges(Guid budgetaryItemId);
 }
 
 /// <summary>
@@ -101,6 +102,8 @@ public class AccountService : IAccountService
     {
         return _dataContext.GetAccountEntries(accountId);
     }
+
+    public IEnumerable<BudgetChange> GetBudgetChanges(Guid budgetaryItemId) => _dataContext.GetBudgetChanges(budgetaryItemId);
 }
 
 public static class AccountFactory

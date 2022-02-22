@@ -48,7 +48,7 @@ public class AccountApiTests : IntegrationTest
     }
     
     [Fact]
-    public async Task CreateAndGet_OfBudgetaryItem_IsCorrect()
+    public async Task CreateAndGet_OfBudgetaryItems_AreCorrect()
     {
         // Arrange + Act
         await AddNewBudgetaryItemAsync("groceries");
@@ -60,6 +60,42 @@ public class AccountApiTests : IntegrationTest
         budgetaryItemDtos.Should().HaveCount(2);
         budgetaryItemDtos.Should().Contain(_ => _.Name.Equals("groceries"));
         budgetaryItemDtos.Should().Contain(_ => _.Name.Equals("car insurance"));
+    }
+    
+    [Fact]
+    public async Task CreateAndGet_OfBudgetChanges_AreCorrect()
+    {
+        // Arrange
+        await AddNewBudgetaryItemAsync("groceries");
+        var budgetaryItemResults = await GetAllBudgetaryItemsAsync();
+        var budgetaryItem = budgetaryItemResults.First();
+        
+        // Act
+        var date = DateOnlyExtensions.Today();
+        await AddNewBudgetChange(budgetaryItem.Id, 80.5, date );
+        await AddNewBudgetChange(budgetaryItem.Id, -60, date);
+        var budgetChanges = await GetBudgetChanges(budgetaryItem.Id);
+        
+        // Assert
+        var budgetChangeApiDtos = budgetChanges.ToList();
+        budgetChangeApiDtos.Should().HaveCount(2);
+        budgetChangeApiDtos.Should().Contain(_ => _.Amount.Equals(80.5));
+        budgetChangeApiDtos.Should().Contain(_ => _.Amount.Equals(-60));
+    }
+
+    private async Task<IEnumerable<BudgetChangeApiDto>> GetBudgetChanges(Guid budgetaryItemId)
+    {
+        var getBudgetChangesResult = await client.GetAsync($"{Route.GetBudgetChangesBase}/{budgetaryItemId}");
+        var budgetChangesJson = await getBudgetChangesResult.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetChangeApiDto[]>(budgetChangesJson);
+    }
+
+    private async Task AddNewBudgetChange(Guid budgetaryItemId, double amount, DateOnly date)
+    {
+        var budgetChangeDto = new AddBudgetChangeDto(budgetaryItemId, amount, date.ToDateTime(TimeOnly.MinValue));
+        var json = JsonConvert.SerializeObject(budgetChangeDto);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        await client.PostAsync(Route.AddBudgetChange, data);
     }
 
 
