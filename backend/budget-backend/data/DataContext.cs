@@ -3,7 +3,6 @@ using budget_backend.domain;
 using budget_backend.domain.account;
 using budget_backend.domain.budget;
 using Microsoft.EntityFrameworkCore;
-using Spending = budget_backend.domain.budget.Spending;
 
 namespace budget_backend.data;
 
@@ -20,6 +19,8 @@ public class DataContext : DbContext
     private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; }
     
     private DbSet<BudgetChangeDto> BudgetChanges { get; set; }
+    
+    private DbSet<SpendingDto> Spendings { get; set; }
 
 
     public async Task AddAccountAsync(Account account)
@@ -50,7 +51,11 @@ public class DataContext : DbContext
 
     public async Task AddSpendingAsync(AccountEntry accountEntry, Spending spending)
     {
-        throw new NotImplementedException();
+        var accountEntryDto = accountEntry.ToDbDto();
+        await AccountEntries.AddAsync(accountEntryDto);
+        var spendingDto = spending.ToDbDto();
+        await Spendings.AddAsync(spendingDto);
+        await SaveChangesAsync();
     }
 
     public async Task AddBudgetaryItemAsync(BudgetaryItem budgetaryItem)
@@ -87,4 +92,6 @@ public class DataContext : DbContext
         var accountEntryDtos = AccountEntries.Where(_ => _.AccountId.Equals(accountId));
         return accountEntryDtos.Select(_ => _.ToDomain());
     }
+
+    public IEnumerable<Spending> GetSpendings() => Spendings.Select(_ => _.ToDomain());
 }

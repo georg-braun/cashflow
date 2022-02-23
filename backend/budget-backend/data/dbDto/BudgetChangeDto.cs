@@ -5,7 +5,22 @@ using budget_backend.domain.budget;
 
 namespace budget_backend.data.dbDto;
 
-public record BudgetChangeDto(Guid Id, Guid BudgetaryItemId, double Amount, DateOnly Date);
+public class BudgetChangeDto
+{
+    public BudgetChangeDto(Guid id, Guid budgetaryItemId, double amount, DateOnly date)
+    {
+        Id = id;
+        BudgetaryItemId = budgetaryItemId;
+        Amount = amount;
+        Date = date;
+    }
+
+    [Key]
+    public Guid Id { get; init; }
+    public Guid BudgetaryItemId { get; init; }
+    public double Amount { get; init; }
+    public DateOnly Date { get; init; }
+}
 
 public static class BudgetChangeDtoExtensions
 {

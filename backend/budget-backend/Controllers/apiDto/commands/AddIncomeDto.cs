@@ -4,5 +4,5 @@ public record AddIncomeDto
 {
     public Guid AccountId { get; init; }
     public double Amount { get; init; }
-    public DateTime Timestamp { get; init; }
+    public DateTime Date { get; init; }
 }

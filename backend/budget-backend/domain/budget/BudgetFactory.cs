@@ -15,12 +15,6 @@ public static class BudgetFactory
     }
     public static Spending CreateSpending(Guid accountId, Guid accountEntryId, Guid budgetaryItemId)
     {
-        var id = Guid.NewGuid();
-        return new Spending()
-        {
-            AccountId = accountId,
-            AccountEntryId = accountEntryId,
-            BudgetaryItemId = budgetaryItemId
-        };
+        return new Spending(accountId, accountEntryId, budgetaryItemId);
     }
 }

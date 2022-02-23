@@ -20,7 +20,7 @@ public class AccountApiTests : IntegrationTest
     public async Task CreateAndGet_OfAccount_IsCorrect()
     {
         // Arrange
-        await AddNewAccountAsync("cash");
+        await AddAccountAsync("cash");
       
         // Act
         var accounts = await GetAllAccountsAsync();
@@ -35,24 +35,45 @@ public class AccountApiTests : IntegrationTest
     public async Task CreateAndGet_OfTransaction_IsCorrect()
     {
         // Arrange
-        await AddNewAccountAsync("cash");
+        await AddAccountAsync("cash");
         var accounts = await GetAllAccountsAsync();
 
         // Act
         await AddIncomeAsync(accounts.First().Id, 35.50, DateOnlyExtensions.Today());
-        var accountEntries = await GetAllAccountEntriesOfAccount(accounts.First().Id);
+        var accountEntries = await GetAllAccountEntriesOfAccountAsync(accounts.First().Id);
 
         // Assert
         accountEntries.Should().HaveCount(1);
         accountEntries.First().Amount.Should().Be(35.50);
     }
     
+     
+    [Fact]
+    public async Task CreateAndGet_OfSpendings_AreCorrect()
+    {
+        // Arrange
+        await AddAccountAsync("cash");
+        await AddBudgetaryItemAsync("groceries");
+        var account = (await GetAllAccountsAsync()).First();
+        var budgetaryItem = (await GetAllBudgetaryItemsAsync()).First();
+
+        // Act
+        await AddSpendingAsync(account.Id, budgetaryItem.Id, -35.50, DateOnlyExtensions.Today());
+        var accountEntries = await GetAllAccountEntriesOfAccountAsync(account.Id);
+        var spendings = await GetAllSpendingsAsync();
+
+        // Assert
+        accountEntries.Should().HaveCount(1);
+        spendings.Should().HaveCount(1);
+        accountEntries.Should().Contain(_ => _.Amount.Equals(-35.50));
+    }
+
     [Fact]
     public async Task CreateAndGet_OfBudgetaryItems_AreCorrect()
     {
         // Arrange + Act
-        await AddNewBudgetaryItemAsync("groceries");
-        await AddNewBudgetaryItemAsync("car insurance");
+        await AddBudgetaryItemAsync("groceries");
+        await AddBudgetaryItemAsync("car insurance");
         var budgetaryItems = await GetAllBudgetaryItemsAsync();
         var budgetaryItemDtos = budgetaryItems.ToList();
         
@@ -66,7 +87,7 @@ public class AccountApiTests : IntegrationTest
     public async Task CreateAndGet_OfBudgetChanges_AreCorrect()
     {
         // Arrange
-        await AddNewBudgetaryItemAsync("groceries");
+        await AddBudgetaryItemAsync("groceries");
         var budgetaryItemResults = await GetAllBudgetaryItemsAsync();
         var budgetaryItem = budgetaryItemResults.First();
         
@@ -82,6 +103,7 @@ public class AccountApiTests : IntegrationTest
         budgetChangeApiDtos.Should().Contain(_ => _.Amount.Equals(80.5));
         budgetChangeApiDtos.Should().Contain(_ => _.Amount.Equals(-60));
     }
+
 
     private async Task<IEnumerable<BudgetChangeApiDto>> GetBudgetChanges(Guid budgetaryItemId)
     {
@@ -106,7 +128,7 @@ public class AccountApiTests : IntegrationTest
         return JsonConvert.DeserializeObject<BudgetaryItemDto[]>(accountsJson);
     }
 
-    private async Task AddNewBudgetaryItemAsync(string name)
+    private async Task AddBudgetaryItemAsync(string name)
     {
         var newBudgetaryItem = new AddNewBudgetaryItemDto(name);
         var json = JsonConvert.SerializeObject(newBudgetaryItem);
@@ -120,20 +142,35 @@ public class AccountApiTests : IntegrationTest
         {
             AccountId = accountId,
             Amount = amount,
-            Timestamp = date.ToDateTime(TimeOnly.MinValue)
+            Date = date.ToDateTime(TimeOnly.MinValue)
         };
         var json = JsonConvert.SerializeObject(income);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         await client.PostAsync(Route.AddIncome, data);
     }
     
-    private async Task<IEnumerable<AccountEntryApiDto>> GetAllAccountEntriesOfAccount(Guid accountId)
+    private async Task AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount, DateOnly date)
+    {
+        var income = new AddSpending(accountId, budgetaryItemId, amount, date.ToDateTime(TimeOnly.MinValue));
+        var json = JsonConvert.SerializeObject(income);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        await client.PostAsync(Route.AddSpending, data);
+    }
+    
+    private async Task<IEnumerable<AccountEntryApiDto>> GetAllAccountEntriesOfAccountAsync(Guid accountId)
     {
         var getAccountResult = await client.GetAsync($"{Route.GetAccountEntriesOfAccountBase}/{accountId}");
         var accountsJson = await getAccountResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<AccountEntryApiDto[]>(accountsJson);
     }
 
+    
+    private async Task<IEnumerable<SpendingDto>> GetAllSpendingsAsync()
+    {
+        var getAccountResult = await client.GetAsync($"{Route.GetSpendings}");
+        var spendingsJson = await getAccountResult.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<SpendingDto[]>(spendingsJson);
+    }
 
     private async Task<IEnumerable<AccountApiDto>> GetAllAccountsAsync()
     {
@@ -142,7 +179,7 @@ public class AccountApiTests : IntegrationTest
         return JsonConvert.DeserializeObject<AccountApiDto[]>(accountsJson);
     }
     
-    private async Task AddNewAccountAsync(string name)
+    private async Task AddAccountAsync(string name)
     {
         var newAccount = new AddNewAccountDto()
         {

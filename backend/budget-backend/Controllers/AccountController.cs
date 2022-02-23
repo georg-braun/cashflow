@@ -32,13 +32,26 @@ public class AccountController : ControllerBase
         var accountEntries =_accountService.GetAccountEntries(accountGuid);
         return accountEntries.Select(_ => _.ToApiDto());
     }
+    [HttpGet(Route.GetSpendings)]
+    public IEnumerable<SpendingDto> GetSpendings()
+    {
+        var spendings =_accountService.GetSpendings();
+        return spendings.Select(_ => _.ToApiDto());
+    }
     
     [HttpPost(Route.AddIncome)]
-    public async Task<IActionResult> AddIncomeMethod([FromBody] AddIncomeDto addIncomeDto)
+    public async Task<IActionResult> AddIncome([FromBody] AddIncomeDto addIncomeDto)
     {
-        var date = new DateOnly(addIncomeDto.Timestamp.Year, addIncomeDto.Timestamp.Month, addIncomeDto.Timestamp.Day);
+        var date = new DateOnly(addIncomeDto.Date.Year, addIncomeDto.Date.Month, addIncomeDto.Date.Day);
         var accountEntry = await _accountService.AddIncomeAsync(addIncomeDto.AccountId, addIncomeDto.Amount, date);
         return Created("fillUrl", accountEntry.ToApiDto());
+    }
+    [HttpPost(Route.AddSpending)]
+    public async Task<IActionResult> AddSpending([FromBody] AddSpending req)
+    {
+        var date = new DateOnly(req.Date.Year, req.Date.Month, req.Date.Day);
+        var spending = await _accountService.AddSpendingAsync(req.AccountId, req.BudgetaryItemId, req.Amount, date);
+        return Created("fillUrl", spending.ToApiDto());
     }
     
     [HttpPost(Route.AddAccount)]

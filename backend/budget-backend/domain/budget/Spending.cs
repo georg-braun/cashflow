@@ -2,8 +2,14 @@ namespace budget_backend.domain.budget;
 
 public class Spending
 {
-    public Guid AccountEntryId { get; init; }
-    
-    public Guid BudgetaryItemId { get; init; }
-    public Guid AccountId { get; set; }
+    public Spending(Guid accountId, Guid accountEntryId, Guid budgetaryItemId)
+    {
+        AccountId = accountId;
+        AccountEntryId = accountEntryId;
+        BudgetaryItemId = budgetaryItemId;
+    }
+
+    public Guid AccountId { get; }
+    public Guid AccountEntryId { get; }
+    public Guid BudgetaryItemId { get;  }
 }

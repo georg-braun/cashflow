@@ -25,6 +25,7 @@ public interface IAccountService
     IEnumerable<Account> GetAccounts();
     IEnumerable<AccountEntry> GetAccountEntries(Guid accountId);
     IEnumerable<BudgetChange> GetBudgetChanges(Guid budgetaryItemId);
+    IEnumerable<Spending> GetSpendings();
 }
 
 /// <summary>
@@ -104,6 +105,7 @@ public class AccountService : IAccountService
     }
 
     public IEnumerable<BudgetChange> GetBudgetChanges(Guid budgetaryItemId) => _dataContext.GetBudgetChanges(budgetaryItemId);
+    public IEnumerable<Spending> GetSpendings() => _dataContext.GetSpendings();
 }
 
 public static class AccountFactory
