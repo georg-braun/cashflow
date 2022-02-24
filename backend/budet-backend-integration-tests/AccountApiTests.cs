@@ -14,16 +14,17 @@ using Xunit;
 
 namespace budet_backend_integration_tests;
 
-public class AccountApiTests : IntegrationTest
+public class AccountApiTests
 {
     [Fact]
     public async Task CreateAndGet_OfAccount_IsCorrect()
     {
         // Arrange
-        await AddAccountAsync("cash");
+        var client = new BackendWithSqlite().client;
+        await AddAccountAsync(client, "cash");
       
         // Act
-        var accounts = await GetAllAccountsAsync();
+        var accounts = await GetAllAccountsAsync(client);
 
         // Assert
         var accountFromServer = accounts.First();
@@ -35,12 +36,13 @@ public class AccountApiTests : IntegrationTest
     public async Task CreateAndGet_OfTransaction_IsCorrect()
     {
         // Arrange
-        await AddAccountAsync("cash");
-        var accounts = await GetAllAccountsAsync();
+        var client = new BackendWithSqlite().client;
+        await AddAccountAsync(client, "cash");
+        var accounts = await GetAllAccountsAsync(client);
 
         // Act
-        await AddIncomeAsync(accounts.First().Id, 35.50, DateOnlyExtensions.Today());
-        var accountEntries = await GetAllAccountEntriesOfAccountAsync(accounts.First().Id);
+        await AddIncomeAsync(client, accounts.First().Id, 35.50, DateOnlyExtensions.Today());
+        var accountEntries = await GetAllAccountEntriesOfAccountAsync(client, accounts.First().Id);
 
         // Assert
         accountEntries.Should().HaveCount(1);
@@ -52,15 +54,16 @@ public class AccountApiTests : IntegrationTest
     public async Task CreateAndGet_OfSpendings_AreCorrect()
     {
         // Arrange
-        await AddAccountAsync("cash");
-        await AddBudgetaryItemAsync("groceries");
-        var account = (await GetAllAccountsAsync()).First();
-        var budgetaryItem = (await GetAllBudgetaryItemsAsync()).First();
+        var client = new BackendWithSqlite().client;
+        await AddAccountAsync(client, "cash");
+        await AddBudgetaryItemAsync(client, "groceries");
+        var account = (await GetAllAccountsAsync(client)).First();
+        var budgetaryItem = (await GetAllBudgetaryItemsAsync(client)).First();
 
         // Act
-        await AddSpendingAsync(account.Id, budgetaryItem.Id, -35.50, DateOnlyExtensions.Today());
-        var accountEntries = await GetAllAccountEntriesOfAccountAsync(account.Id);
-        var spendings = await GetAllSpendingsAsync();
+        await AddSpendingAsync(client, account.Id, budgetaryItem.Id, -35.50, DateOnlyExtensions.Today());
+        var accountEntries = await GetAllAccountEntriesOfAccountAsync(client, account.Id);
+        var spendings = await GetAllSpendingsAsync(client);
 
         // Assert
         accountEntries.Should().HaveCount(1);
@@ -72,9 +75,10 @@ public class AccountApiTests : IntegrationTest
     public async Task CreateAndGet_OfBudgetaryItems_AreCorrect()
     {
         // Arrange + Act
-        await AddBudgetaryItemAsync("groceries");
-        await AddBudgetaryItemAsync("car insurance");
-        var budgetaryItems = await GetAllBudgetaryItemsAsync();
+        var client = new BackendWithSqlite().client;
+        await AddBudgetaryItemAsync(client, "groceries");
+        await AddBudgetaryItemAsync(client, "car insurance");
+        var budgetaryItems = await GetAllBudgetaryItemsAsync(client);
         var budgetaryItemDtos = budgetaryItems.ToList();
         
         // Assert
@@ -87,15 +91,16 @@ public class AccountApiTests : IntegrationTest
     public async Task CreateAndGet_OfBudgetChanges_AreCorrect()
     {
         // Arrange
-        await AddBudgetaryItemAsync("groceries");
-        var budgetaryItemResults = await GetAllBudgetaryItemsAsync();
+        var client = new BackendWithSqlite().client;
+        await AddBudgetaryItemAsync(client, "groceries");
+        var budgetaryItemResults = await GetAllBudgetaryItemsAsync(client);
         var budgetaryItem = budgetaryItemResults.First();
         
         // Act
         var date = DateOnlyExtensions.Today();
-        await AddNewBudgetChange(budgetaryItem.Id, 80.5, date );
-        await AddNewBudgetChange(budgetaryItem.Id, -60, date);
-        var budgetChanges = await GetBudgetChanges(budgetaryItem.Id);
+        await AddNewBudgetChange(client, budgetaryItem.Id, 80.5, date );
+        await AddNewBudgetChange(client, budgetaryItem.Id, -60, date);
+        var budgetChanges = await GetBudgetChanges(client, budgetaryItem.Id);
         
         // Assert
         var budgetChangeApiDtos = budgetChanges.ToList();
@@ -105,14 +110,14 @@ public class AccountApiTests : IntegrationTest
     }
 
 
-    private async Task<IEnumerable<BudgetChangeApiDto>> GetBudgetChanges(Guid budgetaryItemId)
+    private async Task<IEnumerable<BudgetChangeApiDto>> GetBudgetChanges(HttpClient client, Guid budgetaryItemId)
     {
         var getBudgetChangesResult = await client.GetAsync($"{Route.GetBudgetChangesBase}/{budgetaryItemId}");
         var budgetChangesJson = await getBudgetChangesResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetChangeApiDto[]>(budgetChangesJson);
     }
 
-    private async Task AddNewBudgetChange(Guid budgetaryItemId, double amount, DateOnly date)
+    private async Task AddNewBudgetChange(HttpClient client, Guid budgetaryItemId, double amount, DateOnly date)
     {
         var budgetChangeDto = new AddBudgetChangeDto(budgetaryItemId, amount, date.ToDateTime(TimeOnly.MinValue));
         var json = JsonConvert.SerializeObject(budgetChangeDto);
@@ -121,14 +126,14 @@ public class AccountApiTests : IntegrationTest
     }
 
 
-    private async Task<IEnumerable<BudgetaryItemDto>> GetAllBudgetaryItemsAsync()
+    private async Task<IEnumerable<BudgetaryItemDto>> GetAllBudgetaryItemsAsync(HttpClient client)
     {
         var getAccountResult = await client.GetAsync(Route.GetAllBudgetaryItems);
         var accountsJson = await getAccountResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetaryItemDto[]>(accountsJson);
     }
 
-    private async Task AddBudgetaryItemAsync(string name)
+    private async Task AddBudgetaryItemAsync(HttpClient client, string name)
     {
         var newBudgetaryItem = new AddNewBudgetaryItemDto(name);
         var json = JsonConvert.SerializeObject(newBudgetaryItem);
@@ -136,7 +141,7 @@ public class AccountApiTests : IntegrationTest
         await client.PostAsync(Route.AddBudgetaryItem, data);
     }
 
-    private async Task AddIncomeAsync(Guid accountId, double amount, DateOnly date)
+    private async Task AddIncomeAsync(HttpClient client, Guid accountId, double amount, DateOnly date)
     {
         var income = new AddIncomeDto()
         {
@@ -149,7 +154,8 @@ public class AccountApiTests : IntegrationTest
         await client.PostAsync(Route.AddIncome, data);
     }
     
-    private async Task AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount, DateOnly date)
+    private async Task AddSpendingAsync(HttpClient client, Guid accountId, Guid budgetaryItemId, double amount,
+        DateOnly date)
     {
         var income = new AddSpending(accountId, budgetaryItemId, amount, date.ToDateTime(TimeOnly.MinValue));
         var json = JsonConvert.SerializeObject(income);
@@ -157,7 +163,8 @@ public class AccountApiTests : IntegrationTest
         await client.PostAsync(Route.AddSpending, data);
     }
     
-    private async Task<IEnumerable<AccountEntryApiDto>> GetAllAccountEntriesOfAccountAsync(Guid accountId)
+    private async Task<IEnumerable<AccountEntryApiDto>> GetAllAccountEntriesOfAccountAsync(HttpClient client,
+        Guid accountId)
     {
         var getAccountResult = await client.GetAsync($"{Route.GetAccountEntriesOfAccountBase}/{accountId}");
         var accountsJson = await getAccountResult.Content.ReadAsStringAsync();
@@ -165,21 +172,21 @@ public class AccountApiTests : IntegrationTest
     }
 
     
-    private async Task<IEnumerable<SpendingDto>> GetAllSpendingsAsync()
+    private async Task<IEnumerable<SpendingDto>> GetAllSpendingsAsync(HttpClient client)
     {
         var getAccountResult = await client.GetAsync($"{Route.GetSpendings}");
         var spendingsJson = await getAccountResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<SpendingDto[]>(spendingsJson);
     }
 
-    private async Task<IEnumerable<AccountApiDto>> GetAllAccountsAsync()
+    private async Task<IEnumerable<AccountApiDto>> GetAllAccountsAsync(HttpClient client)
     {
         var getAccountResult = await client.GetAsync(Route.GetAllAccounts);
         var accountsJson = await getAccountResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<AccountApiDto[]>(accountsJson);
     }
     
-    private async Task AddAccountAsync(string name)
+    private async Task AddAccountAsync(HttpClient client, string name)
     {
         var newAccount = new AddNewAccountDto()
         {

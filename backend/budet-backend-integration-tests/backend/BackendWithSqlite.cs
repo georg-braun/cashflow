@@ -4,19 +4,19 @@ using Microsoft.Data.Sqlite;
 
 namespace budet_backend_integration_tests;
 
-public class IntegrationTest : IDisposable
+public class BackendWithSqlite : IDisposable
 {
     private SqliteConnection _connection;
 
-    public IntegrationTest()
+    public BackendWithSqlite()
     {
         StartSqliteConnection();
 
-        var appFactory = new CustomWebApplicationFactory<Program>(_connection);
+        var appFactory = new SqLiteWebApplicationFactory<Program>(_connection);
         client = appFactory.CreateClient();
     }
 
-    protected HttpClient client { get; set; }
+    public HttpClient client { get; set; }
 
     public void Dispose()
     {

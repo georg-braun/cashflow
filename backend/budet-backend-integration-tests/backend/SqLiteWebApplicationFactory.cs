@@ -8,12 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace budet_backend_integration_tests;
 
-public class CustomWebApplicationFactory<TStartup>
+public class SqLiteWebApplicationFactory<TStartup>
     : WebApplicationFactory<TStartup> where TStartup : class
 {
     private readonly SqliteConnection _connection;
 
-    public CustomWebApplicationFactory(SqliteConnection connection)
+    public SqLiteWebApplicationFactory(SqliteConnection connection)
     {
         _connection = connection;
     }
