@@ -12,6 +12,12 @@ public class DataContext : DbContext
     {
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Spending composite primary key
+        modelBuilder.Entity<SpendingDto>().HasKey(item => new {item.AccountEntryId, item.BudgetaryItemId});
+    }
+
     private DbSet<AccountDto> Accounts { get; set; }
     private DbSet<AccountEntryDto> AccountEntries { get; set; }
     
