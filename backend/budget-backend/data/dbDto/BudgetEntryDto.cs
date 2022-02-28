@@ -5,29 +5,29 @@ using budget_backend.domain.budget;
 
 namespace budget_backend.data.dbDto;
 
-public class BudgetChangeDto
+public class BudgetEntryDto
 {
-    public BudgetChangeDto(Guid id, Guid budgetaryItemId, double amount, DateOnly date)
+    public BudgetEntryDto(Guid id, Guid budgetaryItemId, double amount, DateTime month)
     {
         Id = id;
         BudgetaryItemId = budgetaryItemId;
         Amount = amount;
-        Date = date;
+        Month = month;
     }
 
     [Key]
     public Guid Id { get; init; }
     public Guid BudgetaryItemId { get; init; }
     public double Amount { get; init; }
-    public DateOnly Date { get; init; }
+    public DateTime Month { get; init; }
 }
 
 public static class BudgetChangeDtoExtensions
 {
-    public static BudgetChangeDto ToDbDto(this BudgetChange item) =>
-        new(item.Id, item.BudgetaryItemId, item.Amount, item.Date);
+    public static BudgetEntryDto ToDbDto(this BudgetEntry item) =>
+        new(item.Id, item.BudgetaryItemId, item.Amount, item.Month);
 
 
-    public static BudgetChange ToDomain(this BudgetChangeDto item) =>
-        new (item.Id, item.BudgetaryItemId, item.Date, item.Amount);
+    public static BudgetEntry ToDomain(this BudgetEntryDto item) =>
+        new (item.Id, item.BudgetaryItemId, item.Month, item.Amount);
 }

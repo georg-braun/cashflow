@@ -24,7 +24,7 @@ public class DataContext : DbContext
     private DbSet<AccountTransactionDto> AccountTransactions { get; set; }
     private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; }
     
-    private DbSet<BudgetChangeDto> BudgetChanges { get; set; }
+    private DbSet<BudgetEntryDto> BudgetEntries { get; set; }
     
     private DbSet<SpendingDto> Spendings { get; set; }
 
@@ -58,6 +58,7 @@ public class DataContext : DbContext
     public async Task AddSpendingAsync(AccountEntry accountEntry, Spending spending)
     {
         var accountEntryDto = accountEntry.ToDbDto();
+        
         await AccountEntries.AddAsync(accountEntryDto);
         var spendingDto = spending.ToDbDto();
         await Spendings.AddAsync(spendingDto);
@@ -73,14 +74,13 @@ public class DataContext : DbContext
 
     public IEnumerable<BudgetaryItem> GetBudgetaryItems() => BudgetaryItems.Select(_ => _.ToDomain());
 
-    public async Task AddBudgetChangeAsync(BudgetChange budgetChange)
+    public async Task AddBudgetEntryAsync(BudgetEntry budgetEntry)
     {
-        var budgetChangeDto = budgetChange.ToDbDto();
-        await BudgetChanges.AddAsync(budgetChangeDto);
+        await BudgetEntries.AddAsync(budgetEntry.ToDbDto());
         await SaveChangesAsync();
     }
 
-    public IEnumerable<BudgetChange> GetBudgetChanges(Guid budgetaryItemId) => BudgetChanges
+    public IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId) => BudgetEntries
         .Where(_ => _.BudgetaryItemId.Equals(budgetaryItemId)).Select(_ => _.ToDomain());
 
     public async Task DeleteBudgetChangeAsync(Guid budgetChangeId)

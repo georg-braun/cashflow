@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using budget_backend.Controllers;
 using budget_backend.Controllers.apiDto;
 using budget_backend.Controllers.apiDto.commands;
+using budget_backend.Controllers.apiDto.datacontainer;
 using Newtonsoft.Json;
 
 namespace budet_backend_integration_tests.backend;
@@ -24,7 +25,7 @@ public static class Api
         var budgetChangeDto = new AddBudgetChangeDto(budgetaryItemId, amount, date.ToDateTime(TimeOnly.MinValue));
         var json = JsonConvert.SerializeObject(budgetChangeDto);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        await client.PostAsync(Route.AddBudgetChange, data);
+        await client.PostAsync(Route.SetBudgetEntry, data);
     }
 
 
@@ -35,15 +36,18 @@ public static class Api
         return JsonConvert.DeserializeObject<BudgetaryItemDto[]>(accountsJson);
     }
 
-    public static async Task AddBudgetaryItemAsync(HttpClient client, string name)
+    public static async Task<BudgetDataApiDto> AddBudgetaryItemAsync(HttpClient client, string name)
     {
         var newBudgetaryItem = new AddNewBudgetaryItemDto(name);
         var json = JsonConvert.SerializeObject(newBudgetaryItem);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        await client.PostAsync(Route.AddBudgetaryItem, data);
+        var response= await client.PostAsync(Route.AddBudgetaryItem, data);
+        
+        var responseJson = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 
-    public static async Task AddIncomeAsync(HttpClient client, Guid accountId, double amount, DateOnly date)
+    public static async Task<BudgetDataApiDto> AddIncomeAsync(HttpClient client, Guid accountId, double amount, DateOnly date)
     {
         var income = new AddIncomeDto()
         {
@@ -53,7 +57,11 @@ public static class Api
         };
         var json = JsonConvert.SerializeObject(income);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        await client.PostAsync(Route.AddIncome, data);
+        
+        var response = await client.PostAsync(Route.AddIncome, data);
+        
+        var responseJson = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 
     public static async Task AddSpendingAsync(HttpClient client, Guid accountId, Guid budgetaryItemId, double amount,
@@ -88,7 +96,7 @@ public static class Api
         return JsonConvert.DeserializeObject<AccountApiDto[]>(accountsJson);
     }
 
-    public static async Task AddAccountAsync(HttpClient client, string name)
+    public static async Task<BudgetDataApiDto> AddAccountAsync(HttpClient client, string name)
     {
         var newAccount = new AddNewAccountDto()
         {
@@ -96,6 +104,26 @@ public static class Api
         };
         var json = JsonConvert.SerializeObject(newAccount);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        await client.PostAsync(Route.AddAccount, data);
+        var response = await client.PostAsync(Route.AddAccount, data);
+        var responseJson = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
+    }
+
+    public static async Task<BudgetDataApiDto> GetAll(HttpClient client)
+    {
+        var getAllResponse = await client.GetAsync(Route.GetAll);
+        var allDataAsJson = await getAllResponse.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetDataApiDto>(allDataAsJson);
+    }
+
+    public static async Task<BudgetDataApiDto> SetBudget(HttpClient client, Guid budgetaryItemId, DateTime month, double amount)
+    {
+        var newAccount = new SetBudgetEntryDto(budgetaryItemId, month, amount);
+   
+        var json = JsonConvert.SerializeObject(newAccount);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(Route.SetBudgetEntry, data);
+        var responseJson = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 }

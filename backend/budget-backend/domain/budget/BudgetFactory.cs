@@ -8,10 +8,10 @@ public static class BudgetFactory
         return new BudgetaryItem(id, name);
     }
     
-    public static BudgetChange CreateBudgetChange(Guid budgetaryItemId, double amount, DateOnly today)
+    public static BudgetEntry CreateBudgetEntry(Guid budgetaryItemId, double amount, DateTime today)
     {
         var id = Guid.NewGuid();
-        return new BudgetChange(id, budgetaryItemId, today, amount);
+        return new BudgetEntry(id, budgetaryItemId, today, amount);
     }
     public static Spending CreateSpending(Guid accountId, Guid accountEntryId, Guid budgetaryItemId)
     {

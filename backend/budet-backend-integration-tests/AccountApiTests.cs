@@ -10,6 +10,37 @@ namespace budet_backend_integration_tests;
 
 public class AccountApiTests
 {
+
+    [Fact]
+    public async Task Commands_ResultInCorrectEffects()
+    {
+        // Arrange
+        var client = new BackendWithSqlite().client;
+        var changedData = await Api.AddAccountAsync(client, "cash");
+        var account = changedData.Accounts.First();
+        var addIncomeResult = await Api.AddIncomeAsync(client, account.Id, 50.50, DateOnlyExtensions.Today());
+        
+        var addBudgetaryItemResult = await Api.AddBudgetaryItemAsync(client, "groceries");
+        var budgetaryItem = addBudgetaryItemResult.BudgetaryItem.First();
+        
+        var budgetEntryResult = await Api.SetBudget(client, budgetaryItem.Id, new DateTime(2022, 2, 1), 500.50);
+        
+        // todo: spending
+        // var addSpendingResult =
+        //     await Api.AddSpendingAsync(client, account.Id, budgetaryItem.Id, 50, DateOnlyExtensions.Today());
+        
+        // Act
+        var budgetData = await Api.GetAll(client);
+
+        // Assert
+        addIncomeResult.AccountEntries.Should().Contain(_ => _.Amount.Equals(50.50));
+        addBudgetaryItemResult.BudgetaryItem.Should().Contain(_ => _.Name.Equals("groceries"));
+        budgetEntryResult.BudgetEntries.Should().Contain(_ => _.Month.Month.Equals(2) && _.Amount.Equals(500.50));
+        
+        budgetData.Accounts.Should().Contain(_ => _.Name.Equals("cash"));
+        budgetData.AccountEntries.Should().Contain(_ => _.Amount.Equals(50.50));
+    }
+    
     [Fact]
     public async Task CreateAndGet_OfAccount_IsCorrect()
     {

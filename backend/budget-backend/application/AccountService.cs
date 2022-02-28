@@ -20,11 +20,11 @@ public interface IAccountService
 
     IEnumerable<BudgetaryItem> GetBudgetaryItems();
 
-    Task<BudgetChange> AddBudgetChangeAsync(Guid budgetaryItemId, double amount, DateOnly timestamp);
+    Task<BudgetEntry> AddBudgetEntryAsync(Guid budgetaryItemId, double amount, DateTime month);
     Task DeleteBudgetChangeAsync(Guid budgetChangeId);
     IEnumerable<Account> GetAccounts();
     IEnumerable<AccountEntry> GetAccountEntries(Guid accountId);
-    IEnumerable<BudgetChange> GetBudgetChanges(Guid budgetaryItemId);
+    IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId);
     IEnumerable<Spending> GetSpendings();
 }
 
@@ -82,11 +82,11 @@ public class AccountService : IAccountService
 
     public IEnumerable<BudgetaryItem> GetBudgetaryItems() => _dataContext.GetBudgetaryItems();
 
-    public async Task<BudgetChange> AddBudgetChangeAsync(Guid budgetaryItemId, double amount, DateOnly timestamp)
+    public async Task<BudgetEntry> AddBudgetEntryAsync(Guid budgetaryItemId, double amount, DateTime month)
     {
-        var budgetChange = BudgetFactory.CreateBudgetChange(budgetaryItemId, amount, timestamp);
-        await _dataContext.AddBudgetChangeAsync(budgetChange);
-        return budgetChange;
+        var budgetEntry = BudgetFactory.CreateBudgetEntry(budgetaryItemId, amount, month);
+        await _dataContext.AddBudgetEntryAsync(budgetEntry);
+        return budgetEntry;
     }
 
     public async Task DeleteBudgetChangeAsync(Guid budgetChangeId)
@@ -104,7 +104,7 @@ public class AccountService : IAccountService
         return _dataContext.GetAccountEntries(accountId);
     }
 
-    public IEnumerable<BudgetChange> GetBudgetChanges(Guid budgetaryItemId) => _dataContext.GetBudgetChanges(budgetaryItemId);
+    public IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId) => _dataContext.GetBudgetEntries(budgetaryItemId);
     public IEnumerable<Spending> GetSpendings() => _dataContext.GetSpendings();
 }
 
