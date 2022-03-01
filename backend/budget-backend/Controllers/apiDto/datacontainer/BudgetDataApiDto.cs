@@ -1,10 +1,12 @@
+using System.Collections.ObjectModel;
+
 namespace budget_backend.Controllers.apiDto.datacontainer;
 
 public record BudgetDataApiDto
 {
-    public IEnumerable<AccountApiDto> Accounts { get; init; }
-    public IEnumerable<AccountEntryApiDto> AccountEntries { get; init; }
-    public IEnumerable<BudgetaryItemDto> BudgetaryItem { get; init; }
-    public IEnumerable<BudgetEntryApiDto> BudgetEntries { get; init; }
-    public IEnumerable<SpendingDto> Spendings { get; init; }
+    public ICollection<AccountApiDto> Accounts { get; init; } = new List<AccountApiDto>();
+    public ICollection<AccountEntryApiDto> AccountEntries { get; init; } = new List<AccountEntryApiDto>();
+    public ICollection<BudgetaryItemDto> BudgetaryItem { get; init; } = new List<BudgetaryItemDto>();
+    public ICollection<BudgetEntryApiDto> BudgetEntries { get; init; } = new List<BudgetEntryApiDto>();
+    public ICollection<SpendingDto> Spendings { get; init; } = new List<SpendingDto>();
 }

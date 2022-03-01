@@ -55,7 +55,7 @@ public class DataContext : DbContext
         await SaveChangesAsync();
     }
 
-    public async Task AddSpendingAsync(AccountEntry accountEntry, Spending spending)
+    public async Task AddSpendingAsync(AccountEntry accountEntry, Spending? spending)
     {
         var accountEntryDto = accountEntry.ToDbDto();
         
@@ -100,4 +100,10 @@ public class DataContext : DbContext
     }
 
     public IEnumerable<Spending> GetSpendings() => Spendings.Select(_ => _.ToDomain());
+
+    public async Task<AccountEntry?> GetAccountEntryAsync(Guid accountEntryId)
+    {
+        var accountEntryDto = await AccountEntries.SingleOrDefaultAsync(_ => _.Id.Equals(accountEntryId));
+        return accountEntryDto?.ToDomain();
+    }
 }

@@ -64,13 +64,15 @@ public static class Api
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 
-    public static async Task AddSpendingAsync(HttpClient client, Guid accountId, Guid budgetaryItemId, double amount,
-        DateOnly date)
+    public static async Task<BudgetDataApiDto> AddSpendingAsync(HttpClient client, Guid accountId, Guid budgetaryItemId, double amount,
+        DateTime timestamp)
     {
-        var income = new AddSpending(accountId, budgetaryItemId, amount, date.ToDateTime(TimeOnly.MinValue));
+        var income = new AddSpending(accountId, budgetaryItemId, amount, timestamp);
         var json = JsonConvert.SerializeObject(income);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        await client.PostAsync(Route.AddSpending, data);
+        var response = await client.PostAsync(Route.AddSpending, data);
+        var responseJson = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 
     public static async Task<IEnumerable<AccountEntryApiDto>> GetAllAccountEntriesOfAccountAsync(HttpClient client,
@@ -116,7 +118,7 @@ public static class Api
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(allDataAsJson);
     }
 
-    public static async Task<BudgetDataApiDto> SetBudget(HttpClient client, Guid budgetaryItemId, DateTime month, double amount)
+    public static async Task<BudgetDataApiDto> AddBudgetEntry(HttpClient client, Guid budgetaryItemId, DateTime month, double amount)
     {
         var newAccount = new SetBudgetEntryDto(budgetaryItemId, month, amount);
    

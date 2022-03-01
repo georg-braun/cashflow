@@ -13,7 +13,7 @@ public static class BudgetFactory
         var id = Guid.NewGuid();
         return new BudgetEntry(id, budgetaryItemId, today, amount);
     }
-    public static Spending CreateSpending(Guid accountId, Guid accountEntryId, Guid budgetaryItemId)
+    public static Spending? CreateSpending(Guid accountId, Guid accountEntryId, Guid budgetaryItemId)
     {
         return new Spending(accountId, accountEntryId, budgetaryItemId);
     }

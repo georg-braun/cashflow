@@ -28,16 +28,16 @@ public class AccountController : ControllerBase
             accounts.SelectMany(_ => _accountService.GetAccountEntries(_.Id)).Select(_ => _.ToApiDto());
         var budgetaryItemDtos = _accountService.GetBudgetaryItems().Select(_ => _.ToApiDto());
         var budgetChangeDtos = budgetaryItemDtos.SelectMany(_ => _accountService.GetBudgetEntries(_.Id))
-            .Select(_ => BudgetEntryApiDto.ToApoDtio(_));
+            .Select(_ => BudgetEntryApiDto.ToApiDto(_));
         var spendingDtos = _accountService.GetSpendings().Select(_ => _.ToApiDto());
 
         var budgetDataDto = new BudgetDataApiDto
         {
-            Accounts = accountDtos, 
-            AccountEntries = accountEntryDtos, 
-            BudgetaryItem = budgetaryItemDtos,
-            BudgetEntries = budgetChangeDtos, 
-            Spendings = spendingDtos
+            Accounts = accountDtos.ToList(), 
+            AccountEntries = accountEntryDtos.ToList(), 
+            BudgetaryItem = budgetaryItemDtos.ToList(),
+            BudgetEntries = budgetChangeDtos.ToList(), 
+            Spendings = spendingDtos.ToList()
         };
         return budgetDataDto;
     }
@@ -78,7 +78,17 @@ public class AccountController : ControllerBase
     {
         var date = new DateOnly(req.Date.Year, req.Date.Month, req.Date.Day);
         var spending = await _accountService.AddSpendingAsync(req.AccountId, req.BudgetaryItemId, req.Amount, date);
-        return Created("fillUrl", spending.ToApiDto());
+
+        if (spending is null)
+            return UnprocessableEntity();
+        
+        var accountEntry = await _accountService.GetAccountEntryAsync(spending.AccountEntryId);
+        
+        var budgetDataDto = new BudgetDataApiDto {Spendings = new[] {spending.ToApiDto()}};
+        if (accountEntry is not null)
+            budgetDataDto.AccountEntries.Add(accountEntry.ToApiDto());
+        
+        return Created("fillUrl", budgetDataDto);
     }
 
     [HttpPost(Route.AddAccount)]
@@ -107,7 +117,7 @@ public class AccountController : ControllerBase
     public IEnumerable<BudgetEntryApiDto> GetBudgetChanges(string budgetaryItemId)
     {
         var budgetaryItemGuid = Guid.Parse(budgetaryItemId);
-        return _accountService.GetBudgetEntries(budgetaryItemGuid).Select(BudgetEntryApiDto.ToApoDtio);
+        return _accountService.GetBudgetEntries(budgetaryItemGuid).Select(BudgetEntryApiDto.ToApiDto);
     }
 
 
@@ -115,7 +125,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> AddBudgetEntry([FromBody] SetBudgetEntryDto item)
     {
         var budgetEntry = await _accountService.AddBudgetEntryAsync(item.BudgetaryItemid, item.Amount, item.Month);
-        var budgetDataDto = new BudgetDataApiDto {BudgetEntries = new[] {BudgetEntryApiDto.ToApoDtio(budgetEntry)}};
+        var budgetDataDto = new BudgetDataApiDto {BudgetEntries = new[] {BudgetEntryApiDto.ToApiDto(budgetEntry)}};
         return Created("fillUrl", budgetDataDto);
     }
 }

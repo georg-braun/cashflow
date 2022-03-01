@@ -14,7 +14,7 @@ public interface IAccountService
     /// <summary>
     ///     Create an account entry (spending) and associate this with a budget.
     /// </summary>
-    Task<AccountEntry> AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount, DateOnly timestamp);
+    Task<Spending?> AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount, DateOnly timestamp);
 
     Task<BudgetaryItem> AddBudgetaryItemAsync(string budgetName);
 
@@ -26,6 +26,7 @@ public interface IAccountService
     IEnumerable<AccountEntry> GetAccountEntries(Guid accountId);
     IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId);
     IEnumerable<Spending> GetSpendings();
+    Task<AccountEntry?> GetAccountEntryAsync(Guid spendingAccountEntryId);
 }
 
 /// <summary>
@@ -62,7 +63,7 @@ public class AccountService : IAccountService
         return accountEntry;
     }
 
-    public async Task<AccountEntry> AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount, DateOnly timestamp)
+    public async Task<Spending?> AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount, DateOnly timestamp)
     {
         if (amount > 0)
             return null;
@@ -70,7 +71,7 @@ public class AccountService : IAccountService
         var accountEntry = AccountFactory.CreateEntry(accountId, amount, timestamp);
         var spending = BudgetFactory.CreateSpending(accountEntry.AccountId, accountEntry.Id, budgetaryItemId);
         await _dataContext.AddSpendingAsync(accountEntry, spending);
-        return accountEntry;
+        return spending;
     }
     
     public async Task<BudgetaryItem> AddBudgetaryItemAsync(string budgetName)
@@ -106,6 +107,7 @@ public class AccountService : IAccountService
 
     public IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId) => _dataContext.GetBudgetEntries(budgetaryItemId);
     public IEnumerable<Spending> GetSpendings() => _dataContext.GetSpendings();
+    public Task<AccountEntry?> GetAccountEntryAsync(Guid spendingAccountEntryId) => _dataContext.GetAccountEntryAsync(spendingAccountEntryId);
 }
 
 public static class AccountFactory

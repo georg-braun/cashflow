@@ -6,6 +6,6 @@ namespace budget_backend.Controllers.apiDto;
 
 public record BudgetEntryApiDto(Guid Id, Guid BudgetaryItemId, DateTime Month, double Amount)
 {
-    public static BudgetEntryApiDto ToApoDtio(BudgetEntry item) =>
+    public static BudgetEntryApiDto ToApiDto(BudgetEntry item) =>
         new BudgetEntryApiDto(item.Id, item.BudgetaryItemId, item.Month, item.Amount);
 }

@@ -14,7 +14,7 @@ public class AccountApiTests
     [Fact]
     public async Task Commands_ResultInCorrectEffects()
     {
-        // Arrange
+        // Arrange + Act
         var client = new BackendWithSqlite().client;
         var changedData = await Api.AddAccountAsync(client, "cash");
         var account = changedData.Accounts.First();
@@ -23,22 +23,16 @@ public class AccountApiTests
         var addBudgetaryItemResult = await Api.AddBudgetaryItemAsync(client, "groceries");
         var budgetaryItem = addBudgetaryItemResult.BudgetaryItem.First();
         
-        var budgetEntryResult = await Api.SetBudget(client, budgetaryItem.Id, new DateTime(2022, 2, 1), 500.50);
+        var budgetEntryResult = await Api.AddBudgetEntry(client, budgetaryItem.Id, new DateTime(2022, 2, 1), 500.50);
+        var addSpendingResult = await Api.AddSpendingAsync(client, account.Id, budgetaryItem.Id, -50, new DateTime(2022,2,1));
         
-        // todo: spending
-        // var addSpendingResult =
-        //     await Api.AddSpendingAsync(client, account.Id, budgetaryItem.Id, 50, DateOnlyExtensions.Today());
-        
-        // Act
-        var budgetData = await Api.GetAll(client);
-
         // Assert
         addIncomeResult.AccountEntries.Should().Contain(_ => _.Amount.Equals(50.50));
         addBudgetaryItemResult.BudgetaryItem.Should().Contain(_ => _.Name.Equals("groceries"));
         budgetEntryResult.BudgetEntries.Should().Contain(_ => _.Month.Month.Equals(2) && _.Amount.Equals(500.50));
-        
-        budgetData.Accounts.Should().Contain(_ => _.Name.Equals("cash"));
-        budgetData.AccountEntries.Should().Contain(_ => _.Amount.Equals(50.50));
+        addSpendingResult.Spendings.Should().Contain(_ =>
+            _.BudgetaryItemId.Equals(budgetaryItem.Id) &&
+            _.AccountEntryId.Equals(addSpendingResult.AccountEntries.First().Id));
     }
     
     [Fact]
@@ -86,7 +80,7 @@ public class AccountApiTests
         var budgetaryItem = (await Api.GetAllBudgetaryItemsAsync(client)).First();
 
         // Act
-        await Api.AddSpendingAsync(client, account.Id, budgetaryItem.Id, -35.50, DateOnlyExtensions.Today());
+        await Api.AddSpendingAsync(client, account.Id, budgetaryItem.Id, -35.50, new DateTime(2022,2,1));
         var accountEntries = await Api.GetAllAccountEntriesOfAccountAsync(client, account.Id);
         var spendings = await Api.GetAllSpendingsAsync(client);
 

@@ -23,7 +23,7 @@ public class SpendingDto
 
 public static class SpendingDtoExtensions
 {
-    public static SpendingDto ToDbDto(this Spending item) =>
+    public static SpendingDto ToDbDto(this Spending? item) =>
         new(item.AccountId, item.AccountEntryId, item.BudgetaryItemId);
 
 
