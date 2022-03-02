@@ -1,8 +1,10 @@
+using budget_backend.domain.account;
+
 namespace budget_backend.domain.budget;
 
 public class Spending
 {
-    public Spending(Guid accountId, Guid accountEntryId, Guid budgetaryItemId)
+    public Spending(Guid accountId, AccountEntryId accountEntryId, Guid budgetaryItemId)
     {
         AccountId = accountId;
         AccountEntryId = accountEntryId;
@@ -10,6 +12,6 @@ public class Spending
     }
 
     public Guid AccountId { get; }
-    public Guid AccountEntryId { get; }
+    public AccountEntryId AccountEntryId { get; }
     public Guid BudgetaryItemId { get;  }
 }

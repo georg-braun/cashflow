@@ -16,7 +16,7 @@ public static class AccountEntryApiDtoExtensions
     {
         return new AccountEntryApiDto()
         {
-            Id = accountEntry.Id,
+            Id = accountEntry.Id.Id,
             Amount = accountEntry.Amount,
             Date = accountEntry.Date.ToDateTime(TimeOnly.MinValue), 
             AccountId = accountEntry.AccountId

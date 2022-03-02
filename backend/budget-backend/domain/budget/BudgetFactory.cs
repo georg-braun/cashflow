@@ -1,3 +1,5 @@
+using budget_backend.domain.account;
+
 namespace budget_backend.domain.budget;
 
 public static class BudgetFactory
@@ -13,7 +15,7 @@ public static class BudgetFactory
         var id = Guid.NewGuid();
         return new BudgetEntry(id, budgetaryItemId, today, amount);
     }
-    public static Spending? CreateSpending(Guid accountId, Guid accountEntryId, Guid budgetaryItemId)
+    public static Spending? CreateSpending(Guid accountId, AccountEntryId accountEntryId, Guid budgetaryItemId)
     {
         return new Spending(accountId, accountEntryId, budgetaryItemId);
     }

@@ -22,7 +22,7 @@ public static class AccountEntryDtoExtensions
     {
         return new AccountEntryDto()
         {
-            Id = accountEntry.Id,
+            Id = accountEntry.Id.Id,
             AccountId = accountEntry.AccountId,
             Amount = accountEntry.Amount,
             Timestamp = accountEntry.Date
@@ -31,6 +31,6 @@ public static class AccountEntryDtoExtensions
 
     public static AccountEntry ToDomain(this AccountEntryDto accountEntryDto)
     {
-        return new AccountEntry(accountEntryDto.Id, accountEntryDto.AccountId, accountEntryDto.Amount, accountEntryDto.Timestamp);
+        return new AccountEntry(new AccountEntryId(){Id = accountEntryDto.Id}, accountEntryDto.AccountId, accountEntryDto.Amount, accountEntryDto.Timestamp);
     }
 }

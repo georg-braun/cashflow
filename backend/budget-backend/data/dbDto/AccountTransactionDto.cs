@@ -9,12 +9,12 @@ public class AccountTransactionDto
     [Key]
     public Guid Id { get; set; }
     
-    public Guid AccountEntryIdFrom { get; set; }
+    public AccountEntryId AccountEntryIdFrom { get; set; }
     
     public Guid AccountIdFrom { get; set; }
     public Guid AccountIdTo { get; set; }
     
-    public Guid AccountEntryIdTo { get; set; }
+    public AccountEntryId AccountEntryIdTo { get; set; }
 
     public DateOnly Timestamp  { get; set; }
     

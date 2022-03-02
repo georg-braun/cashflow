@@ -101,9 +101,9 @@ public class DataContext : DbContext
 
     public IEnumerable<Spending> GetSpendings() => Spendings.Select(_ => _.ToDomain());
 
-    public async Task<AccountEntry?> GetAccountEntryAsync(Guid accountEntryId)
+    public async Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId accountEntryId)
     {
-        var accountEntryDto = await AccountEntries.SingleOrDefaultAsync(_ => _.Id.Equals(accountEntryId));
+        var accountEntryDto = await AccountEntries.SingleOrDefaultAsync(_ => _.Id.Equals(accountEntryId.Id));
         return accountEntryDto?.ToDomain();
     }
 }

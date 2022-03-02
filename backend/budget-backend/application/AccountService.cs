@@ -26,7 +26,7 @@ public interface IAccountService
     IEnumerable<AccountEntry> GetAccountEntries(Guid accountId);
     IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId);
     IEnumerable<Spending> GetSpendings();
-    Task<AccountEntry?> GetAccountEntryAsync(Guid spendingAccountEntryId);
+    Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId);
 }
 
 /// <summary>
@@ -107,7 +107,7 @@ public class AccountService : IAccountService
 
     public IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId) => _dataContext.GetBudgetEntries(budgetaryItemId);
     public IEnumerable<Spending> GetSpendings() => _dataContext.GetSpendings();
-    public Task<AccountEntry?> GetAccountEntryAsync(Guid spendingAccountEntryId) => _dataContext.GetAccountEntryAsync(spendingAccountEntryId);
+    public Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId) => _dataContext.GetAccountEntryAsync(spendingAccountEntryId);
 }
 
 public static class AccountFactory
@@ -125,7 +125,7 @@ public static class AccountFactory
 
     public static AccountEntry CreateEntry(Guid accountId, double amount, DateOnly timestamp)
     {
-        var id = Guid.NewGuid();
+        var id = new AccountEntryId(){Id = Guid.NewGuid()};
         return new AccountEntry(id, accountId, amount, timestamp);
     }
 

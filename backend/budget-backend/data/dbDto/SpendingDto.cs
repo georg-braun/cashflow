@@ -24,9 +24,9 @@ public class SpendingDto
 public static class SpendingDtoExtensions
 {
     public static SpendingDto ToDbDto(this Spending? item) =>
-        new(item.AccountId, item.AccountEntryId, item.BudgetaryItemId);
+        new(item.AccountId, item.AccountEntryId.Id, item.BudgetaryItemId);
 
 
     public static Spending ToDomain(this SpendingDto item) =>
-        new (item.AccountId, item.AccountEntryId, item.BudgetaryItemId);
+        new (item.AccountId, new AccountEntryId(){Id = item.AccountEntryId}, item.BudgetaryItemId);
 }
