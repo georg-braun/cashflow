@@ -10,7 +10,6 @@ namespace budet_backend_integration_tests;
 
 public class AccountApiTests
 {
-
     [Fact]
     public async Task BudgetEntriesResultInCorrectBudget()
     {
@@ -27,6 +26,34 @@ public class AccountApiTests
         // Assert
         var budgeted = allData.BudgetEntries.Sum(_ => _.Amount);
         budgeted.Should().Be(1001);
+    }
+    
+    [Fact]
+    public async Task BudgetEntriesAndSpendingResultInCorrectAvailableBudget()
+    {
+        // Arrange + Act
+        var client = new BackendWithSqlite().client;
+        var changedData = await Api.AddAccountAsync(client, "cash");
+        var account = changedData.Accounts.First();
+        
+        var addBudgetaryItemResult = await Api.AddBudgetaryItemAsync(client, "groceries");
+        var groceriesBudgetaryItem = addBudgetaryItemResult.BudgetaryItem.First();
+        
+        await Api.AddBudgetEntry(client, groceriesBudgetaryItem.Id, new DateTime(2022, 2, 1), 500);
+        await Api.AddBudgetEntry(client, groceriesBudgetaryItem.Id, new DateTime(2022, 3, 1), 500);
+
+        await Api.AddSpendingAsync(client, account.Id, groceriesBudgetaryItem.Id, -200, new DateTime(2022, 2, 10));
+
+        var allData = await Api.GetAll(client);
+        var budgeted = allData.BudgetEntries.Where(_ => _.BudgetaryItemId.Equals(groceriesBudgetaryItem.Id)).Sum(_ => _.Amount);
+        var groceriesSpendings = allData.Spendings.Where(_ => _.BudgetaryItemId.Equals(groceriesBudgetaryItem.Id));
+        var groceriesSpendingAccountEntries = groceriesSpendings.Select(_ =>
+            allData.AccountEntries.FirstOrDefault(accountEntry => accountEntry.Id.Equals(_.AccountEntryId)));
+        var groceriesSpendingsTotal = groceriesSpendingAccountEntries.Sum(_ => _.Amount);
+        var availableBudgetForGroceries = budgeted + groceriesSpendingsTotal;
+        
+        // Assert
+        availableBudgetForGroceries.Should().Be(800);
     }
     
     [Fact]
