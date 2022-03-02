@@ -12,6 +12,24 @@ public class AccountApiTests
 {
 
     [Fact]
+    public async Task BudgetEntriesResultInCorrectBudget()
+    {
+        // Arrange + Act
+        var client = new BackendWithSqlite().client;
+        var addBudgetaryItemResult = await Api.AddBudgetaryItemAsync(client, "groceries");
+        var budgetaryItem = addBudgetaryItemResult.BudgetaryItem.First();
+        
+        await Api.AddBudgetEntry(client, budgetaryItem.Id, new DateTime(2022, 2, 1), 500.50);
+        await Api.AddBudgetEntry(client, budgetaryItem.Id, new DateTime(2022, 3, 1), 500.50);
+
+        var allData = await Api.GetAll(client);
+     
+        // Assert
+        var budgeted = allData.BudgetEntries.Sum(_ => _.Amount);
+        budgeted.Should().Be(1001);
+    }
+    
+    [Fact]
     public async Task Commands_ResultInCorrectEffects()
     {
         // Arrange + Act
