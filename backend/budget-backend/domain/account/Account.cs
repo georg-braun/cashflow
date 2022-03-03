@@ -13,3 +13,13 @@ public class Account
 
     public string Name { get; }
 }
+
+public class AccountId
+{
+    public Guid Id { get; init; }
+}
+
+public static class AccountIdFactory
+{
+    public static AccountId Create(Guid id) => new AccountId {Id = id};
+}

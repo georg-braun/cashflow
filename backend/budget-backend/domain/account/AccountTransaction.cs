@@ -22,3 +22,13 @@ public class AccountTransaction
     public AccountId FromAccountId { get; }
     public AccountId ToAccountId { get; }
 }
+
+public class AccountTransactionId
+{
+    public Guid Id { get; init; }
+}
+
+public static class AccountTransactionIdFactory
+{
+    public static AccountTransactionId Create(Guid id) => new AccountTransactionId {Id = id};
+}

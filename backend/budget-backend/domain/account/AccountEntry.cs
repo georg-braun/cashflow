@@ -16,3 +16,8 @@ public class AccountEntry
     public DateOnly Date { get; }
     public AccountId AccountId { get; }
 }
+
+public class AccountEntryId
+{
+    public Guid Id { get; init; }
+}
