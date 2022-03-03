@@ -25,9 +25,9 @@ public class BudgetEntryDto
 public static class BudgetChangeDtoExtensions
 {
     public static BudgetEntryDto ToDbDto(this BudgetEntry item) =>
-        new(item.Id, item.BudgetaryItemId, item.Amount, item.Month);
+        new(item.Id.Id, item.BudgetaryItemId.Id, item.Amount, item.Month);
 
 
     public static BudgetEntry ToDomain(this BudgetEntryDto item) =>
-        new (item.Id, item.BudgetaryItemId, item.Month, item.Amount);
+        new (BudgetEntryIdFactory.Create(item.Id), BudgetaryItemIdFactory.Create(item.BudgetaryItemId), item.Month, item.Amount);
 }

@@ -80,13 +80,9 @@ public class DataContext : DbContext
         await SaveChangesAsync();
     }
 
-    public IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId) => BudgetEntries
-        .Where(_ => _.BudgetaryItemId.Equals(budgetaryItemId)).Select(_ => _.ToDomain());
-
-    public async Task DeleteBudgetChangeAsync(Guid budgetChangeId)
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId) => BudgetEntries
+        .Where(_ => _.BudgetaryItemId.Equals(budgetaryItemId.Id)).Select(_ => _.ToDomain());
+    
 
     public IEnumerable<Account> GetAccounts()
     {

@@ -2,7 +2,7 @@ namespace budget_backend.domain.budget;
 
 public class BudgetChange
 {
-    public BudgetChange(Guid id, Guid budgetaryItemId, DateOnly date, double amount)
+    public BudgetChange(BudgetChangeId id, BudgetaryItemId budgetaryItemId, DateOnly date, double amount)
     {
         Id = id;
         BudgetaryItemId = budgetaryItemId;
@@ -10,11 +10,22 @@ public class BudgetChange
         Amount = amount;
     }
 
-    public Guid Id { get; }
+    public BudgetChangeId Id { get; }
 
-    public Guid BudgetaryItemId { get; }
+    public BudgetaryItemId BudgetaryItemId { get; }
     
     public DateOnly Date { get; }
     
     public double Amount { get; }
+}
+
+
+public class BudgetChangeId
+{
+    public Guid Id { get; init; }
+}
+
+public static class BudgetChangeIdFactory
+{
+    public static BudgetChangeId Create(Guid id) => new BudgetChangeId {Id = id};
 }

@@ -7,6 +7,6 @@ public record SpendingDto(Guid AccountId, Guid AccountEntryId, Guid BudgetaryIte
 
 public static class SpendingDtoExtensions
 {
-    public static SpendingDto ToApiDto(this Spending item) => new(item.AccountId.Id, item.AccountEntryId.Id, item.BudgetaryItemId);
+    public static SpendingDto ToApiDto(this Spending item) => new(item.AccountId.Id, item.AccountEntryId.Id, item.BudgetaryItemId.Id);
 
 }

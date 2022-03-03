@@ -14,17 +14,16 @@ public interface IAccountService
     /// <summary>
     ///     Create an account entry (spending) and associate this with a budget.
     /// </summary>
-    Task<Spending?> AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount, DateOnly timestamp);
+    Task<Spending?> AddSpendingAsync(AccountId accountId, BudgetaryItemId budgetaryItemId, double amount, DateOnly timestamp);
 
     Task<BudgetaryItem> AddBudgetaryItemAsync(string budgetName);
 
     IEnumerable<BudgetaryItem> GetBudgetaryItems();
 
-    Task<BudgetEntry> AddBudgetEntryAsync(Guid budgetaryItemId, double amount, DateTime month);
-    Task DeleteBudgetChangeAsync(Guid budgetChangeId);
+    Task<BudgetEntry> AddBudgetEntryAsync(BudgetaryItemId budgetaryItemId, double amount, DateTime month);
     IEnumerable<Account> GetAccounts();
     IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId);
-    IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId);
+    IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId);
     IEnumerable<Spending> GetSpendings();
     Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId);
 }
@@ -63,13 +62,12 @@ public class AccountService : IAccountService
         return accountEntry;
     }
 
-    public async Task<Spending?> AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount, DateOnly timestamp)
+    public async Task<Spending?> AddSpendingAsync(AccountId accountId, BudgetaryItemId budgetaryItemId, double amount, DateOnly timestamp)
     {
         if (amount > 0)
             return null;
         
-        
-        var accountEntry = AccountFactory.CreateEntry(AccountIdFactory.Create(accountId), amount, timestamp);
+        var accountEntry = AccountFactory.CreateEntry(accountId, amount, timestamp);
         var spending = BudgetFactory.CreateSpending(accountEntry.AccountId, accountEntry.Id, budgetaryItemId);
         await _dataContext.AddSpendingAsync(accountEntry, spending);
         return spending;
@@ -84,16 +82,12 @@ public class AccountService : IAccountService
 
     public IEnumerable<BudgetaryItem> GetBudgetaryItems() => _dataContext.GetBudgetaryItems();
 
-    public async Task<BudgetEntry> AddBudgetEntryAsync(Guid budgetaryItemId, double amount, DateTime month)
+    public async Task<BudgetEntry> AddBudgetEntryAsync(BudgetaryItemId budgetaryItemId, double amount, DateTime month)
     {
-        var budgetEntry = BudgetFactory.CreateBudgetEntry(budgetaryItemId, amount, month);
+        var typedBudgetaryItemId = budgetaryItemId;
+        var budgetEntry = BudgetFactory.CreateBudgetEntry(typedBudgetaryItemId, amount, month);
         await _dataContext.AddBudgetEntryAsync(budgetEntry);
         return budgetEntry;
-    }
-
-    public async Task DeleteBudgetChangeAsync(Guid budgetChangeId)
-    {
-        await _dataContext.DeleteBudgetChangeAsync(budgetChangeId);
     }
 
     public IEnumerable<Account> GetAccounts()
@@ -106,7 +100,7 @@ public class AccountService : IAccountService
         return _dataContext.GetAccountEntries(accountId);
     }
 
-    public IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId) => _dataContext.GetBudgetEntries(budgetaryItemId);
+    public IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId) => _dataContext.GetBudgetEntries(budgetaryItemId);
     public IEnumerable<Spending> GetSpendings() => _dataContext.GetSpendings();
     public Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId) => _dataContext.GetAccountEntryAsync(spendingAccountEntryId);
 }

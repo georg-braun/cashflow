@@ -7,5 +7,5 @@ public record BudgetChangeApiDto(Guid Id, Guid BudgetaryItemId, double Amount, D
 
 public static class BudgetChangesApiDtoExtensions
 {
-    public static BudgetChangeApiDto ToApiDto(this BudgetChange item) => new(item.Id, item.BudgetaryItemId, item.Amount, item.Date.ToDateTime(TimeOnly.MinValue));
+    public static BudgetChangeApiDto ToApiDto(this BudgetChange item) => new(item.Id.Id, item.BudgetaryItemId.Id, item.Amount, item.Date.ToDateTime(TimeOnly.MinValue));
 }

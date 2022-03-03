@@ -8,11 +8,11 @@ public static class BudgetaryItemDtoExtensions
 {
     public static BudgetaryItemDto ToDbDto(this BudgetaryItem budgetaryItem)
     {
-        return new BudgetaryItemDto(budgetaryItem.Id, budgetaryItem.Name);
+        return new BudgetaryItemDto(budgetaryItem.Id.Id, budgetaryItem.Name);
     }
 
     public static BudgetaryItem ToDomain(this BudgetaryItemDto budgetaryItemDto)
     {
-        return new BudgetaryItem(budgetaryItemDto.Id, budgetaryItemDto.Name);
+        return new BudgetaryItem(BudgetaryItemIdFactory.Create(budgetaryItemDto.Id), budgetaryItemDto.Name);
     }
 }

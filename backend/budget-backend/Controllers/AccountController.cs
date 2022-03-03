@@ -3,6 +3,7 @@ using budget_backend.Controllers.apiDto;
 using budget_backend.Controllers.apiDto.commands;
 using budget_backend.Controllers.apiDto.datacontainer;
 using budget_backend.domain.account;
+using budget_backend.domain.budget;
 using Microsoft.AspNetCore.Mvc;
 
 namespace budget_backend.Controllers;
@@ -27,9 +28,10 @@ public class AccountController : ControllerBase
         var accountDtos = accounts.Select(_ => _.ToApiDto());
         var accountEntryDtos =
             accounts.SelectMany(_ => _accountService.GetAccountEntries(_.Id)).Select(_ => _.ToApiDto());
-        var budgetaryItemDtos = _accountService.GetBudgetaryItems().Select(_ => _.ToApiDto());
-        var budgetChangeDtos = budgetaryItemDtos.SelectMany(_ => _accountService.GetBudgetEntries(_.Id))
-            .Select(_ => BudgetEntryApiDto.ToApiDto(_));
+        var budgetaryItems = _accountService.GetBudgetaryItems().ToList();
+        var budgetaryItemDtos = budgetaryItems.Select(_ => _.ToApiDto());
+        var budgetChangeDtos = budgetaryItems.SelectMany(_ => _accountService.GetBudgetEntries(_.Id)
+            .Select(_ => BudgetEntryApiDto.ToApiDto(_)));
         var spendingDtos = _accountService.GetSpendings().Select(_ => _.ToApiDto());
 
         var budgetDataDto = new BudgetDataApiDto
@@ -78,7 +80,9 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> AddSpending([FromBody] AddSpending req)
     {
         var date = new DateOnly(req.Date.Year, req.Date.Month, req.Date.Day);
-        var spending = await _accountService.AddSpendingAsync(req.AccountId, req.BudgetaryItemId, req.Amount, date);
+        var accountId = AccountIdFactory.Create(req.AccountId);
+        var budgetaryItemId = BudgetaryItemIdFactory.Create(req.BudgetaryItemId);
+        var spending = await _accountService.AddSpendingAsync(accountId, budgetaryItemId, req.Amount, date);
 
         if (spending is null)
             return UnprocessableEntity();
@@ -117,15 +121,16 @@ public class AccountController : ControllerBase
     [HttpGet(Route.GetBudgetChanges)]
     public IEnumerable<BudgetEntryApiDto> GetBudgetChanges(string budgetaryItemId)
     {
-        var budgetaryItemGuid = Guid.Parse(budgetaryItemId);
-        return _accountService.GetBudgetEntries(budgetaryItemGuid).Select(BudgetEntryApiDto.ToApiDto);
+        var typedBudgetaryItemId = BudgetaryItemIdFactory.Create(Guid.Parse(budgetaryItemId));
+        return _accountService.GetBudgetEntries(typedBudgetaryItemId).Select(BudgetEntryApiDto.ToApiDto);
     }
 
 
     [HttpPost(Route.SetBudgetEntry)]
     public async Task<IActionResult> AddBudgetEntry([FromBody] SetBudgetEntryDto item)
     {
-        var budgetEntry = await _accountService.AddBudgetEntryAsync(item.BudgetaryItemid, item.Amount, item.Month);
+        var budgetaryItemId = BudgetaryItemIdFactory.Create(item.BudgetaryItemid);
+        var budgetEntry = await _accountService.AddBudgetEntryAsync(budgetaryItemId, item.Amount, item.Month);
         var budgetDataDto = new BudgetDataApiDto {BudgetEntries = new[] {BudgetEntryApiDto.ToApiDto(budgetEntry)}};
         return Created("fillUrl", budgetDataDto);
     }
