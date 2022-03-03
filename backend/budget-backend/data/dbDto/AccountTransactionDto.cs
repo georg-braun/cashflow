@@ -9,12 +9,12 @@ public class AccountTransactionDto
     [Key]
     public Guid Id { get; set; }
     
-    public AccountEntryId AccountEntryIdFrom { get; set; }
+    public Guid AccountEntryIdFrom { get; set; }
     
     public Guid AccountIdFrom { get; set; }
     public Guid AccountIdTo { get; set; }
     
-    public AccountEntryId AccountEntryIdTo { get; set; }
+    public Guid AccountEntryIdTo { get; set; }
 
     public DateOnly Timestamp  { get; set; }
     
@@ -28,16 +28,16 @@ public static class AccountTransactionDtoExtensions
         return new AccountTransactionDto()
         {
             Id = accountTransaction.Id,
-            AccountEntryIdFrom = accountTransaction.FromAccountEntryId,
-            AccountEntryIdTo = accountTransaction.ToAccountEntryId,
-            AccountIdFrom = accountTransaction.FromAccountId,
-            AccountIdTo = accountTransaction.ToAccountId
+            AccountEntryIdFrom = accountTransaction.FromAccountEntryId.Id,
+            AccountEntryIdTo = accountTransaction.ToAccountEntryId.Id,
+            AccountIdFrom = accountTransaction.FromAccountId.Id,
+            AccountIdTo = accountTransaction.ToAccountId.Id
         };
     }
 
     public static AccountTransaction ToDomain(this AccountTransactionDto accountTransactionDto)
     {
-        return new AccountTransaction(accountTransactionDto.Id, accountTransactionDto.AccountIdFrom, accountTransactionDto.AccountEntryIdFrom, accountTransactionDto.AccountIdTo, accountTransactionDto.AccountEntryIdTo);
+        return new AccountTransaction(accountTransactionDto.Id, AccountIdFactory.Create(accountTransactionDto.AccountIdFrom), new AccountEntryId{Id = accountTransactionDto.AccountEntryIdFrom}, AccountIdFactory.Create(accountTransactionDto.AccountIdTo), new AccountEntryId{Id = accountTransactionDto.AccountEntryIdTo});
     }
     
 }

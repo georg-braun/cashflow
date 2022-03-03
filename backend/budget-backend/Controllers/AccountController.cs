@@ -2,6 +2,7 @@ using budget_backend.application;
 using budget_backend.Controllers.apiDto;
 using budget_backend.Controllers.apiDto.commands;
 using budget_backend.Controllers.apiDto.datacontainer;
+using budget_backend.domain.account;
 using Microsoft.AspNetCore.Mvc;
 
 namespace budget_backend.Controllers;
@@ -52,7 +53,7 @@ public class AccountController : ControllerBase
     [HttpGet(Route.GetAccountEntriesOfAccount)]
     public IEnumerable<AccountEntryApiDto> GetAccountEntriesOfAccount(string accountId)
     {
-        var accountGuid = Guid.Parse(accountId);
+        var accountGuid = AccountIdFactory.Create(Guid.Parse(accountId));
         var accountEntries = _accountService.GetAccountEntries(accountGuid);
         return accountEntries.Select(_ => _.ToApiDto());
     }
@@ -68,7 +69,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> AddIncome([FromBody] AddIncomeDto addIncomeDto)
     {
         var date = new DateOnly(addIncomeDto.Date.Year, addIncomeDto.Date.Month, addIncomeDto.Date.Day);
-        var accountEntry = await _accountService.AddIncomeAsync(addIncomeDto.AccountId, addIncomeDto.Amount, date);
+        var accountEntry = await _accountService.AddIncomeAsync(AccountIdFactory.Create(addIncomeDto.AccountId), addIncomeDto.Amount, date);
         var budgetDataDto = new BudgetDataApiDto {AccountEntries = new[] {accountEntry.ToApiDto()}};
         return Created("fillUrl", budgetDataDto);
     }

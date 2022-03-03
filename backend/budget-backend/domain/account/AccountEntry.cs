@@ -3,7 +3,7 @@ namespace budget_backend.domain.account;
 
 public class AccountEntry
 {
-    public AccountEntry(AccountEntryId id, Guid accountId, double amount, DateOnly date)
+    public AccountEntry(AccountEntryId id, AccountId accountId, double amount, DateOnly date)
     {
         Id = id;
         Amount = amount;
@@ -14,5 +14,5 @@ public class AccountEntry
     public AccountEntryId Id { get; }
     public double Amount { get; }
     public DateOnly Date { get; }
-    public Guid AccountId { get; }
+    public AccountId AccountId { get; }
 }

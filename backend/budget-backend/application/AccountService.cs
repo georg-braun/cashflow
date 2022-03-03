@@ -9,7 +9,7 @@ public interface IAccountService
 {
     Task<Account> AddNewAccountAsync(string accountName);
     Task<Account> GetAccountAsync(string accountName);
-    Task<AccountEntry> AddIncomeAsync(Guid accountId, double amount, DateOnly timestamp);
+    Task<AccountEntry> AddIncomeAsync(AccountId accountId, double amount, DateOnly timestamp);
 
     /// <summary>
     ///     Create an account entry (spending) and associate this with a budget.
@@ -23,7 +23,7 @@ public interface IAccountService
     Task<BudgetEntry> AddBudgetEntryAsync(Guid budgetaryItemId, double amount, DateTime month);
     Task DeleteBudgetChangeAsync(Guid budgetChangeId);
     IEnumerable<Account> GetAccounts();
-    IEnumerable<AccountEntry> GetAccountEntries(Guid accountId);
+    IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId);
     IEnumerable<BudgetEntry> GetBudgetEntries(Guid budgetaryItemId);
     IEnumerable<Spending> GetSpendings();
     Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId);
@@ -53,7 +53,7 @@ public class AccountService : IAccountService
         return _dataContext.GetAccount(accountName);
     }
 
-    public async Task<AccountEntry> AddIncomeAsync(Guid accountId, double amount, DateOnly timestamp)
+    public async Task<AccountEntry> AddIncomeAsync(AccountId accountId, double amount, DateOnly timestamp)
     {
         if (amount < 0)
             return null;
@@ -68,7 +68,8 @@ public class AccountService : IAccountService
         if (amount > 0)
             return null;
         
-        var accountEntry = AccountFactory.CreateEntry(accountId, amount, timestamp);
+        
+        var accountEntry = AccountFactory.CreateEntry(AccountIdFactory.Create(accountId), amount, timestamp);
         var spending = BudgetFactory.CreateSpending(accountEntry.AccountId, accountEntry.Id, budgetaryItemId);
         await _dataContext.AddSpendingAsync(accountEntry, spending);
         return spending;
@@ -100,7 +101,7 @@ public class AccountService : IAccountService
         return _dataContext.GetAccounts();
     }
 
-    public IEnumerable<AccountEntry> GetAccountEntries(Guid accountId)
+    public IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId)
     {
         return _dataContext.GetAccountEntries(accountId);
     }
@@ -114,16 +115,16 @@ public static class AccountFactory
 {
     public static Account Create(string name)
     {
-        var id = Guid.NewGuid();
+        var id = new AccountId {Id = Guid.NewGuid()};
         return Create(id, name);
     }
 
-    public static Account Create(Guid id, string name)
+    public static Account Create(AccountId id, string name)
     {
         return new Account(id, name);
     }
 
-    public static AccountEntry CreateEntry(Guid accountId, double amount, DateOnly timestamp)
+    public static AccountEntry CreateEntry(AccountId accountId, double amount, DateOnly timestamp)
     {
         var id = new AccountEntryId(){Id = Guid.NewGuid()};
         return new AccountEntry(id, accountId, amount, timestamp);

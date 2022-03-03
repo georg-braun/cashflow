@@ -1,18 +1,15 @@
-using budget_backend.domain.account;
-using budget_backend.domain.budget;
-
-namespace budget_backend.domain;
+namespace budget_backend.domain.account;
 
 
 public class Account
 {
-    public Account(Guid id, string name)
+    public Account(AccountId id, string name)
     {
         Id = id;
         Name = name;
     }
 
-    public Guid Id { get; }
+    public AccountId Id { get; }
 
     public string Name { get; }
 }

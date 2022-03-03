@@ -1,4 +1,5 @@
 using budget_backend.domain;
+using budget_backend.domain.account;
 
 namespace budget_backend.Controllers.apiDto;
 
@@ -14,7 +15,7 @@ public static class AccountApiDtoExtensions
     {
         return new AccountApiDto()
         {
-            Id = account.Id,
+            Id = account.Id.Id,
             Name = account.Name
         };
     }

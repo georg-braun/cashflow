@@ -93,9 +93,9 @@ public class DataContext : DbContext
         return Accounts.Select(_ => _.ToDomain());
     }
 
-    public IEnumerable<AccountEntry> GetAccountEntries(Guid accountId)
+    public IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId)
     {
-        var accountEntryDtos = AccountEntries.Where(_ => _.AccountId.Equals(accountId));
+        var accountEntryDtos = AccountEntries.Where(_ => _.AccountId.Equals(accountId.Id));
         return accountEntryDtos.Select(_ => _.ToDomain());
     }
 

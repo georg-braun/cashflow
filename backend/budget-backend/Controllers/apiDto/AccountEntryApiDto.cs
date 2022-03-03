@@ -7,7 +7,7 @@ public record AccountEntryApiDto
     public Guid Id { get; init; }
     public double Amount { get; init; }
     public DateTime Date { get; init; }
-    public Guid AccountId { get; init; }
+    public AccountId AccountId { get; init; }
 }
 
 public static class AccountEntryApiDtoExtensions
