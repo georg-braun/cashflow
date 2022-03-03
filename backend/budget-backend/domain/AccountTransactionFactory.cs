@@ -8,11 +8,11 @@ public static class AccountTransactionFactory
 
     public static AccountTransaction Create(AccountEntry from, AccountEntry to)
     {
-        var id = Guid.NewGuid();
+        var id = AccountTransactionIdFactory.Create(Guid.NewGuid());
         return Create(id, from, to);
     }
 
-    public static AccountTransaction Create(Guid id, AccountEntry fromEntry, AccountEntry toEntry)
+    public static AccountTransaction Create(AccountTransactionId id, AccountEntry fromEntry, AccountEntry toEntry)
     {
         return new AccountTransaction(id, fromEntry.AccountId, fromEntry.Id, toEntry.AccountId, toEntry.Id);
     }

@@ -27,7 +27,7 @@ public static class AccountTransactionDtoExtensions
     {
         return new AccountTransactionDto()
         {
-            Id = accountTransaction.Id,
+            Id = accountTransaction.Id.Id,
             AccountEntryIdFrom = accountTransaction.FromAccountEntryId.Id,
             AccountEntryIdTo = accountTransaction.ToAccountEntryId.Id,
             AccountIdFrom = accountTransaction.FromAccountId.Id,
@@ -37,7 +37,7 @@ public static class AccountTransactionDtoExtensions
 
     public static AccountTransaction ToDomain(this AccountTransactionDto accountTransactionDto)
     {
-        return new AccountTransaction(accountTransactionDto.Id, AccountIdFactory.Create(accountTransactionDto.AccountIdFrom), new AccountEntryId{Id = accountTransactionDto.AccountEntryIdFrom}, AccountIdFactory.Create(accountTransactionDto.AccountIdTo), new AccountEntryId{Id = accountTransactionDto.AccountEntryIdTo});
+        return new AccountTransaction(AccountTransactionIdFactory.Create(accountTransactionDto.Id), AccountIdFactory.Create(accountTransactionDto.AccountIdFrom), new AccountEntryId{Id = accountTransactionDto.AccountEntryIdFrom}, AccountIdFactory.Create(accountTransactionDto.AccountIdTo), new AccountEntryId{Id = accountTransactionDto.AccountEntryIdTo});
     }
     
 }
