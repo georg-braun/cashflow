@@ -109,7 +109,7 @@ public class ApiClient
 }
 public class BackendWithSqlite : IDisposable
 {
-    private SqliteConnection _connection;
+    private SqliteConnection _connection = new("Filename=:memory:");
 
     public BackendWithSqlite()
     {
@@ -129,9 +129,8 @@ public class BackendWithSqlite : IDisposable
 
     private void StartSqliteConnection()
     {
-        // Create and open a connection. This creates the SQLite in-memory database, which will persist until the connection is closed
+        // Open a connection. This creates the SQLite in-memory database, which will persist until the connection is closed
         // at the end of the test (see Dispose below).
-        _connection = new SqliteConnection("Filename=:memory:");
         _connection.Open();
     }
 }

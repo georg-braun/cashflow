@@ -49,7 +49,11 @@ public class AccountApiTests
         var groceriesSpendings = allData.Spendings.Where(_ => _.BudgetaryItemId.Equals(groceriesBudgetaryItem.Id));
         var groceriesSpendingAccountEntries = groceriesSpendings.Select(_ =>
             allData.AccountEntries.FirstOrDefault(accountEntry => accountEntry.Id.Equals(_.AccountEntryId)));
-        var groceriesSpendingsTotal = groceriesSpendingAccountEntries.Sum(_ => _.Amount);
+        var groceriesSpendingsTotal = groceriesSpendingAccountEntries.Sum(_ =>
+        {
+            if (_ != null) return _.Amount;
+            return 0;
+        });
         var availableBudgetForGroceries = budgeted + groceriesSpendingsTotal;
         
         // Assert
