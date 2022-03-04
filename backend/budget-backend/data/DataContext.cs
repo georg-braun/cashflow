@@ -18,15 +18,15 @@ public class DataContext : DbContext
         modelBuilder.Entity<SpendingDto>().HasKey(item => new {item.AccountEntryId, item.BudgetaryItemId});
     }
 
-    private DbSet<AccountDto> Accounts { get; set; }
-    private DbSet<AccountEntryDto> AccountEntries { get; set; }
-    
-    private DbSet<AccountTransactionDto> AccountTransactions { get; set; }
-    private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; }
-    
-    private DbSet<BudgetEntryDto> BudgetEntries { get; set; }
-    
-    private DbSet<SpendingDto> Spendings { get; set; }
+    private DbSet<AccountDto> Accounts { get; set; } = null!;
+    private DbSet<AccountEntryDto> AccountEntries { get; set; } = null!;
+
+    private DbSet<AccountTransactionDto> AccountTransactions { get; set; } = null!;
+    private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; } = null!;
+
+    private DbSet<BudgetEntryDto> BudgetEntries { get; set; } = null!;
+
+    private DbSet<SpendingDto> Spendings { get; set; } = null!;
 
 
     public async Task AddAccountAsync(Account account)
@@ -36,16 +36,10 @@ public class DataContext : DbContext
         await SaveChangesAsync();
     }
 
-    public Task<Account> GetAccount(string accountName)
+    public Account? GetAccount(string accountName)
     {
         var accountDto = Accounts.FirstOrDefault(_ => _.Name.Equals(accountName));
-        if (accountDto is null)
-        {
-            return Task.FromResult<Account>(null);
-        }
-        
-        var account = accountDto.ToDomain();
-        return Task.FromResult(account);
+        return accountDto?.ToDomain();
     }
 
     public async Task AddAccountEntryAsync(AccountEntry accountEntry)
@@ -55,7 +49,7 @@ public class DataContext : DbContext
         await SaveChangesAsync();
     }
 
-    public async Task AddSpendingAsync(AccountEntry accountEntry, Spending? spending)
+    public async Task AddSpendingAsync(AccountEntry accountEntry, Spending spending)
     {
         var accountEntryDto = accountEntry.ToDbDto();
         

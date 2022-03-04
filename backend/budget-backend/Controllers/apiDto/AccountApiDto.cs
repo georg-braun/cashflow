@@ -6,7 +6,7 @@ namespace budget_backend.Controllers.apiDto;
 public class AccountApiDto
 {
     public Guid Id { get; init; }
-    public string Name { get; init; }
+    public string Name { get; init; } = string.Empty;
 }
 
 public static class AccountApiDtoExtensions

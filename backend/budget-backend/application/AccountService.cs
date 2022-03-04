@@ -8,8 +8,8 @@ namespace budget_backend.application;
 public interface IAccountService
 {
     Task<Account> AddNewAccountAsync(string accountName);
-    Task<Account> GetAccountAsync(string accountName);
-    Task<AccountEntry> AddIncomeAsync(AccountId accountId, double amount, DateOnly timestamp);
+    Account? GetAccount(string accountName);
+    Task<AccountEntry?> AddIncomeAsync(AccountId accountId, double amount, DateOnly timestamp);
 
     /// <summary>
     ///     Create an account entry (spending) and associate this with a budget.
@@ -47,12 +47,12 @@ public class AccountService : IAccountService
         return account;
     }
 
-    public Task<Account> GetAccountAsync(string accountName)
+    public Account? GetAccount(string accountName)
     {
         return _dataContext.GetAccount(accountName);
     }
 
-    public async Task<AccountEntry> AddIncomeAsync(AccountId accountId, double amount, DateOnly timestamp)
+    public async Task<AccountEntry?> AddIncomeAsync(AccountId accountId, double amount, DateOnly timestamp)
     {
         if (amount < 0)
             return null;

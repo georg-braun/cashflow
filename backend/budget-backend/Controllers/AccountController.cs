@@ -72,8 +72,13 @@ public class AccountController : ControllerBase
     {
         var date = new DateOnly(addIncomeDto.Date.Year, addIncomeDto.Date.Month, addIncomeDto.Date.Day);
         var accountEntry = await _accountService.AddIncomeAsync(AccountIdFactory.Create(addIncomeDto.AccountId), addIncomeDto.Amount, date);
-        var budgetDataDto = new BudgetDataApiDto {AccountEntries = new[] {accountEntry.ToApiDto()}};
-        return Created("fillUrl", budgetDataDto);
+        if (accountEntry != null)
+        {
+            var budgetDataDto = new BudgetDataApiDto {AccountEntries = new[] {accountEntry.ToApiDto()}};
+            return Created("fillUrl", budgetDataDto);
+        }
+
+        return UnprocessableEntity();
     }
 
     [HttpPost(Route.AddSpending)]
