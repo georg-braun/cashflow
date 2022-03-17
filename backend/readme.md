@@ -1,28 +1,27 @@
 # Notes
 
-# Conitnuous Deployment
+# setup development machine
 
-Main branch changed
---> Github Action: build image
---> Github Action: publish image to image repository
+**Persistence**
 
-# Build
+- Add database connection string environment variable
+  ` dotnet user-secrets set "ConnectionStrings:Database" "<connection-string>"`
+- Generate database structure
+    - use `dotnet ef` migration / sql
+
+# Build for deployment
 
 ## Docker
 
 Run image
 
- docker run -d -p 8001:80 --name budget-backend budget-backend
- access via http://localhost:8001/...
+docker run -d -p 8001:80 --name budget-backend budget-backend access via http://localhost:8001/...
 
- ## local minikube
+## local minikube
 
-1. create Kubernetes deployment + service of the backend`kubectl apply -f backend-deployment.yaml` 
+1. create Kubernetes deployment + service of the backend`kubectl apply -f backend-deployment.yaml`
 2. access service via NodePort services `minikube service --url backend-api-service`
 
-
 *background: https://minikube.sigs.k8s.io/docs/handbook/accessing/*
-
-
 
 

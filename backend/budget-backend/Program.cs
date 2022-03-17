@@ -1,8 +1,18 @@
+using budget_backend.application;
+using budget_backend.data;
+using budget_backend.domain;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IAccountService, AccountService>();
+
+builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
+    builder.Configuration["ConnectionStrings:Database"]));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -24,4 +34,6 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program{} /* use for integration tests */
+public partial class Program
+{
+} /* use for integration tests */
