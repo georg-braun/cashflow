@@ -14,8 +14,8 @@ public static class Routes
     public const string AddSpending = $"{Base}{Version}/AddSpending";
     public const string SetBudgetEntry = $"{Base}{Version}/SetBudgetEntry";
     public const string GetAccountEntriesOfAccountBase = $"{Base}{Version}/GetAccountEntriesOfAccount";
-    public const string GetAccountEntriesOfAccount = GetAccountEntriesOfAccountBase + "{accountId}";
+    public const string GetAccountEntriesOfAccount = GetAccountEntriesOfAccountBase + "/{accountId}";
     public const string GetBudgetChangesBase = $"{Base}{Version}/GetBudgetChanges";
-    public const string GetBudgetChanges = GetBudgetChangesBase + "{budgetaryItemId}";
+    public const string GetBudgetChanges = GetBudgetChangesBase + "/{budgetaryItemId}";
     public const string GetAll = $"{Base}{Version}/GetAll";
 }
