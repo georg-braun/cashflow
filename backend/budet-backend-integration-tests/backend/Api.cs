@@ -15,7 +15,7 @@ public static class Api
 {
     public static async Task<IEnumerable<BudgetChangeApiDto>> GetBudgetChanges(HttpClient client, Guid budgetaryItemId)
     {
-        var getBudgetChangesResult = await client.GetAsync($"{Route.GetBudgetChangesBase}/{budgetaryItemId}");
+        var getBudgetChangesResult = await client.GetAsync($"{Routes.GetBudgetChangesBase}/{budgetaryItemId}");
         var budgetChangesJson = await getBudgetChangesResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetChangeApiDto[]>(budgetChangesJson);
     }
@@ -25,13 +25,13 @@ public static class Api
         var budgetChangeDto = new AddBudgetChangeDto(budgetaryItemId, amount, date.ToDateTime(TimeOnly.MinValue));
         var json = JsonConvert.SerializeObject(budgetChangeDto);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        await client.PostAsync(Route.SetBudgetEntry, data);
+        await client.PostAsync(Routes.SetBudgetEntry, data);
     }
 
 
     public static async Task<IEnumerable<BudgetaryItemDto>> GetAllBudgetaryItemsAsync(HttpClient client)
     {
-        var getAccountResult = await client.GetAsync(Route.GetAllBudgetaryItems);
+        var getAccountResult = await client.GetAsync(Routes.GetAllBudgetaryItems);
         var accountsJson = await getAccountResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetaryItemDto[]>(accountsJson);
     }
@@ -41,7 +41,7 @@ public static class Api
         var newBudgetaryItem = new AddNewBudgetaryItemDto(name);
         var json = JsonConvert.SerializeObject(newBudgetaryItem);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        var response= await client.PostAsync(Route.AddBudgetaryItem, data);
+        var response= await client.PostAsync(Routes.AddBudgetaryItem, data);
         
         var responseJson = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
@@ -58,7 +58,7 @@ public static class Api
         var json = JsonConvert.SerializeObject(income);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await client.PostAsync(Route.AddIncome, data);
+        var response = await client.PostAsync(Routes.AddIncome, data);
         
         var responseJson = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
@@ -70,7 +70,7 @@ public static class Api
         var income = new AddSpending(accountId, budgetaryItemId, amount, timestamp);
         var json = JsonConvert.SerializeObject(income);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await client.PostAsync(Route.AddSpending, data);
+        var response = await client.PostAsync(Routes.AddSpending, data);
         var responseJson = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
@@ -78,7 +78,7 @@ public static class Api
     public static async Task<IEnumerable<AccountEntryApiDto>> GetAllAccountEntriesOfAccountAsync(HttpClient client,
         Guid accountId)
     {
-        var getAccountResult = await client.GetAsync($"{Route.GetAccountEntriesOfAccountBase}/{accountId}");
+        var getAccountResult = await client.GetAsync($"{Routes.GetAccountEntriesOfAccountBase}/{accountId}");
         var accountsJson = await getAccountResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<AccountEntryApiDto[]>(accountsJson);
     }
@@ -86,14 +86,14 @@ public static class Api
 
     public static async Task<IEnumerable<SpendingDto>> GetAllSpendingsAsync(HttpClient client)
     {
-        var getAccountResult = await client.GetAsync($"{Route.GetSpendings}");
+        var getAccountResult = await client.GetAsync($"{Routes.GetSpendings}");
         var spendingsJson = await getAccountResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<SpendingDto[]>(spendingsJson);
     }
 
     public static async Task<IEnumerable<AccountApiDto>> GetAllAccountsAsync(HttpClient client)
     {
-        var getAccountResult = await client.GetAsync(Route.GetAllAccounts);
+        var getAccountResult = await client.GetAsync(Routes.GetAllAccounts);
         var accountsJson = await getAccountResult.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<AccountApiDto[]>(accountsJson);
     }
@@ -106,14 +106,14 @@ public static class Api
         };
         var json = JsonConvert.SerializeObject(newAccount);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await client.PostAsync(Route.AddAccount, data);
+        var response = await client.PostAsync(Routes.AddAccount, data);
         var responseJson = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 
     public static async Task<BudgetDataApiDto> GetAll(HttpClient client)
     {
-        var getAllResponse = await client.GetAsync(Route.GetAll);
+        var getAllResponse = await client.GetAsync(Routes.GetAll);
         var allDataAsJson = await getAllResponse.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(allDataAsJson);
     }
@@ -124,7 +124,7 @@ public static class Api
    
         var json = JsonConvert.SerializeObject(newAccount);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await client.PostAsync(Route.SetBudgetEntry, data);
+        var response = await client.PostAsync(Routes.SetBudgetEntry, data);
         var responseJson = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
