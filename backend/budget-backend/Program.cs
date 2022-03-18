@@ -13,13 +13,12 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
     builder.Configuration["ConnectionStrings:Database"]));
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline (middleware)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -28,8 +27,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 //app.UseAuthorization();
-
-
 
 app.MapGet(Routes.GetAll, AccountEndpoints.GetAll);
 app.MapGet(Routes.GetAllAccounts, AccountEndpoints.GetAllAccounts);
