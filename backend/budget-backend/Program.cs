@@ -17,25 +17,20 @@ var jwtSettings = new JwtSettings();
 builder.Configuration.Bind(nameof(jwtSettings), jwtSettings);
 builder.Services.AddSingleton(jwtSettings);
 
-builder.Services.AddAuthentication(x =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(jwtOptions =>
+    jwtOptions.Authority = builder.Configuration["Auth0:Domain"];
+    jwtOptions.Audience = builder.Configuration["Auth0:Audience"];
+});
+
+const string readWritePolicy = "budget:read-write";
+builder.Services.AddAuthorization(o =>
 {
-    // how the token looks like
-    jwtOptions.SaveToken = true;
-    jwtOptions.TokenValidationParameters = new TokenValidationParameters()
+    o.AddPolicy(readWritePolicy, p =>
     {
-        // validate the hash with the secret
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        RequireExpirationTime = false,
-        ValidateLifetime = true
-    };
+        p.RequireAuthenticatedUser().RequireClaim("scope", "budget:read-write");
+    });
 });
 
 
@@ -45,27 +40,7 @@ builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseN
     builder.Configuration["ConnectionStrings:Database"]));
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(x =>
-{
-    x.SwaggerDoc("v1", new OpenApiInfo(){Title = "Budget API", Version = "v1"});
-
-    var securityScheme = new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "bearer",
-        BearerFormat = "JWT"
-    };
-    
-    x.AddSecurityDefinition("Bearer", securityScheme);
-
-    x.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {securityScheme, Array.Empty<string>()}
-    });
-});
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -78,8 +53,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapGet(Routes.GetAll, AccountEndpoints.GetAll);
+app.MapGet(Routes.GetAll, AccountEndpoints.GetAll).RequireAuthorization(readWritePolicy);
 app.MapGet(Routes.GetAllAccounts, AccountEndpoints.GetAllAccounts);
 app.MapGet(Routes.GetAccountEntriesOfAccount, AccountEndpoints.GetAccountEntriesOfAccount);
 app.MapGet(Routes.GetSpendings, AccountEndpoints.GetSpendings);
