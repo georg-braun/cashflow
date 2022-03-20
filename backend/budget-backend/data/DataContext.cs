@@ -23,9 +23,7 @@ public class DataContext : DbContext
 
     private DbSet<AccountTransactionDto> AccountTransactions { get; set; } = null!;
     private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; } = null!;
-
     private DbSet<BudgetEntryDto> BudgetEntries { get; set; } = null!;
-
     private DbSet<SpendingDto> Spendings { get; set; } = null!;
 
 

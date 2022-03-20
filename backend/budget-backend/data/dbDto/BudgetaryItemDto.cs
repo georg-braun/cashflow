@@ -2,7 +2,17 @@ using budget_backend.domain.budget;
 
 namespace budget_backend.data.dbDto;
 
-public record BudgetaryItemDto(Guid Id, string Name);
+public class BudgetaryItemDto
+{
+    public BudgetaryItemDto(Guid id, string name)
+    {
+        Id = id;
+        Name = name;
+    }
+
+    public Guid Id { get; init; }
+    public string Name { get; init; }
+}
 
 public static class BudgetaryItemDtoExtensions
 {

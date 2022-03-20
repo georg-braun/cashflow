@@ -78,19 +78,29 @@ public static class AccountEndpoints
             var accountDtos = accounts.Select(_ => _.ToApiDto());
             var accountEntryDtos =
                 accounts.SelectMany(_ => accountService.GetAccountEntries(_.Id)).Select(_ => _.ToApiDto());
-            var budgetaryItems = accountService.GetBudgetaryItems().ToList();
-            var budgetaryItemDtos = budgetaryItems.Select(_ => _.ToApiDto());
-            var budgetChangeDtos = budgetaryItems.SelectMany(_ => accountService.GetBudgetEntries(_.Id)
-                .Select(_ => BudgetEntryApiDto.ToApiDto(_)));
-            var spendingDtos = accountService.GetSpendings().Select(_ => _.ToApiDto());
+            var budgetaryItems = accountService.GetBudgetaryItems()?.ToList();
+
+            var budgetaryItemDtos = new List<BudgetaryItemDto>();
+            var budgetEntries = new List<BudgetEntryApiDto>();
+            var spendings = new List<SpendingDto>();
+            
+            if (budgetaryItems != null)
+            {
+                budgetaryItemDtos.AddRange(budgetaryItems.Select(_ => _.ToApiDto()));
+                var budgetChanges = budgetaryItems.SelectMany(_ => accountService.GetBudgetEntries(_.Id)
+                    .Select(_ => BudgetEntryApiDto.ToApiDto(_)));
+                budgetEntries.AddRange(budgetChanges);
+            }
+
+            spendings.AddRange(accountService.GetSpendings().Select(_ => _.ToApiDto()));
 
             var budgetDataDto = new BudgetDataApiDto
             {
                 Accounts = accountDtos.ToList(),
                 AccountEntries = accountEntryDtos.ToList(),
                 BudgetaryItem = budgetaryItemDtos.ToList(),
-                BudgetEntries = budgetChangeDtos.ToList(),
-                Spendings = spendingDtos.ToList()
+                BudgetEntries = budgetEntries.ToList(),
+                Spendings = spendings.ToList()
             };
             return Results.Ok(budgetDataDto);
         }
