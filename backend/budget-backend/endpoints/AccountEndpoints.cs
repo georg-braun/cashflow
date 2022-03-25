@@ -1,5 +1,5 @@
+using System.Security.Claims;
 using budget_backend.application;
-using budget_backend.Controllers;
 using budget_backend.Controllers.apiDto;
 using budget_backend.Controllers.apiDto.commands;
 using budget_backend.Controllers.apiDto.datacontainer;
@@ -70,10 +70,11 @@ public static class AccountEndpoints
         return Results.Created("fillUrl", budgetDataDto);
     }
 
-    public static IResult GetAll(IAccountService accountService)
+    public static IResult GetAll(IAccountService accountService, ClaimsPrincipal user)
     {
         try
         {
+            var id = user.FindFirstValue(ClaimTypes.NameIdentifier);
             var accounts = accountService.GetAccounts().ToList();
             var accountDtos = accounts.Select(_ => _.ToApiDto());
             var accountEntryDtos =

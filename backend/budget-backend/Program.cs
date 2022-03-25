@@ -1,4 +1,3 @@
-using System.Text;
 using budget_backend.application;
 using budget_backend.Controllers;
 using budget_backend.data;
@@ -6,8 +5,6 @@ using budget_backend.endpoints;
 using budget_backend.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,7 +52,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet(Routes.GetAll, AccountEndpoints.GetAll).RequireAuthorization(readWritePolicy);
+app.MapGet(Routes.GetAll, AccountEndpoints.GetAll).RequireAuthorization();
 app.MapGet(Routes.GetAllAccounts, AccountEndpoints.GetAllAccounts);
 app.MapGet(Routes.GetAccountEntriesOfAccount, AccountEndpoints.GetAccountEntriesOfAccount);
 app.MapGet(Routes.GetSpendings, AccountEndpoints.GetSpendings);

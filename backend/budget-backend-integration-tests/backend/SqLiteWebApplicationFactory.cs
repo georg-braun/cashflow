@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace budet_backend_integration_tests;
@@ -36,6 +37,13 @@ public class SqLiteWebApplicationFactory<TStartup>
             AddSqliteDbContext(services);
             EnsureThatDatabaseIsCreated(services);
         });
+        
+        var config = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .AddUserSecrets<AccountApiTests>()
+            .Build();
+
+        builder.ConfigureAppConfiguration(_ => _.AddConfiguration(config));
     }
 
     private void EnsureThatDatabaseIsCreated(IServiceCollection services)

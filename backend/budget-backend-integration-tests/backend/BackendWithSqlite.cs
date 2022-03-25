@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Auth0.AuthenticationApi;
+using Auth0.AuthenticationApi.Models;
 using budget_backend.Controllers;
 using budget_backend.Controllers.apiDto;
 using budget_backend.Controllers.apiDto.commands;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace budet_backend_integration_tests.backend;
@@ -107,9 +112,11 @@ public class ApiClient
     }
     
 }
+
 public class BackendWithSqlite : IDisposable
 {
-    private SqliteConnection _connection = new("Filename=:memory:");
+
+    private readonly SqliteConnection _connection = new("Filename=:memory:");
 
     public BackendWithSqlite()
     {
@@ -117,6 +124,8 @@ public class BackendWithSqlite : IDisposable
 
         var appFactory = new SqLiteWebApplicationFactory<Program>(_connection);
         client = appFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", AuthorizationServer.AccessToken);
     }
 
     public HttpClient client { get; set; }
