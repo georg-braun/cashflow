@@ -19,7 +19,7 @@ public class ApiClient
     private HttpClient client; 
     public ApiClient()
     {
-        client = new BackendWithSqlite().client;
+        client = new IntegrationTestBackend().client;
     }
     
     

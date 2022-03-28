@@ -5,16 +5,14 @@ using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace budet_backend_integration_tests.backend;
+namespace budget_backend_integration_tests.backend;
 
-public class AuthorizationServer
+public static class AuthenticationService
 {
     public static string AccessToken => _accessToken.Value;
-    private static Lazy<string> _accessToken = new(GetAccessToken().Result);
+    private static readonly Lazy<string> _accessToken = new(GetFakeAccessTokenAsync().Result);
 
-  
-
-    private static IConfigurationSection GetAuthSettings()
+    private static IConfigurationSection GetAuth0Settings()
     {
         return new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -25,9 +23,14 @@ public class AuthorizationServer
             .GetSection("Auth0Client");
     }
 
-    private static async Task<string> GetAccessToken()
+    private static async Task<string> GetFakeAccessTokenAsync()
     {
-        var authSettings = GetAuthSettings();
+        return await Task.FromResult(FakeJwtManager.GenerateJwtToken());
+    }    
+    
+    private static async Task<string> GetAuth0AccessTokenAsync()
+    {
+        var authSettings = GetAuth0Settings();
         var auth0Client = new AuthenticationApiClient(authSettings["Domain"]);
         var tokenRequest = new ClientCredentialsTokenRequest()
         {
@@ -36,8 +39,7 @@ public class AuthorizationServer
             Audience = authSettings["Audience"]
         };
         var tokenResponse = await auth0Client.GetTokenAsync(tokenRequest);
-
+        
         return tokenResponse.AccessToken;
     }
-  
 }

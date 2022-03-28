@@ -1,20 +1,27 @@
 using System.Linq;
 using budget_backend.data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
-namespace budet_backend_integration_tests;
+namespace budget_backend_integration_tests.backend;
 
-public class SqLiteWebApplicationFactory<TStartup>
+/// <summary>
+///     Creates a backend with authentication and a sqlite database.
+/// </summary>
+/// <typeparam name="TStartup"></typeparam>
+public class AuthenticatedSqLiteWebApplicationFactory<TStartup>
     : WebApplicationFactory<TStartup> where TStartup : class
 {
     private readonly SqliteConnection _connection;
 
-    public SqLiteWebApplicationFactory(SqliteConnection connection)
+    public AuthenticatedSqLiteWebApplicationFactory(SqliteConnection connection)
     {
         _connection = connection;
     }
@@ -37,13 +44,35 @@ public class SqLiteWebApplicationFactory<TStartup>
             AddSqliteDbContext(services);
             EnsureThatDatabaseIsCreated(services);
         });
-        
+
+        ConfigureFakeAuthentication(builder);
+        //ConfigureAuth0Authentication(builder);
+    }
+
+    private void ConfigureAuth0Authentication(IWebHostBuilder builder)
+    {
         var config = new ConfigurationBuilder()
             .AddEnvironmentVariables()
             .AddUserSecrets<AccountApiTests>()
             .Build();
 
         builder.ConfigureAppConfiguration(_ => _.AddConfiguration(config));
+    }
+
+    private void ConfigureFakeAuthentication(IWebHostBuilder builder)
+    {
+        builder.ConfigureTestServices(services =>
+        {
+            services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    IssuerSigningKey = FakeJwtManager.SecurityKey,
+                    ValidIssuer = FakeJwtManager.Issuer,
+                    ValidAudience = FakeJwtManager.Audience
+                };
+            });
+        });
     }
 
     private void EnsureThatDatabaseIsCreated(IServiceCollection services)

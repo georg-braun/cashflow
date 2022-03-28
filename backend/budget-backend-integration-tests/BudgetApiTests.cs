@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using budet_backend_integration_tests.backend;
 using budget_backend;
+using budget_backend_integration_tests.backend;
 using FluentAssertions;
 using Xunit;
 
-namespace budet_backend_integration_tests;
+namespace budget_backend_integration_tests;
 
 public class BudgetApiTests
 {
