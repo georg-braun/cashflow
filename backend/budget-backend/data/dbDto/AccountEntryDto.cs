@@ -14,6 +14,7 @@ public class AccountEntryDto
     public DateOnly Timestamp { get; init;}
     
     public Guid AccountId { get; init; }
+    public Guid UserId { get; set; }
 }
 
 public static class AccountEntryDtoExtensions

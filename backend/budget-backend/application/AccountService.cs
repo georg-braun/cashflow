@@ -7,7 +7,7 @@ namespace budget_backend.application;
 
 public interface IAccountService
 {
-    Task<Account> AddNewAccountAsync(string accountName);
+    Task<Account> AddNewAccountAsync(Guid userId, string accountName);
     Account? GetAccount(string accountName);
     Task<AccountEntry?> AddIncomeAsync(AccountId accountId, double amount, DateOnly timestamp);
 
@@ -25,7 +25,7 @@ public interface IAccountService
     IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId);
     IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId);
     IEnumerable<Spending> GetSpendings();
-    Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId);
+    Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId, Guid userId);
 }
 
 /// <summary>
@@ -40,10 +40,10 @@ public class AccountService : IAccountService
         _dataContext = dataContext;
     }
 
-    public async Task<Account> AddNewAccountAsync(string accountName)
+    public async Task<Account> AddNewAccountAsync(Guid userId, string accountName)
     {
         var account = AccountFactory.Create(accountName);
-        await _dataContext.AddAccountAsync(account);
+        await _dataContext.AddAccountAsync(account, userId);
         return account;
     }
 
@@ -102,7 +102,8 @@ public class AccountService : IAccountService
 
     public IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId) => _dataContext.GetBudgetEntries(budgetaryItemId);
     public IEnumerable<Spending> GetSpendings() => _dataContext.GetSpendings();
-    public Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId) => _dataContext.GetAccountEntryAsync(spendingAccountEntryId);
+    
+    public Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId, Guid userId) => _dataContext.GetAccountEntryAsync(spendingAccountEntryId, userId);
 }
 
 public static class AccountFactory

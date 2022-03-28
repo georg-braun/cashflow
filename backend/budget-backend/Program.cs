@@ -4,6 +4,7 @@ using budget_backend.data;
 using budget_backend.endpoints;
 using budget_backend.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,24 +15,27 @@ var jwtSettings = new JwtSettings();
 builder.Configuration.Bind(nameof(jwtSettings), jwtSettings);
 builder.Services.AddSingleton(jwtSettings);
 
+var domain = builder.Configuration["Auth0:Domain"];
+var audience = builder.Configuration["Auth0:Audience"];
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
-{
-    jwtOptions.Authority = builder.Configuration["Auth0:Domain"];
-    jwtOptions.Audience = builder.Configuration["Auth0:Audience"];
-});
+    {
+        jwtOptions.Authority = domain;
+        jwtOptions.Audience = audience;
+        jwtOptions.RequireHttpsMetadata = false;
+    });
 
-const string readWritePolicy = "budget:read-write";
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy(readWritePolicy, p =>
-    {
-        p.RequireAuthenticatedUser().RequireClaim("scope", "budget:read-write");
-    });
+    o.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 });
 
 
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
     builder.Configuration["ConnectionStrings:Database"]));
@@ -52,7 +56,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet(Routes.GetAll, AccountEndpoints.GetAll).RequireAuthorization();
+app.MapGet(Routes.GetAll, AccountEndpoints.GetAll);
 app.MapGet(Routes.GetAllAccounts, AccountEndpoints.GetAllAccounts);
 app.MapGet(Routes.GetAccountEntriesOfAccount, AccountEndpoints.GetAccountEntriesOfAccount);
 app.MapGet(Routes.GetSpendings, AccountEndpoints.GetSpendings);

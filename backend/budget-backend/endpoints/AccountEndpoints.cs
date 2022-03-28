@@ -44,17 +44,18 @@ public static class AccountEndpoints
         return Results.UnprocessableEntity();
     }
     
-    public static async Task<IResult> AddSpending(IAccountService accountService, [FromBody] AddSpending req)
+    public static async Task<IResult> AddSpending(IAccountService accountService, IUserService userService, AddSpending addSpendingDto, ClaimsPrincipal claims)
     {
-        var date = new DateOnly(req.Date.Year, req.Date.Month, req.Date.Day);
-        var accountId = AccountIdFactory.Create(req.AccountId);
-        var budgetaryItemId = BudgetaryItemIdFactory.Create(req.BudgetaryItemId);
-        var spending = await accountService.AddSpendingAsync(accountId, budgetaryItemId, req.Amount, date);
+        var userId = await userService.GetUserIdAsync(ExtractAuthUserId(claims));
+        var date = new DateOnly(addSpendingDto.Date.Year, addSpendingDto.Date.Month, addSpendingDto.Date.Day);
+        var accountId = AccountIdFactory.Create(addSpendingDto.AccountId);
+        var budgetaryItemId = BudgetaryItemIdFactory.Create(addSpendingDto.BudgetaryItemId);
+        var spending = await accountService.AddSpendingAsync(accountId, budgetaryItemId, addSpendingDto.Amount, date);
 
         if (spending is null)
             return Results.UnprocessableEntity();
         
-        var accountEntry = await accountService.GetAccountEntryAsync(spending.AccountEntryId);
+        var accountEntry = await accountService.GetAccountEntryAsync(spending.AccountEntryId, userId);
         
         var budgetDataDto = new BudgetDataApiDto {Spendings = new[] {spending.ToApiDto()}};
         if (accountEntry is not null)
@@ -63,18 +64,20 @@ public static class AccountEndpoints
         return Results.Created("fillUrl", budgetDataDto);
     }
     
-    public static async Task<IResult> AddAccount(IAccountService accountService, AddNewAccountDto addNewAccountDto)
+    public static async Task<IResult> AddAccount(IAccountService accountService, IUserService userService, AddNewAccountDto addNewAccountDto,  ClaimsPrincipal claims)
     {
-        var account = await accountService.AddNewAccountAsync(addNewAccountDto.Name);
+        var userId = await userService.GetUserIdAsync(ExtractAuthUserId(claims));
+        var account = await accountService.AddNewAccountAsync(userId, addNewAccountDto.Name);
         var budgetDataDto = new BudgetDataApiDto {Accounts = new[] {account.ToApiDto()}};
         return Results.Created("fillUrl", budgetDataDto);
     }
 
-    public static IResult GetAll(IAccountService accountService, ClaimsPrincipal user)
+    private static string ExtractAuthUserId(ClaimsPrincipal claims) => claims.FindFirstValue(ClaimTypes.NameIdentifier);
+    public static IResult GetAll(IAccountService accountService, ClaimsPrincipal claims)
     {
         try
         {
-            var id = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = ExtractAuthUserId(claims);
             var accounts = accountService.GetAccounts().ToList();
             var accountDtos = accounts.Select(_ => _.ToApiDto());
             var accountEntryDtos =

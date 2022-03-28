@@ -18,6 +18,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<SpendingDto>().HasKey(item => new {item.AccountEntryId, item.BudgetaryItemId});
     }
 
+    private DbSet<UserDto> Users { get; set; } = null!;
     private DbSet<AccountDto> Accounts { get; set; } = null!;
     private DbSet<AccountEntryDto> AccountEntries { get; set; } = null!;
 
@@ -27,9 +28,9 @@ public class DataContext : DbContext
     private DbSet<SpendingDto> Spendings { get; set; } = null!;
 
 
-    public async Task AddAccountAsync(Account account)
+    public async Task AddAccountAsync(Account account, Guid userId)
     {
-        var accountDto = account.ToDbDto();
+        var accountDto = account.ToDbDto(userId);
         await Accounts.AddAsync(accountDto);
         await SaveChangesAsync();
     }
@@ -89,9 +90,25 @@ public class DataContext : DbContext
 
     public IEnumerable<Spending> GetSpendings() => Spendings.Select(_ => _.ToDomain());
 
-    public async Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId accountEntryId)
+    public async Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId accountEntryId, Guid userId)
     {
-        var accountEntryDto = await AccountEntries.SingleOrDefaultAsync(_ => _.Id.Equals(accountEntryId.Id));
+        var accountEntryDto = await AccountEntries.SingleOrDefaultAsync(_ => _.Id.Equals(accountEntryId.Id) && _.UserId.Equals(userId));
         return accountEntryDto?.ToDomain();
+    }
+
+    public Guid GetUserIdByAuthProviderId(string authProviderId)
+    {
+        return Users.FirstOrDefault(_ => _.AuthProviderId.Equals(authProviderId))?.Id ?? Guid.Empty;
+    }
+
+    public async Task<Guid> AddUserAsync(string authProviderId)
+    {
+        var user = GetUserIdByAuthProviderId(authProviderId);
+        var userAlreadyExists = !GetUserIdByAuthProviderId(authProviderId).Equals(Guid.Empty);
+        if (!user.Equals(Guid.Empty))
+            return user;
+
+        var addedUserEntity = await Users.AddAsync(new UserDto(Guid.NewGuid(), authProviderId, DateTime.UtcNow));
+        return addedUserEntity.Entity.Id;
     }
 }

@@ -9,16 +9,18 @@ public class AccountDto
     public Guid Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
 }
 
 public static class AccountDtoExtensions
 {
-    public static AccountDto ToDbDto(this Account account)
+    public static AccountDto ToDbDto(this Account account, Guid userId)
     {
         return new AccountDto()
         {
             Id = account.Id.Id,
-            Name = account.Name
+            Name = account.Name,
+            UserId = userId
         };
     }
 
