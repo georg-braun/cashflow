@@ -4,7 +4,7 @@ namespace budget_backend.application;
 
 public interface IUserService
 {
-    Task<Guid> GetUserIdAsync(string AuthProviderId);
+    Task<UserId> GetUserIdAsync(string AuthProviderId);
 }
 
 public class UserService : IUserService
@@ -21,16 +21,16 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="authProviderId"></param>
     /// <returns></returns>
-    public async Task<Guid> GetUserIdAsync(string authProviderId)
+    public async Task<UserId> GetUserIdAsync(string authProviderId)
     {
         var userId =  _dataContext.GetUserIdByAuthProviderId(authProviderId);
-        if (!userId.Equals(Guid.Empty))
+        if (userId.IsValid)
             return userId;
 
         return await AddUserAsync(authProviderId);
     }
 
-    public Task<Guid> AddUserAsync(string authProviderId)
+    public Task<UserId> AddUserAsync(string authProviderId)
     {
         return _dataContext.AddUserAsync(authProviderId);
     }

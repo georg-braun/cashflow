@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using budget_backend.application;
 using budget_backend.domain.account;
 
 namespace budget_backend.data.dbDto;
@@ -14,13 +15,13 @@ public class AccountDto
 
 public static class AccountDtoExtensions
 {
-    public static AccountDto ToDbDto(this Account account, Guid userId)
+    public static AccountDto ToDbDto(this Account account, UserId userId)
     {
         return new AccountDto()
         {
             Id = account.Id.Id,
             Name = account.Name,
-            UserId = userId
+            UserId = userId.Id
         };
     }
 
