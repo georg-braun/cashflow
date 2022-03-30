@@ -5,23 +5,37 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace budget_backend.Migrations
 {
-    public partial class recordswithuserid : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<Guid>(
-                name: "UserId",
-                table: "Accounts",
-                type: "uuid",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+            migrationBuilder.CreateTable(
+                name: "AccountEntries",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Amount = table.Column<double>(type: "double precision", nullable: false),
+                    Timestamp = table.Column<DateOnly>(type: "date", nullable: false),
+                    AccountId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountEntries", x => x.Id);
+                });
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "UserId",
-                table: "AccountEntries",
-                type: "uuid",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+            migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AccountTransactions",
@@ -99,6 +113,12 @@ namespace budget_backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AccountEntries");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
                 name: "AccountTransactions");
 
             migrationBuilder.DropTable(
@@ -112,14 +132,6 @@ namespace budget_backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "Accounts");
-
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "AccountEntries");
         }
     }
 }
