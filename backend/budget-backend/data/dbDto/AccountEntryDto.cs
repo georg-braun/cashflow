@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using budget_backend.application;
 using budget_backend.domain;
 using budget_backend.domain.account;
 
@@ -14,18 +15,20 @@ public class AccountEntryDto
     public DateOnly Timestamp { get; init;}
     
     public Guid AccountId { get; init; }
+    public Guid UserId { get; init; }
 }
 
 public static class AccountEntryDtoExtensions
 {
-    public static AccountEntryDto ToDbDto(this AccountEntry accountEntry)
+    public static AccountEntryDto ToDbDto(this AccountEntry accountEntry, UserId userId)
     {
         return new AccountEntryDto()
         {
             Id = accountEntry.Id.Id,
             AccountId = accountEntry.AccountId.Id,
             Amount = accountEntry.Amount,
-            Timestamp = accountEntry.Date
+            Timestamp = accountEntry.Date,
+            UserId = userId.Id
         };
     }
 
