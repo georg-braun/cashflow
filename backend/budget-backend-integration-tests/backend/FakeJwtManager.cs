@@ -11,10 +11,8 @@ public class FakeJwtManager
     public static string Issuer { get; } = Guid.NewGuid().ToString();
     public static string Audience { get; } = Guid.NewGuid().ToString();
     public static SecurityKey SecurityKey { get; }
-    public static SigningCredentials SigningCredentials { get; }
+    private static SigningCredentials SigningCredentials { get; }
 
-    private static readonly JwtSecurityTokenHandler TokenHandler = new();
-    
     static FakeJwtManager()
     {
         var key = new byte[32];
@@ -25,7 +23,8 @@ public class FakeJwtManager
 
     public static string GenerateJwtToken()
     {
+        var tokenHandler = new JwtSecurityTokenHandler();
         var claim = new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString());
-        return TokenHandler.WriteToken(new JwtSecurityToken(Issuer, Audience, new []{claim}, null, DateTime.UtcNow.AddMinutes(60), SigningCredentials));
+        return tokenHandler.WriteToken(new JwtSecurityToken(Issuer, Audience, new []{claim}, null, DateTime.UtcNow.AddMinutes(60), SigningCredentials));
     }
 }

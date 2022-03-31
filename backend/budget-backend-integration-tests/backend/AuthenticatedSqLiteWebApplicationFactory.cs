@@ -45,7 +45,7 @@ public class AuthenticatedSqLiteWebApplicationFactory<TStartup>
             EnsureThatDatabaseIsCreated(services);
         });
 
-        ConfigureFakeAuthentication(builder);
+        ConfigureTestJwtOptions(builder);
         //ConfigureAuth0Authentication(builder);
     }
 
@@ -59,13 +59,13 @@ public class AuthenticatedSqLiteWebApplicationFactory<TStartup>
         builder.ConfigureAppConfiguration(_ => _.AddConfiguration(config));
     }
 
-    private void ConfigureFakeAuthentication(IWebHostBuilder builder)
+    private void ConfigureTestJwtOptions(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
         {
             services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters()
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     IssuerSigningKey = FakeJwtManager.SecurityKey,
                     ValidIssuer = FakeJwtManager.Issuer,

@@ -19,6 +19,8 @@ public class IntegrationTestBackend : IDisposable
 
         var appFactory = new AuthenticatedSqLiteWebApplicationFactory<Program>(_connection);
         client = appFactory.CreateClient();
+        
+        // add the bearer token
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", AuthenticationService.AccessToken);
     }
@@ -34,7 +36,7 @@ public class IntegrationTestBackend : IDisposable
     private void StartSqliteConnection()
     {
         // Open a connection. This creates the SQLite in-memory database, which will persist until the connection is closed
-        // at the end of the test (see Dispose below).
+        // at the end of the test (see Dispose).
         _connection.Open();
     }
 }
