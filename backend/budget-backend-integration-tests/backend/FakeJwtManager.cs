@@ -14,8 +14,7 @@ public class FakeJwtManager
     public static SigningCredentials SigningCredentials { get; }
 
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
-
-
+    
     static FakeJwtManager()
     {
         var key = new byte[32];
