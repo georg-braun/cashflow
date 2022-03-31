@@ -57,13 +57,13 @@ public class ApiClient
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 
-    public async Task<BudgetDataApiDto> AddIncomeAsync(Guid accountId, double amount, DateOnly date)
+    public async Task<BudgetDataApiDto> AddIncomeAsync(Guid accountId, double amount, DateTime date)
     {
         var income = new AddIncomeDto()
         {
             AccountId = accountId,
             Amount = amount,
-            Date = date.ToDateTime(TimeOnly.MinValue)
+            Date = date
         };
         var json = JsonConvert.SerializeObject(income);
         var data = new StringContent(json, Encoding.UTF8, "application/json");

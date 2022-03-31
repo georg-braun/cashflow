@@ -61,10 +61,10 @@ public class AccountService : IAccountService
     public async Task<Spending?> AddSpendingAsync(AccountId accountId, BudgetaryItemId budgetaryItemId, double amount,
         DateOnly timestamp, UserId userId)
     {
-        if (amount > 0)
-            return null;
+        // amount has to be negative
+        var correctAmount = amount > 0 ? -amount : amount;
         
-        var accountEntry = AccountFactory.CreateEntry(accountId, amount, timestamp);
+        var accountEntry = AccountFactory.CreateEntry(accountId, correctAmount, timestamp);
         var spending = BudgetFactory.CreateSpending(accountEntry.AccountId, accountEntry.Id, budgetaryItemId);
         await _dataContext.AddSpendingAsync(accountEntry, spending, userId);
         return spending;

@@ -67,7 +67,7 @@ public class AccountApiTests
         var client = new ApiClient();
         var changedData = await client.AddAccountAsync( "cash");
         var account = changedData.Accounts.First();
-        var addIncomeResult = await client.AddIncomeAsync(account.Id, 50.50, DateOnlyExtensions.Today());
+        var addIncomeResult = await client.AddIncomeAsync(account.Id, 50.50, DateTime.Today);
         
         var addBudgetaryItemResult = await client.AddBudgetaryItemAsync( "groceries");
         var budgetaryItem = addBudgetaryItemResult.BudgetaryItem.First();
@@ -109,7 +109,7 @@ public class AccountApiTests
         var accounts = await client.GetAllAccountsAsync();
 
         // Act
-        await client.AddIncomeAsync(accounts.First().Id, 35.50, DateOnlyExtensions.Today());
+        await client.AddIncomeAsync(accounts.First().Id, 35.50, DateTime.Today);
         var accountEntries = await client.GetAllAccountEntriesOfAccountAsync(accounts.First().Id);
 
         // Assert
