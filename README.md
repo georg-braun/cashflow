@@ -2,12 +2,11 @@
 
 ## What is this?
 
->Software service for managing personal finance with budgets.
+>Software for managing personal finance with budgets.
 
 *Yeah..., it's just another budget app* 😉 
 
 I just wanted to replace my YNAB subscription and learn new stuff (architecture, asp.net, entity framework, authentication, kubernetes, and other stuff along the way)
-
 
 # Roadmap
 
@@ -22,3 +21,11 @@ Q2-2022
   - manage income and spendings
 
 
+# Feature ideas
+- cli for fast entries
+- no bank account sync but maybe a flexible csv import
+- built in "flow" diagram, maybe something like a sankey diagram
+
+# Technology
+
+![](overview.png)
