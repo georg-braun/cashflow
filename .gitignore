@@ -3,3 +3,4 @@
 **/obj
 *.user
 *Designer.cs
+DataContextModelSnapshot.cs

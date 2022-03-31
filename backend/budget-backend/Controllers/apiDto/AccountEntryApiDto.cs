@@ -7,7 +7,7 @@ public record AccountEntryApiDto
     public Guid Id { get; init; }
     public double Amount { get; init; }
     public DateTime Date { get; init; }
-    public AccountId AccountId { get; init; } = null!;
+    public Guid AccountId { get; init; }
 }
 
 public static class AccountEntryApiDtoExtensions
@@ -19,7 +19,7 @@ public static class AccountEntryApiDtoExtensions
             Id = accountEntry.Id.Id,
             Amount = accountEntry.Amount,
             Date = accountEntry.Date.ToDateTime(TimeOnly.MinValue), 
-            AccountId = accountEntry.AccountId
+            AccountId = accountEntry.AccountId.Id
         };
     }
 }

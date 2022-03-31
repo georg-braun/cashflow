@@ -9,6 +9,10 @@
 - Generate database structure
     - use `dotnet ef` migration / sql
 
+**Authenication**
+
+- Add Auth0 environment variables.
+
 # Build for deployment
 
 ## Docker

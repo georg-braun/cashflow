@@ -1,3 +1,5 @@
+using System.Linq;
+using budget_backend.application;
 using budget_backend.data.dbDto;
 using budget_backend.domain;
 using budget_backend.domain.account;
@@ -18,82 +20,96 @@ public class DataContext : DbContext
         modelBuilder.Entity<SpendingDto>().HasKey(item => new {item.AccountEntryId, item.BudgetaryItemId});
     }
 
+    private DbSet<UserDto> Users { get; set; } = null!;
     private DbSet<AccountDto> Accounts { get; set; } = null!;
     private DbSet<AccountEntryDto> AccountEntries { get; set; } = null!;
 
     private DbSet<AccountTransactionDto> AccountTransactions { get; set; } = null!;
     private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; } = null!;
-
     private DbSet<BudgetEntryDto> BudgetEntries { get; set; } = null!;
-
     private DbSet<SpendingDto> Spendings { get; set; } = null!;
 
 
-    public async Task AddAccountAsync(Account account)
+    public async Task AddAccountAsync(Account account, UserId userId)
     {
-        var accountDto = account.ToDbDto();
+        var accountDto = account.ToDbDto(userId);
         await Accounts.AddAsync(accountDto);
         await SaveChangesAsync();
     }
 
-    public Account? GetAccount(string accountName)
+    public async Task AddAccountEntryAsync(AccountEntry accountEntry, UserId userId)
     {
-        var accountDto = Accounts.FirstOrDefault(_ => _.Name.Equals(accountName));
-        return accountDto?.ToDomain();
-    }
-
-    public async Task AddAccountEntryAsync(AccountEntry accountEntry)
-    {
-        var accountEntryDto = accountEntry.ToDbDto();
+        var accountEntryDto = accountEntry.ToDbDto(userId);
         await AccountEntries.AddAsync(accountEntryDto);
         await SaveChangesAsync();
     }
 
-    public async Task AddSpendingAsync(AccountEntry accountEntry, Spending spending)
+    public async Task AddSpendingAsync(AccountEntry accountEntry, Spending spending, UserId userId)
     {
-        var accountEntryDto = accountEntry.ToDbDto();
+        var accountEntryDto = accountEntry.ToDbDto(userId);
         
         await AccountEntries.AddAsync(accountEntryDto);
-        var spendingDto = spending.ToDbDto();
+        var spendingDto = spending.ToDbDto(userId);
         await Spendings.AddAsync(spendingDto);
         await SaveChangesAsync();
     }
 
-    public async Task AddBudgetaryItemAsync(BudgetaryItem budgetaryItem)
+    public async Task AddBudgetaryItemAsync(BudgetaryItem budgetaryItem, UserId userId)
     {
-        var budgetaryItemDbDto = budgetaryItem.ToDbDto();
+        var budgetaryItemDbDto = budgetaryItem.ToDbDto(userId);
         await BudgetaryItems.AddAsync(budgetaryItemDbDto);
         await SaveChangesAsync();
     }
 
-    public IEnumerable<BudgetaryItem> GetBudgetaryItems() => BudgetaryItems.Select(_ => _.ToDomain());
+    public IEnumerable<BudgetaryItem> GetBudgetaryItems(UserId userId) => BudgetaryItems.Where(_ => _.UserId.Equals(userId.Id)).Select(_ => _.ToDomain());
 
-    public async Task AddBudgetEntryAsync(BudgetEntry budgetEntry)
+    public async Task AddBudgetEntryAsync(BudgetEntry budgetEntry, UserId userId)
     {
-        await BudgetEntries.AddAsync(budgetEntry.ToDbDto());
+        await BudgetEntries.AddAsync(budgetEntry.ToDbDto(userId));
         await SaveChangesAsync();
     }
 
-    public IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId) => BudgetEntries
-        .Where(_ => _.BudgetaryItemId.Equals(budgetaryItemId.Id)).Select(_ => _.ToDomain());
+    public IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId, UserId userId) => BudgetEntries
+        .Where(_ => _.UserId.Equals(userId.Id) && _.BudgetaryItemId.Equals(budgetaryItemId.Id)).Select(_ => _.ToDomain());
     
 
-    public IEnumerable<Account> GetAccounts()
+    public IEnumerable<Account> GetAccounts(UserId userId)
     {
-        return Accounts.Select(_ => _.ToDomain());
+        return Accounts.Where(_ => _.UserId.Equals(userId.Id)).Select(_ => _.ToDomain());
     }
 
-    public IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId)
+    public IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId, UserId userId)
     {
-        var accountEntryDtos = AccountEntries.Where(_ => _.AccountId.Equals(accountId.Id));
+        var accountEntryDtos = AccountEntries.Where(_ => _.UserId.Equals(userId.Id) && _.AccountId.Equals(accountId.Id));
         return accountEntryDtos.Select(_ => _.ToDomain());
     }
 
-    public IEnumerable<Spending> GetSpendings() => Spendings.Select(_ => _.ToDomain());
+    public IEnumerable<Spending> GetSpendings(UserId userId) => Spendings.Where(_ => _.UserId.Equals(userId.Id)).Select(_ => _.ToDomain());
 
-    public async Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId accountEntryId)
+    public async Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId accountEntryId, UserId userId)
     {
         var accountEntryDto = await AccountEntries.SingleOrDefaultAsync(_ => _.Id.Equals(accountEntryId.Id));
-        return accountEntryDto?.ToDomain();
+        if (accountEntryDto != null && accountEntryDto.UserId.Equals(userId.Id))
+            return accountEntryDto.ToDomain();
+        return null;
+    }
+
+    public UserId GetUserIdByAuthProviderId(string authProviderId)
+    {
+        var hFoundUserId = Users.FirstOrDefault(_ => _.AuthProviderId.Equals(authProviderId))?.Id;
+        if (hFoundUserId is null || hFoundUserId.Value.Equals(Guid.Empty))
+            return UserId.Empty;
+        return UserId.New(hFoundUserId.Value);
+    }
+
+    public async Task<UserId> AddUserAsync(string authProviderId)
+    {
+        var userId = GetUserIdByAuthProviderId(authProviderId);
+
+        if (userId.IsValid)
+            return userId;
+        
+        var addedUserEntity = await Users.AddAsync(new UserDto(Guid.NewGuid(), authProviderId, DateTime.UtcNow));
+        return UserId.New(addedUserEntity.Entity.Id);
     }
 }
