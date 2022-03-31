@@ -8,7 +8,6 @@
 
 I just wanted to replace my YNAB subscription and learn new stuff (architecture, asp.net, entity framework, authentication, kubernetes, and other stuff along the way)
 
-Motivati
 
 # Roadmap
 
