@@ -1,43 +1,26 @@
 <script>
     import { onMount } from "svelte";
-    import auth from "./authService";
-    import { isAuthenticated, user, user_tasks, tasks } from "./store";
+    import auth from "./auth0Service";
+
 
   
-    let auth0Client;
-    let newTask;
-  
     onMount(async () => {
-      auth0Client = await auth.createClient();
-  
-      isAuthenticated.set(await auth0Client.isAuthenticated());
-      user.set(await auth0Client.getUser());
+      await auth.createClient();
+ 
+      console.log(await auth.getAccessToken())
+      
     });
   
     function login() {
-      auth.loginWithPopup(auth0Client);
+      auth.loginWithPopup();
     }
   
     function logout() {
-      auth.logout(auth0Client);
+      auth.logout();
     }
+
+    let {isAuthenticated, user} = auth;
   
-    function addItem() {
-      let newTaskObject = {
-        id: genRandom(),
-        description: newTask,
-        completed: false,
-        user: $user.email
-      };
-  
-      console.log(newTaskObject);
-  
-      let updatedTasks = [...$tasks, newTaskObject];
-  
-      tasks.set(updatedTasks);
-  
-      newTask = "";
-    }
   
   </script>
 

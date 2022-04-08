@@ -1,0 +1,58 @@
+import createAuth0Client from "@auth0/auth0-spa-js";
+import auth0Config from "./auth_config";
+import { writable, get } from "svelte/store";
+
+export const isAuthenticated = writable(false);
+export const popupOpen = writable(false);
+export const error = writable();
+export const user = writable({});
+export const tasks = writable([]);
+export const client = writable();
+
+
+
+
+async function createClient() {
+  let auth0Client = await createAuth0Client({
+    domain: auth0Config.domain,
+    client_id: auth0Config.clientId
+  });
+
+  client.set(auth0Client);
+  user.set(await get(client).getUser());
+}
+
+async function loginWithPopup(options) {
+  popupOpen.set(true);
+  try {
+    await get(client).loginWithPopup(options);
+
+    user.set(await get(client).getUser());
+    isAuthenticated.set(true);
+  } catch (e) {
+    // eslint-disable-next-line
+    console.error(e);
+  } finally {
+    popupOpen.set(false);
+  }
+}
+
+function logout() {
+  return get(client).logout();
+}
+
+async function getAccessToken(){
+  return await get(client).getTokenSilently();
+}
+
+
+const auth = {
+  createClient,
+  loginWithPopup,
+  logout,
+  getAccessToken,
+  user,
+  isAuthenticated
+};
+
+export default auth;
