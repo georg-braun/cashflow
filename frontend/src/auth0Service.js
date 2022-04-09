@@ -1,5 +1,4 @@
 import createAuth0Client from "@auth0/auth0-spa-js";
-import auth0Config from "./auth_config";
 import { writable, get } from "svelte/store";
 
 export const isAuthenticated = writable(false);
@@ -14,8 +13,8 @@ export const client = writable();
 
 async function createClient() {
   let auth0Client = await createAuth0Client({
-    domain: auth0Config.domain,
-    client_id: auth0Config.clientId
+    domain: process.env.AUTH_DOMAIN,
+    client_id: process.env.AUTH_CLIENT_ID
   });
 
   client.set(auth0Client);
