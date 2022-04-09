@@ -1,5 +1,5 @@
-import createAuth0Client from "@auth0/auth0-spa-js";
-import { writable, get } from "svelte/store";
+import createAuth0Client from '@auth0/auth0-spa-js';
+import { writable, get } from 'svelte/store';
 
 export const isAuthenticated = writable(false);
 export const popupOpen = writable(false);
@@ -8,50 +8,46 @@ export const user = writable({});
 export const tasks = writable([]);
 export const client = writable();
 
-
-
-
 async function createClient() {
-  let auth0Client = await createAuth0Client({
-    domain: process.env.AUTH_DOMAIN,
-    client_id: process.env.AUTH_CLIENT_ID
-  });
+	let auth0Client = await createAuth0Client({
+		domain: import.meta.env.VITE_AUTH_DOMAIN,
+		client_id: import.meta.env.VITE_AUTH_CLIENT_ID
+	});
 
-  client.set(auth0Client);
-  user.set(await get(client).getUser());
+	client.set(auth0Client);
+	user.set(await get(client).getUser());
 }
 
 async function loginWithPopup(options) {
-  popupOpen.set(true);
-  try {
-    await get(client).loginWithPopup(options);
+	popupOpen.set(true);
+	try {
+		await get(client).loginWithPopup(options);
 
-    user.set(await get(client).getUser());
-    isAuthenticated.set(true);
-  } catch (e) {
-    // eslint-disable-next-line
-    console.error(e);
-  } finally {
-    popupOpen.set(false);
-  }
+		user.set(await get(client).getUser());
+		isAuthenticated.set(true);
+	} catch (e) {
+		// eslint-disable-next-line
+		console.error(e);
+	} finally {
+		popupOpen.set(false);
+	}
 }
 
 function logout() {
-  return get(client).logout();
+	return get(client).logout();
 }
 
-async function getAccessToken(){
-  return await get(client).getTokenSilently();
+async function getAccessToken() {
+	return await get(client).getTokenSilently();
 }
-
 
 const auth = {
-  createClient,
-  loginWithPopup,
-  logout,
-  getAccessToken,
-  user,
-  isAuthenticated
+	createClient,
+	loginWithPopup,
+	logout,
+	getAccessToken,
+	user,
+	isAuthenticated
 };
 
 export default auth;
