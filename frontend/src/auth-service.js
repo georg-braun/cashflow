@@ -9,9 +9,14 @@ export const tasks = writable([]);
 export const client = writable();
 
 async function createClient() {
-	let auth0Client = await createAuth0Client({
+	
+  console.log(import.meta.env.VITE_AUTH_DOMAIN);
+  console.log(import.meta.env);
+  let auth0Client = await createAuth0Client({    
 		domain: import.meta.env.VITE_AUTH_DOMAIN,
-		client_id: import.meta.env.VITE_AUTH_CLIENT_ID
+		client_id: import.meta.env.VITE_AUTH_CLIENT_ID,
+		audience: import.meta.env.VITE_AUTH_AUDIENCE,
+		redirect_uri: window.location.origin		
 	});
 
 	client.set(auth0Client);

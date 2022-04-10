@@ -2,6 +2,7 @@ using budget_backend.application;
 using budget_backend.Controllers;
 using budget_backend.data;
 using budget_backend.endpoints;
+using budget_backend.middleware;
 using budget_backend.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,9 @@ builder.Services.AddSingleton(jwtSettings);
 var domain = builder.Configuration["Auth0:Domain"];
 var audience = builder.Configuration["Auth0:Audience"];
 
+if (string.IsNullOrEmpty(domain) || string.IsNullOrEmpty(audience))
+    Console.WriteLine("WARNING. Domain or audience is empty.");
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
     {
@@ -33,7 +37,7 @@ builder.Services.AddAuthorization(o =>
         .Build();
 });
 
-
+builder.Services.AddCors();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
@@ -45,6 +49,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseDebugAllRequestsMiddleware();
+
 // Configure the HTTP request pipeline (middleware)
 if (app.Environment.IsDevelopment())
 {
@@ -52,6 +58,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
