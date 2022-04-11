@@ -1,4 +1,4 @@
-import createAuth0Client from '@auth0/auth0-spa-js';
+import initializeAuth0Client from '@auth0/auth0-spa-js';
 import { writable, get } from 'svelte/store';
 
 export const isAuthenticated = writable(false);
@@ -12,7 +12,7 @@ async function createClient() {
 	
   console.log(import.meta.env.VITE_AUTH_DOMAIN);
   console.log(import.meta.env);
-  let auth0Client = await createAuth0Client({    
+  let auth0Client = await initializeAuth0Client({    
 		domain: import.meta.env.VITE_AUTH_DOMAIN,
 		client_id: import.meta.env.VITE_AUTH_CLIENT_ID,
 		audience: import.meta.env.VITE_AUTH_AUDIENCE,
@@ -20,6 +20,7 @@ async function createClient() {
 	});
 
 	client.set(auth0Client);
+	isAuthenticated.set(await get(client).isAuthenticated());
 	user.set(await get(client).getUser());
 }
 
