@@ -112,4 +112,14 @@ public class DataContext : DbContext
         var addedUserEntity = await Users.AddAsync(new UserDto(Guid.NewGuid(), authProviderId, DateTime.UtcNow));
         return UserId.New(addedUserEntity.Entity.Id);
     }
+
+    public async Task<bool> DeleteAccountAsync(Guid accountId, UserId userId)
+    {
+        var account = await Accounts.FirstOrDefaultAsync(_ => _.Id.Equals(accountId) && _.UserId.Equals(userId.Id));
+        if (account is null)
+            return false;
+        var removeResult = Accounts.Remove(account);
+        await SaveChangesAsync();
+        return removeResult.State == EntityState.Deleted;
+    }
 }

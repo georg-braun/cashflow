@@ -45,6 +45,8 @@ export async function sendPost(endpoint, data) {
     }
 }
 
+
+
 export async function getAccounts() {
     const config = {
         url: `${serverUrl}/api/GetAllAccounts`,
@@ -61,6 +63,12 @@ export async function getAccounts() {
 export async function addAccount() {
     await sendPost("AddAccount", {
         Name: "Cash"
+    });
+}
+
+export async function deleteAccount(accountId) {
+    await sendPost("DeleteAccount", {
+        AccountId: accountId
     });
 }
 

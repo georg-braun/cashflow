@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import auth from './auth-service';
-	import { getAccounts, addAccount, addIncome } from './budget-api-service';
+	import { getAccounts, addAccount, addIncome, deleteAccount } from './budget-api-service';
 
 	onMount(async () => {
 		await auth.createClient();
@@ -56,7 +56,10 @@
     <button on:click={async () => await addAccount()} >Add account</button>
 
     {#each accounts as account}
-      <p>{account.name} ({account.id})</p>
+      <div>{account.name} ({account.id})
+		<button on:click={async () => await deleteAccount(account.id)}>Delete account</button>
+	</div>
+
 	  <button on:click={async () => await addIncome(account.id, new Date(), 50.25)}>Add income</button>
     {/each}
   </div>

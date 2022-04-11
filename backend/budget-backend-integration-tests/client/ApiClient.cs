@@ -190,4 +190,16 @@ public class ApiClient
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 
+    public async Task<BudgetDataApiDto> DeleteAccount(Guid id)
+    {
+        var deleteAccountDto = new DeleteAccountDto()
+        {
+            AccountId = id
+        };
+        var json = JsonConvert.SerializeObject(deleteAccountDto);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(Routes.DeleteAccount, data);
+        var responseJson = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
+    }
 }

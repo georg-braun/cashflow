@@ -68,6 +68,7 @@ app.MapGet(Routes.GetAllAccounts, AccountEndpoints.GetAllAccounts);
 app.MapGet(Routes.GetAccountEntriesOfAccount, AccountEndpoints.GetAccountEntriesOfAccount);
 app.MapGet(Routes.GetSpendings, AccountEndpoints.GetSpendings);
 app.MapPost(Routes.AddIncome, AccountEndpoints.AddIncome);
+app.MapPost(Routes.DeleteAccount, AccountEndpoints.DeleteAccount);
 app.MapPost(Routes.AddSpending, AccountEndpoints.AddSpending);
 app.MapPost(Routes.AddAccount, AccountEndpoints.AddAccount);
 

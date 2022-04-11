@@ -117,4 +117,12 @@ public static class AccountEndpoints
             throw;
         }
     }
+
+    public static async Task<IResult> DeleteAccount(IAccountService accountService, IUserService userService, DeleteAccountDto deleteAccountDto,  ClaimsPrincipal claims)
+    {
+        var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
+        var accountIsDeleted = await accountService.DeleteAccountAsync(userId, deleteAccountDto.AccountId);
+        var budgetDataDto = new BudgetDataApiDto {};
+        return Results.Created("fillUrl", budgetDataDto);
+    }
 }
