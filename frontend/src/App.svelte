@@ -1,13 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
 	import auth from './auth-service';
-	import { getAccounts, addAccount, addIncome, deleteAccount } from './budget-api-service';
-	import {accountStore} from "./store"
+	import { getAccounts, addAccount, addIncome, deleteAccount, getAllData } from './budget-api-service';
+	import {accountStore, accountEntryStore} from "./store"
 
 	onMount(async () => {
 		await auth.createClient();
-
-		console.log(await auth.getAccessToken());
 	});
 
 	function login() {
@@ -48,10 +46,10 @@
 	</nav>
 	<div>
 		<button
-			on:click={async () => {
-				await getAccounts();
-			}}>Get accounts</button
-		>
+		on:click={async () => {
+			await getAllData();
+		}}>Get all</button
+	>
 		<button on:click={async () => await addAccount()}>Add account</button>
 
 		{#each $accountStore as account}
@@ -63,5 +61,11 @@
 			<button on:click={async () => await addIncome(account.id, new Date(), 50.25)}
 				>Add income</button>
 		{/each}
+		Account Entries
+		{#each $accountEntryStore as accountEntry}
+		<div>
+			{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
+		</div>
+	{/each}
 	</div>
 </main>

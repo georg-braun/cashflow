@@ -1,7 +1,10 @@
 import axios from "axios";
+import { get } from 'svelte/store';
+
 
 import auth from "./auth-service";
-import {accountStore} from "./store";
+import {accountStore, accountEntryStore} from "./store";
+
 
 const serverUrl = import.meta.env.VITE_BUDGET_API_SERVER
 
@@ -12,9 +15,6 @@ async function makeRequest(config) {
             ...config.headers,
             Authorization: `Bearer ${token}`,
         };
-
-        console.log(`initiate request`)
-        console.log(config)
 
         const response = axios.request(config);
         return response;
@@ -36,8 +36,6 @@ export async function sendPost(endpoint, data) {
                 Authorization: `Bearer ${token}`
             }
         }
-        console.log(`initiate request`)
-        console.log(config)
 
         const response = axios.post(`${serverUrl}/api/${endpoint}`, data, config);
         return response;
@@ -46,7 +44,21 @@ export async function sendPost(endpoint, data) {
     }
 }
 
+export async function getAllData() {
+    const config = {
+        url: `${serverUrl}/api/GetAll`,
+        method: "GET",
+        headers: {
+            "content-type": "application/json",
+        }
+    }
+    const response = await makeRequest(config);
+    accountStore.set(response.data.accounts);
+    accountEntryStore.set(response.data.accountEntries);
+    updateStore(accountStore, [], accountExtractAccountId);
+}
 
+const  accountExtractAccountId = (account) => account.id;
 
 export async function getAccounts() {
     const config = {
@@ -57,17 +69,16 @@ export async function getAccounts() {
         }
     }
 
-    console.log("Get all accounts");
     const response = await makeRequest(config);
-    console.log("Accounts:")
-    console.log(response.data);
     accountStore.set(response.data);
 }
 
 export async function addAccount() {
-    await sendPost("AddAccount", {
+    const response = await sendPost("AddAccount", {
         Name: "Cash"
     });
+    console.log(response.data.accounts);
+    updateStore(accountStore, response.data.accounts, accountExtractAccountId)
 }
 
 export async function deleteAccount(accountId) {
@@ -84,6 +95,31 @@ export async function addIncome(accountId, date, amount){
     };
     console.log(`AddIncome: ${data}`)
     await sendPost("AddIncome", data);
+}
+
+function updateStore(store, newData, getIdFunc){
+    try {
+        // handle existing data
+        const storeItems = get(store);
+        const itemsById = {};
+        storeItems.forEach(_ => {
+            let id = getIdFunc(_);
+            itemsById[id] = _
+        });
+
+        // update with new items
+        newData.forEach(_ => {
+            let id = getIdFunc(_);
+            itemsById[id] = _
+        });
+
+    
+        console.log(Object.values(itemsById));
+        accountStore.set(Object.values(itemsById));
+    } catch (error) {
+        console.log(error);
+    }
+   
 }
 
 
