@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import auth from "./auth-service";
+import {accountStore} from "./store";
 
 const serverUrl = import.meta.env.VITE_BUDGET_API_SERVER
 
@@ -57,7 +58,10 @@ export async function getAccounts() {
     }
 
     console.log("Get all accounts");
-    return makeRequest(config);
+    const response = await makeRequest(config);
+    console.log("Accounts:")
+    console.log(response.data);
+    accountStore.set(response.data);
 }
 
 export async function addAccount() {
