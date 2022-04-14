@@ -1,8 +1,15 @@
 <script>
 	import { onMount } from 'svelte';
 	import auth from './auth-service';
-	import { getAccounts, addAccount, addIncome, deleteAccount, getAllData } from './budget-api-service';
-	import {accountStore, accountEntryStore} from "./store"
+	import {
+		getAccounts,
+		addAccount,
+		addIncome,
+		deleteAccount,
+		getAllData
+	} from './budget-api-service';
+	import { accountStore, accountEntryStore } from './store';
+	import NewAccount from './components/new-account.svelte';
 
 	onMount(async () => {
 		await auth.createClient();
@@ -17,7 +24,6 @@
 	}
 
 	let { isAuthenticated, user } = auth;
-
 </script>
 
 <main>
@@ -45,13 +51,16 @@
 		</div>
 	</nav>
 	<div>
-		<button
-		on:click={async () => {
-			await getAllData();
-		}}>Get all</button
-	>
-		<button on:click={async () => await addAccount()}>Add account</button>
+		<div>
+			<button
+				on:click={async () => {
+					await getAllData();
+				}}>Get all data</button
+			>
+		</div>
 
+		<h1>Accounts</h1>
+		<NewAccount />
 		{#each $accountStore as account}
 			<div>
 				{account.name} ({account.id})
@@ -59,13 +68,16 @@
 			</div>
 
 			<button on:click={async () => await addIncome(account.id, new Date(), 50.25)}
-				>Add income</button>
+				>Add income</button
+			>
 		{/each}
-		Account Entries
-		{#each $accountEntryStore as accountEntry}
 		<div>
-			{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
+			<h1>Account Entries</h1>
+			{#each $accountEntryStore as accountEntry}
+				<div>
+					{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
+				</div>
+			{/each}
 		</div>
-	{/each}
 	</div>
 </main>
