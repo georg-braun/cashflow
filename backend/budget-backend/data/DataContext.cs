@@ -119,7 +119,8 @@ public class DataContext : DbContext
         if (account is null)
             return false;
         var removeResult = Accounts.Remove(account);
+        var hResult = removeResult.State == EntityState.Deleted; 
         await SaveChangesAsync();
-        return removeResult.State == EntityState.Deleted;
+        return hResult;
     }
 }

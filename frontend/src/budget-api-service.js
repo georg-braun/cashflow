@@ -55,7 +55,7 @@ export async function getAllData() {
     const response = await makeRequest(config);
     accountStore.set(response.data.accounts);
     accountEntryStore.set(response.data.accountEntries);
-    updateStore(accountStore, [], accountExtractAccountId);
+    updateStore(accountStore, [], accountExtractAccountId, []);
 }
 
 const  accountExtractAccountId = (account) => account.id;
@@ -78,13 +78,16 @@ export async function addAccount() {
         Name: "Cash"
     });
     console.log(response.data.accounts);
-    updateStore(accountStore, response.data.accounts, accountExtractAccountId)
+    updateStore(accountStore, response.data.accounts, accountExtractAccountId, [])
 }
 
 export async function deleteAccount(accountId) {
-    await sendPost("DeleteAccount", {
+    const response = await sendPost("DeleteAccount", {
         AccountId: accountId
     });
+
+    const deletedItemIds = response.data.deletedAccountIds;
+    updateStore(accountStore, [], accountExtractAccountId, deletedItemIds);
 }
 
 export async function addIncome(accountId, date, amount){
@@ -97,22 +100,26 @@ export async function addIncome(accountId, date, amount){
     await sendPost("AddIncome", data);
 }
 
-function updateStore(store, newData, getIdFunc){
+function updateStore(store, newItems, getNewItemFunc, deletedItemIds){
     try {
         // handle existing data
         const storeItems = get(store);
         const itemsById = {};
         storeItems.forEach(_ => {
-            let id = getIdFunc(_);
+            let id = getNewItemFunc(_);
             itemsById[id] = _
         });
 
-        // update with new items
-        newData.forEach(_ => {
-            let id = getIdFunc(_);
+        // update with new items        
+        newItems.forEach(_ => {
+            let id = getNewItemFunc(_);
             itemsById[id] = _
         });
 
+        // remove deletedItems
+        deletedItemIds.forEach(_ => {
+            delete itemsById[_];
+        })
     
         console.log(Object.values(itemsById));
         accountStore.set(Object.values(itemsById));

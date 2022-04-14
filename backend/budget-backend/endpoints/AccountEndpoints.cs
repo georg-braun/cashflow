@@ -122,7 +122,10 @@ public static class AccountEndpoints
     {
         var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
         var accountIsDeleted = await accountService.DeleteAccountAsync(userId, deleteAccountDto.AccountId);
-        var budgetDataDto = new BudgetDataApiDto {};
+
+        BudgetDataApiDto budgetDataDto;
+        budgetDataDto = accountIsDeleted ? new BudgetDataApiDto {DeletedAccountIds = new List<Guid>() {deleteAccountDto.AccountId}} : new BudgetDataApiDto();
+            
         return Results.Created("fillUrl", budgetDataDto);
     }
 }
