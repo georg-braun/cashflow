@@ -49,12 +49,13 @@ export async function getAllData() {
 		}
 	};
 	const response = await makeRequest(config);
-	accountStore.set(response.data.accounts);
-	accountEntryStore.set(response.data.accountEntries);
-	updateStore(accountStore, [], accountExtractAccountId, []);
+
+	updateStore(accountStore, response.data.accounts, accountExtractId, []);
+	updateStore(accountEntryStore, response.data.accountEntries, accountEntriersExtractId, []);
 }
 
-const accountExtractAccountId = (account) => account.id;
+const accountExtractId = (account) => account.id;
+const accountEntriersExtractId = (accountEntry) => accountEntry.id;
 
 export async function getAccounts() {
 	const config = {
@@ -74,7 +75,7 @@ export async function addAccount(name) {
 		Name: name
 	});
 	console.log(response.data.accounts);
-	updateStore(accountStore, response.data.accounts, accountExtractAccountId, []);
+	updateStore(accountStore, response.data.accounts, accountExtractId, []);
 }
 
 export async function deleteAccount(accountId) {
@@ -83,7 +84,7 @@ export async function deleteAccount(accountId) {
 	});
 
 	const deletedItemIds = response.data.deletedAccountIds;
-	updateStore(accountStore, [], accountExtractAccountId, deletedItemIds);
+	updateStore(accountStore, [], accountExtractId, deletedItemIds);
 }
 
 export async function addIncome(accountId, date, amount) {
@@ -93,7 +94,13 @@ export async function addIncome(accountId, date, amount) {
 		Amount: amount
 	};
 	console.log(`AddIncome: ${data}`);
-	await sendPost('AddIncome', data);
+	const response = await sendPost('AddIncome', data);
+	applyDataChanges(response.data);
+}
+
+function applyDataChanges(changes) {
+	updateStore(accountStore, changes.accounts, accountExtractId, changes.deletedAccountIds);
+	updateStore(accountEntryStore, changes.accountEntries, accountEntriersExtractId, []);
 }
 
 function updateStore(store, newItems, getNewItemFunc, deletedItemIds) {
@@ -118,7 +125,7 @@ function updateStore(store, newItems, getNewItemFunc, deletedItemIds) {
 		});
 
 		console.log(Object.values(itemsById));
-		accountStore.set(Object.values(itemsById));
+		store.set(Object.values(itemsById));
 	} catch (error) {
 		console.log(error);
 	}
