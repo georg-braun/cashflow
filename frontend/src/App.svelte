@@ -10,6 +10,7 @@
 	} from './budget-api-service';
 	import { accountStore, accountEntryStore } from './store';
 	import NewAccount from './components/new-account.svelte';
+	import NewIncome from './components/new-income.svelte';
 
 	onMount(async () => {
 		await auth.createClient();
@@ -32,8 +33,8 @@
 		<div>
 			<div>
 				{#if $isAuthenticated}
-					<span>&nbsp;&nbsp;{$user.name} ({$user.email})</span>
-				{:else}<span>&nbsp;</span>{/if}
+					<span>{$user.name} ({$user.email})</span>
+				{:else}<span>Not logged in</span>{/if}
 			</div>
 			<span>
 				<ul>
@@ -51,33 +52,32 @@
 		</div>
 	</nav>
 	<div>
-		<div>
-			<button
-				on:click={async () => {
-					await getAllData();
-				}}>Get all data</button
-			>
-		</div>
-
-		<h1>Accounts</h1>
-		<NewAccount />
-		{#each $accountStore as account}
+		{#if $isAuthenticated}
 			<div>
-				{account.name} ({account.id})
-				<button on:click={async () => await deleteAccount(account.id)}>Delete account</button>
+				<button
+					on:click={async () => {
+						await getAllData();
+					}}>Get all data</button
+				>
 			</div>
 
-			<button on:click={async () => await addIncome(account.id, new Date(), 50.25)}
-				>Add income</button
-			>
-		{/each}
-		<div>
-			<h1>Account Entries</h1>
-			{#each $accountEntryStore as accountEntry}
+			<h1>Accounts</h1>
+			<NewAccount />
+			{#each $accountStore as account}
 				<div>
-					{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
+					{account.name} ({account.id})
+					<button on:click={async () => await deleteAccount(account.id)}>Delete account</button>
 				</div>
 			{/each}
-		</div>
+			<div>
+				<h1>Account Entries</h1>
+				<NewIncome />
+				{#each $accountEntryStore as accountEntry}
+					<div>
+						{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
+					</div>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </main>
