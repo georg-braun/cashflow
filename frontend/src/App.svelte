@@ -13,7 +13,9 @@
 	import NewIncome from './components/new-income.svelte';
 
 	onMount(async () => {
+		console.log('Mounting app');
 		await auth.createClient();
+		await getAllData();
 	});
 
 	function login() {
