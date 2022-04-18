@@ -9,8 +9,12 @@ public static class Routes
     public const string GetAllBudgetaryItems = $"{Base}{Version}/GetAllBudgetaryItems";
     public const string GetSpendings = $"{Base}{Version}/GetSpendings";
     public const string AddAccount = $"{Base}{Version}/AddAccount";
-    public const string DeleteAccount = $"{Base}{Version}/DeleteAccount";
     public const string AddBudgetaryItem = $"{Base}{Version}/AddBudgetaryItem";
+    
+    public const string DeleteAccount = $"{Base}{Version}/DeleteAccount";
+    public const string DeleteAccountEntry = $"{Base}{Version}/DeleteAccountEntry";
+    
+    
     public const string AddIncome = $"{Base}{Version}/AddIncome";
     public const string AddSpending = $"{Base}{Version}/AddSpending";
     public const string SetBudgetEntry = $"{Base}{Version}/SetBudgetEntry";

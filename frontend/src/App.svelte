@@ -6,7 +6,8 @@
 		addAccount,
 		addIncome,
 		deleteAccount,
-		getAllData
+		getAllData,
+		deleteAccountEntry
 	} from './budget-api-service';
 	import { accountStore, accountEntryStore } from './store';
 	import NewAccount from './components/new-account.svelte';
@@ -77,6 +78,7 @@
 				{#each $accountEntryStore as accountEntry}
 					<div>
 						{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
+						<button on:click={async () => await deleteAccountEntry(accountEntry.id)}>Delete</button>
 					</div>
 				{/each}
 			</div>

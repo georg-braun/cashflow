@@ -123,4 +123,15 @@ public class DataContext : DbContext
         await SaveChangesAsync();
         return hResult;
     }
+
+    public async Task<bool> DeleteAccountEntryAsync(Guid accountEntryId, UserId userId)
+    {
+        var accountEntry = await AccountEntries.FirstOrDefaultAsync(_ => _.Id.Equals(accountEntryId) && _.UserId.Equals(userId.Id));
+        if (accountEntry is null)
+            return false;
+        var removeResult = AccountEntries.Remove(accountEntry);
+        var hResult = removeResult.State == EntityState.Deleted; 
+        await SaveChangesAsync();
+        return hResult;
+    }
 }

@@ -86,6 +86,14 @@ export async function deleteAccount(accountId) {
 	updateStore(accountStore, [], accountExtractId, deletedItemIds);
 }
 
+export async function deleteAccountEntry(accountEntryId) {
+	const response = await sendPost('DeleteAccountEntry', {
+		AccountEntryId: accountEntryId
+	});
+
+	applyDataChanges(response.data);
+}
+
 export async function addIncome(accountId, date, amount) {
 	const data = {
 		AccountId: accountId,
@@ -98,7 +106,12 @@ export async function addIncome(accountId, date, amount) {
 
 function applyDataChanges(changes) {
 	updateStore(accountStore, changes.accounts, accountExtractId, changes.deletedAccountIds);
-	updateStore(accountEntryStore, changes.accountEntries, accountEntriersExtractId, []);
+	updateStore(
+		accountEntryStore,
+		changes.accountEntries,
+		accountEntriersExtractId,
+		changes.deletedAccountEntryIds
+	);
 }
 
 function updateStore(store, newItems, getNewItemFunc, deletedItemIds) {

@@ -127,5 +127,16 @@ public static class AccountEndpoints
         budgetDataDto = accountIsDeleted ? new BudgetDataApiDto {DeletedAccountIds = new List<Guid>() {deleteAccountDto.AccountId}} : new BudgetDataApiDto();
             
         return Results.Created("fillUrl", budgetDataDto);
+    }    
+    
+    public static async Task<IResult> DeleteAccountEntry(IAccountService accountService, IUserService userService, DeleteAccountEntryDto deleteAccountEntry,  ClaimsPrincipal claims)
+    {
+        var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
+        var accountEntryIsDeleted = await accountService.DeleteAccountEntryAsync(userId, deleteAccountEntry.AccountEntryId);
+
+        BudgetDataApiDto budgetDataDto;
+        budgetDataDto = accountEntryIsDeleted ? new BudgetDataApiDto {DeletedAccountEntryIds = new List<Guid>() {deleteAccountEntry.AccountEntryId}} : new BudgetDataApiDto();
+            
+        return Results.Created("fillUrl", budgetDataDto);
     }
 }
