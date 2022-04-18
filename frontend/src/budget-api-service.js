@@ -74,7 +74,6 @@ export async function addAccount(name) {
 	const response = await sendPost('AddAccount', {
 		Name: name
 	});
-	console.log(response.data.accounts);
 	updateStore(accountStore, response.data.accounts, accountExtractId, []);
 }
 
@@ -93,7 +92,6 @@ export async function addIncome(accountId, date, amount) {
 		Date: date,
 		Amount: amount
 	};
-	console.log(`AddIncome: ${data}`);
 	const response = await sendPost('AddIncome', data);
 	applyDataChanges(response.data);
 }
@@ -124,7 +122,6 @@ function updateStore(store, newItems, getNewItemFunc, deletedItemIds) {
 			delete itemsById[_];
 		});
 
-		console.log(Object.values(itemsById));
 		store.set(Object.values(itemsById));
 	} catch (error) {
 		console.log(error);
