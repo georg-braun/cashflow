@@ -74,8 +74,8 @@ app.MapPost(Routes.AddAccount, AccountEndpoints.AddAccount);
 app.MapPost(Routes.DeleteAccount, AccountEndpoints.DeleteAccount);
 app.MapPost(Routes.DeleteAccountEntry, AccountEndpoints.DeleteAccountEntry);
 
-
 app.MapPost(Routes.AddBudgetaryItem, BudgetEndpoints.AddBudgetaryItem);
+app.MapPost(Routes.DeleteBudgetryItem, AccountEndpoints.DeleteBudgetaryItem);
 app.MapGet(Routes.GetAllBudgetaryItems, BudgetEndpoints.GetAllBudgetaryItems);
 app.MapGet(Routes.GetBudgetChanges, BudgetEndpoints.GetBudgetChanges);
 app.MapPost(Routes.SetBudgetEntry, BudgetEndpoints.AddBudgetEntry);

@@ -105,7 +105,7 @@ public static class AccountEndpoints
             {
                 Accounts = accountDtos.ToList(),
                 AccountEntries = accountEntryDtos.ToList(),
-                BudgetaryItem = budgetaryItemDtos.ToList(),
+                BudgetaryItems = budgetaryItemDtos.ToList(),
                 BudgetEntries = budgetEntries.ToList(),
                 Spendings = spendings.ToList()
             };
@@ -127,8 +127,19 @@ public static class AccountEndpoints
         budgetDataDto = accountIsDeleted ? new BudgetDataApiDto {DeletedAccountIds = new List<Guid>() {deleteAccountDto.AccountId}} : new BudgetDataApiDto();
             
         return Results.Created("fillUrl", budgetDataDto);
-    }    
+    }  
     
+    public static async Task<IResult> DeleteBudgetaryItem(IAccountService accountService, IUserService userService, DeleteBudgetaryItemCommand deleteBudgetaryItem,  ClaimsPrincipal claims)
+    {
+        var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
+        var budgetaryItemIsDeleted = await accountService.DeleteBudgetaryItemAsync(deleteBudgetaryItem.BudgetaryItemId, userId);
+
+        BudgetDataApiDto budgetDataDto;
+        budgetDataDto = budgetaryItemIsDeleted ? new BudgetDataApiDto {DeletedBudgetaryItemIds = new List<Guid>() {deleteBudgetaryItem.BudgetaryItemId}} : new BudgetDataApiDto();
+            
+        return Results.Created("fillUrl", budgetDataDto);
+    }
+
     public static async Task<IResult> DeleteAccountEntry(IAccountService accountService, IUserService userService, DeleteAccountEntryDto deleteAccountEntry,  ClaimsPrincipal claims)
     {
         var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));

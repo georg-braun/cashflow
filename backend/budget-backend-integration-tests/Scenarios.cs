@@ -22,8 +22,8 @@ public class Scenarios
         var cashAccountId = (await client.AddAccountAsync("Cash")).Accounts.First().Id;
         
         // add budgetary item
-        var bicycleBudgetId = (await client.AddBudgetaryItemAsync("Bicycle")).BudgetaryItem.First().Id;
-        var groceriesBudgetId = (await client.AddBudgetaryItemAsync("Groceries")).BudgetaryItem.First().Id;
+        var bicycleBudgetId = (await client.AddBudgetaryItemAsync("Bicycle")).BudgetaryItems.First().Id;
+        var groceriesBudgetId = (await client.AddBudgetaryItemAsync("Groceries")).BudgetaryItems.First().Id;
         
         // bicycle budget
         await client.AddBudgetEntry(bicycleBudgetId, new DateTime(2022,3,1), 50);

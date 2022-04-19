@@ -134,4 +134,15 @@ public class DataContext : DbContext
         await SaveChangesAsync();
         return hResult;
     }
+
+    public async Task<bool> DeleteBudgetaryItemAsync(Guid budgetaryItemId, UserId userId)
+    {
+        var budgetaryItem = await BudgetaryItems.FirstOrDefaultAsync(_ => _.Id.Equals(budgetaryItemId) && _.UserId.Equals(userId.Id));
+        if (budgetaryItem is null)
+            return false;
+        var removeResult = BudgetaryItems.Remove(budgetaryItem);
+        var hResult = removeResult.State == EntityState.Deleted; 
+        await SaveChangesAsync();
+        return hResult;
+    }
 }

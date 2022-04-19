@@ -7,11 +7,13 @@
 		addIncome,
 		deleteAccount,
 		getAllData,
-		deleteAccountEntry
+		deleteAccountEntry,
+deleteBudgetaryItem
 	} from './budget-api-service';
-	import { accountStore, accountEntryStore } from './store';
+	import { accountStore, accountEntryStore, budgetaryItemStore } from './store';
 	import NewAccount from './components/new-account.svelte';
 	import NewIncome from './components/new-income.svelte';
+import NewBudget from './components/new-budget.svelte';
 
 	onMount(async () => {
 		console.log('Mounting app');
@@ -79,6 +81,16 @@
 					<div>
 						{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
 						<button on:click={async () => await deleteAccountEntry(accountEntry.id)}>Delete</button>
+					</div>
+				{/each}
+			</div>
+			<div>
+				<h1>Budgets</h1>
+				<NewBudget />
+				{#each $budgetaryItemStore as budgetaryItem}
+					<div>
+						{budgetaryItem.id} - {budgetaryItem.name}
+						<button on:click={async () => await deleteBudgetaryItem(budgetaryItem.id)}>Delete</button>
 					</div>
 				{/each}
 			</div>

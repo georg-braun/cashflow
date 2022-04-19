@@ -2,7 +2,7 @@ import axios from 'axios';
 import { get } from 'svelte/store';
 
 import auth from './auth-service';
-import { accountStore, accountEntryStore } from './store';
+import { accountStore, accountEntryStore, budgetaryItemStore } from './store';
 
 const serverUrl = import.meta.env.VITE_BUDGET_API_SERVER;
 
@@ -51,11 +51,13 @@ export async function getAllData() {
 	const response = await makeRequest(config);
 
 	updateStore(accountStore, response.data.accounts, accountExtractId, []);
-	updateStore(accountEntryStore, response.data.accountEntries, accountEntriersExtractId, []);
+	updateStore(accountEntryStore, response.data.accountEntries, accountEntriesExtractId, []);
+	updateStore(budgetaryItemStore, response.data.budgetaryItems, budgetaryItemExtractId, []);
 }
 
 const accountExtractId = (account) => account.id;
-const accountEntriersExtractId = (accountEntry) => accountEntry.id;
+const accountEntriesExtractId = (accountEntry) => accountEntry.id;
+const budgetaryItemExtractId = (budgetaryItem) => budgetaryItem.id;
 
 export async function getAccounts() {
 	const config = {
@@ -86,6 +88,23 @@ export async function deleteAccount(accountId) {
 	updateStore(accountStore, [], accountExtractId, deletedItemIds);
 }
 
+
+export async function addBudgetaryItem(name) {
+	const response = await sendPost('AddBudgetaryItem', {
+		Name: name
+	});
+	updateStore(budgetaryItemStore, response.data.budgetaryItems, budgetaryItemExtractId, []);
+}
+
+export async function deleteBudgetaryItem(budgetaryItemId) {
+	const response = await sendPost('DeleteBudgetaryItem', {
+		BudgetaryItemId: budgetaryItemId
+	});
+
+	const deletedItemIds = response.data.deletedBudgetaryItemIds;
+	updateStore(budgetaryItemStore, response.data.budgetaryItems, accountExtractId, deletedItemIds);
+}
+
 export async function deleteAccountEntry(accountEntryId) {
 	const response = await sendPost('DeleteAccountEntry', {
 		AccountEntryId: accountEntryId
@@ -109,7 +128,7 @@ function applyDataChanges(changes) {
 	updateStore(
 		accountEntryStore,
 		changes.accountEntries,
-		accountEntriersExtractId,
+		accountEntriesExtractId,
 		changes.deletedAccountEntryIds
 	);
 }

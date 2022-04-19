@@ -16,7 +16,7 @@ public static class BudgetEndpoints
     {
         var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
         var budgetaryItem = await accountService.AddBudgetaryItemAsync(newBudgetaryItemDto.Name, userId);
-        var budgetDataDto = new BudgetDataApiDto {BudgetaryItem = new[] {budgetaryItem.ToApiDto()}};
+        var budgetDataDto = new BudgetDataApiDto {BudgetaryItems = new[] {budgetaryItem.ToApiDto()}};
         return Results.Created("fillUrl", budgetDataDto);
     }
 

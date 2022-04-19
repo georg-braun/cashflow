@@ -29,6 +29,7 @@ public interface IAccountService
     Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId, UserId userId);
     Task<bool> DeleteAccountAsync(UserId userId, Guid accountId);
     Task<bool> DeleteAccountEntryAsync(UserId userId, Guid accountEntryId);
+    Task<bool> DeleteBudgetaryItemAsync(Guid budgetaryItemId, UserId userId);
 }
 
 /// <summary>
@@ -122,6 +123,11 @@ public class AccountService : IAccountService
     public Task<bool> DeleteAccountAsync(UserId userId, Guid accountId)
     {
         return _dataContext.DeleteAccountAsync(accountId, userId);
+    }
+    
+    public Task<bool> DeleteBudgetaryItemAsync(Guid budgetaryItemId, UserId userId)
+    {
+        return _dataContext.DeleteBudgetaryItemAsync(budgetaryItemId, userId);
     }
 
     public Task<bool> DeleteAccountEntryAsync(UserId userId, Guid accountEntryId)

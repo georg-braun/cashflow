@@ -16,7 +16,7 @@ public class AccountApiTests
         // Arrange + Act
         var client = new ApiClient();
         var addBudgetaryItemResult = await client.AddBudgetaryItemAsync( "groceries");
-        var budgetaryItem = addBudgetaryItemResult.BudgetaryItem.First();
+        var budgetaryItem = addBudgetaryItemResult.BudgetaryItems.First();
         
         await client.AddBudgetEntry( budgetaryItem.Id, new DateTime(2022, 2, 1), 500.50);
         await client.AddBudgetEntry( budgetaryItem.Id, new DateTime(2022, 3, 1), 500.50);
@@ -37,7 +37,7 @@ public class AccountApiTests
         var account = changedData.Accounts.First();
         
         var addBudgetaryItemResult = await client.AddBudgetaryItemAsync( "groceries");
-        var groceriesBudgetaryItem = addBudgetaryItemResult.BudgetaryItem.First();
+        var groceriesBudgetaryItem = addBudgetaryItemResult.BudgetaryItems.First();
         
         await client.AddBudgetEntry( groceriesBudgetaryItem.Id, new DateTime(2022, 2, 1), 500);
         await client.AddBudgetEntry( groceriesBudgetaryItem.Id, new DateTime(2022, 3, 1), 500);
@@ -70,14 +70,14 @@ public class AccountApiTests
         var addIncomeResult = await client.AddIncomeAsync(account.Id, 50.50, DateTime.Today);
         
         var addBudgetaryItemResult = await client.AddBudgetaryItemAsync( "groceries");
-        var budgetaryItem = addBudgetaryItemResult.BudgetaryItem.First();
+        var budgetaryItem = addBudgetaryItemResult.BudgetaryItems.First();
         
         var budgetEntryResult = await client.AddBudgetEntry( budgetaryItem.Id, new DateTime(2022, 2, 1), 500.50);
         var addSpendingResult = await client.AddSpendingAsync(account.Id, budgetaryItem.Id, -50, new DateTime(2022,2,1));
         
         // Assert
         addIncomeResult.AccountEntries.Should().Contain(_ => _.Amount.Equals(50.50));
-        addBudgetaryItemResult.BudgetaryItem.Should().Contain(_ => _.Name.Equals("groceries"));
+        addBudgetaryItemResult.BudgetaryItems.Should().Contain(_ => _.Name.Equals("groceries"));
         budgetEntryResult.BudgetEntries.Should().Contain(_ => _.Month.Month.Equals(2) && _.Amount.Equals(500.50));
         addSpendingResult.Spendings.Should().Contain(_ =>
             _.BudgetaryItemId.Equals(budgetaryItem.Id) &&
