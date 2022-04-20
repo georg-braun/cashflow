@@ -1,8 +1,9 @@
 <script>
 	import { addIncome } from '../budget-api-service';
-	import { accountStore } from '../store';
+	import { accountStore, budgetaryItemStore } from '../store';
 
 	let selectedAccount;
+	let selectedBudgetaryItem;
 	let date = '2022-04-15';
 	let amount = 0;
 	let note = '';
@@ -14,6 +15,16 @@
 		{#each $accountStore as account}
 			<option value={account}>
 				{account.name}
+			</option>
+		{/each}
+	</select>
+</div>
+<div>
+	Budget:
+	<select bind:value={selectedBudgetaryItem}>
+		{#each $budgetaryItemStore as budgetaryItem}
+			<option value={budgetaryItem}>
+				{budgetaryItem.name}
 			</option>
 		{/each}
 	</select>

@@ -12,7 +12,7 @@ deleteBudgetaryItem
 	} from './budget-api-service';
 	import { accountStore, accountEntryStore, budgetaryItemStore } from './store';
 	import NewAccount from './components/new-account.svelte';
-	import NewIncome from './components/new-income.svelte';
+	import NewMoneyMovement from './components/new-money-movement.svelte';
 import NewBudget from './components/new-budget.svelte';
 
 	onMount(async () => {
@@ -76,7 +76,7 @@ import NewBudget from './components/new-budget.svelte';
 			{/each}
 			<div>
 				<h1>Account Entries</h1>
-				<NewIncome />
+				<NewMoneyMovement />
 				{#each $accountEntryStore as accountEntry}
 					<div>
 						{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
