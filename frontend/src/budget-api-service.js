@@ -33,8 +33,14 @@ export async function sendPost(endpoint, data) {
 			}
 		};
 
-		const response = axios.post(`${serverUrl}/api/${endpoint}`, data, config);
+		try {
+			const response = await axios.post(`${serverUrl}/api/${endpoint}`, data, config);
 		return response;
+		} catch (error) {
+			console.log(`${error.response.status}: ${error.response.data}`);
+			return error.response;
+		}
+
 	} catch (error) {
 		console.log(error);
 	}
@@ -121,7 +127,8 @@ export async function addAccountEntry(accountId, budgetaryItemId, date, amount, 
 		Note: note
 	};
 	const response = await sendPost('AddAccountEntry', data);
-	applyDataChanges(response.data);
+	if (response.status === 201)
+		applyDataChanges(response.data);
 }
 
 function applyDataChanges(changes) {
