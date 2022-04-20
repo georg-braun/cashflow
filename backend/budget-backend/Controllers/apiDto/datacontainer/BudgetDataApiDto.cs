@@ -15,7 +15,4 @@ public record BudgetDataApiDto
     
     
     public ICollection<Guid> DeletedBudgetEntryIds { get; init; } = new List<Guid>();
-    public ICollection<SpendingDto> Spendings { get; init; } = new List<SpendingDto>();
-
-    
 }

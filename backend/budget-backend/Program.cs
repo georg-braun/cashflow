@@ -64,14 +64,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet(Routes.GetAll, AccountEndpoints.GetAll);
-app.MapGet(Routes.GetAllAccounts, AccountEndpoints.GetAllAccounts);
-app.MapGet(Routes.GetAccountEntriesOfAccount, AccountEndpoints.GetAccountEntriesOfAccount);
-app.MapGet(Routes.GetSpendings, AccountEndpoints.GetSpendings);
-app.MapPost(Routes.AddIncome, AccountEndpoints.AddIncome);
-app.MapPost(Routes.AddSpending, AccountEndpoints.AddSpending);
-app.MapPost(Routes.AddAccount, AccountEndpoints.AddAccount);
 
+
+app.MapGet(Routes.GetAllAccounts, AccountEndpoints.GetAllAccounts);
+app.MapPost(Routes.AddAccount, AccountEndpoints.AddAccount);
 app.MapPost(Routes.DeleteAccount, AccountEndpoints.DeleteAccount);
+
+app.MapPost(Routes.AddAccountEntry, AccountEndpoints.AddAccountEntry);
+app.MapGet(Routes.GetAccountEntriesOfAccount, AccountEndpoints.GetAccountEntriesOfAccount);
 app.MapPost(Routes.DeleteAccountEntry, AccountEndpoints.DeleteAccountEntry);
 
 app.MapPost(Routes.AddBudgetaryItem, BudgetEndpoints.AddBudgetaryItem);

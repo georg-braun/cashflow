@@ -17,8 +17,8 @@ public class BudgetApiTests
         var client = new ApiClient();
         await client.AddAccountAsync("cash");
         var account = (await client.GetAllAccountsAsync()).First();
-        await client.AddIncomeAsync(account.Id, 49.50, DateTime.Today);
-        await client.AddIncomeAsync(account.Id, 50.50, DateTime.Today);
+        await client.AddAccountEntryAsync(account.Id, 49.50, DateTime.Today);
+        await client.AddAccountEntryAsync(account.Id, 50.50, DateTime.Today);
         
         await client.AddBudgetaryItemAsync("car insurance");
         var budgetaryItem = (await client.GetAllBudgetaryItemsAsync()).First();

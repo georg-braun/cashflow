@@ -26,18 +26,18 @@ public static class AccountEndpoints
         return accountEntries.Select(_ => _.ToApiDto());
     }
 
-    public static async Task<IEnumerable<SpendingDto>> GetSpendings(IAccountService accountService, IUserService userService, ClaimsPrincipal claims)
+    public static async Task<IResult> AddAccountEntry(IAccountService accountService, IUserService userService, ClaimsPrincipal claims, AddAccountEntryCommand command)
     {
-        var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
-        var spendings = accountService.GetSpendings(userId);
-        return spendings.Select(_ => _.ToApiDto());
-    }
+        var amount = command.Amount;
+        var budgetaryItemId = command.BudgetaryItemId;
 
-    public static async Task<IResult> AddIncome(IAccountService accountService, IUserService userService, ClaimsPrincipal claims, AddIncomeDto addIncomeDto)
-    {
+        if (amount >= 0.0 && budgetaryItemId != Guid.Empty)
+            return Results.UnprocessableEntity(
+                "Positive amount can't be associated with a budgetary item. A spending has a negative value");
+        
         var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
-        var date = new DateOnly(addIncomeDto.Date.Year, addIncomeDto.Date.Month, addIncomeDto.Date.Day);
-        var accountEntry = await accountService.AddIncomeAsync(AccountIdFactory.Create(addIncomeDto.AccountId), addIncomeDto.Amount, date, userId);
+        var date = new DateOnly(command.Date.Year, command.Date.Month, command.Date.Day);
+        var accountEntry = await accountService.AddAccountEntryAsync(AccountIdFactory.Create(command.AccountId), command.Amount, date, userId, BudgetaryItemIdFactory.Create(command.BudgetaryItemId));
         if (accountEntry != null)
         {
             var budgetDataDto = new BudgetDataApiDto {AccountEntries = new[] {accountEntry.ToApiDto()}};
@@ -45,26 +45,6 @@ public static class AccountEndpoints
         }
 
         return Results.UnprocessableEntity();
-    }
-    
-    public static async Task<IResult> AddSpending(IAccountService accountService, IUserService userService, AddSpending addSpendingDto, ClaimsPrincipal claims)
-    {
-        var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
-        var date = new DateOnly(addSpendingDto.Date.Year, addSpendingDto.Date.Month, addSpendingDto.Date.Day);
-        var accountId = AccountIdFactory.Create(addSpendingDto.AccountId);
-        var budgetaryItemId = BudgetaryItemIdFactory.Create(addSpendingDto.BudgetaryItemId);
-        var spending = await accountService.AddSpendingAsync(accountId, budgetaryItemId, addSpendingDto.Amount, date, userId);
-
-        if (spending is null)
-            return Results.UnprocessableEntity();
-        
-        var accountEntry = await accountService.GetAccountEntryAsync(spending.AccountEntryId, userId);
-        
-        var budgetDataDto = new BudgetDataApiDto {Spendings = new[] {spending.ToApiDto()}};
-        if (accountEntry is not null)
-            budgetDataDto.AccountEntries.Add(accountEntry.ToApiDto());
-        
-        return Results.Created("fillUrl", budgetDataDto);
     }
     
     public static async Task<IResult> AddAccount(IAccountService accountService, IUserService userService, AddNewAccountDto addNewAccountDto,  ClaimsPrincipal claims)
@@ -89,8 +69,7 @@ public static class AccountEndpoints
 
             var budgetaryItemDtos = new List<BudgetaryItemDto>();
             var budgetEntries = new List<BudgetEntryApiDto>();
-            var spendings = new List<SpendingDto>();
-            
+
             if (budgetaryItems != null)
             {
                 budgetaryItemDtos.AddRange(budgetaryItems.Select(_ => _.ToApiDto()));
@@ -99,15 +78,12 @@ public static class AccountEndpoints
                 budgetEntries.AddRange(budgetChanges);
             }
 
-            spendings.AddRange(accountService.GetSpendings(userId).Select(_ => _.ToApiDto()));
-
             var budgetDataDto = new BudgetDataApiDto
             {
                 Accounts = accountDtos.ToList(),
                 AccountEntries = accountEntryDtos.ToList(),
                 BudgetaryItems = budgetaryItemDtos.ToList(),
                 BudgetEntries = budgetEntries.ToList(),
-                Spendings = spendings.ToList()
             };
             return Results.Ok(budgetDataDto);
         }

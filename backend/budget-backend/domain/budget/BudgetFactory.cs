@@ -15,8 +15,4 @@ public static class BudgetFactory
         var id = BudgetEntryIdFactory.Create(Guid.NewGuid());
         return new BudgetEntry(id, budgetaryItemId, today, amount);
     }
-    public static Spending CreateSpending(AccountId accountId, AccountEntryId accountEntryId, BudgetaryItemId budgetaryItemId)
-    {
-        return new Spending(accountId, accountEntryId, budgetaryItemId);
-    }
 }

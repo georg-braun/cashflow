@@ -13,13 +13,7 @@ public class DataContext : DbContext
     public DataContext(DbContextOptions options) : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // Spending composite primary key
-        modelBuilder.Entity<SpendingDto>().HasKey(item => new {item.AccountEntryId, item.BudgetaryItemId});
-    }
-
+    
     private DbSet<UserDto> Users { get; set; } = null!;
     private DbSet<AccountDto> Accounts { get; set; } = null!;
     private DbSet<AccountEntryDto> AccountEntries { get; set; } = null!;
@@ -27,8 +21,6 @@ public class DataContext : DbContext
     private DbSet<AccountTransactionDto> AccountTransactions { get; set; } = null!;
     private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; } = null!;
     private DbSet<BudgetEntryDto> BudgetEntries { get; set; } = null!;
-    private DbSet<SpendingDto> Spendings { get; set; } = null!;
-
 
     public async Task AddAccountAsync(Account account, UserId userId)
     {
@@ -41,16 +33,6 @@ public class DataContext : DbContext
     {
         var accountEntryDto = accountEntry.ToDbDto(userId);
         await AccountEntries.AddAsync(accountEntryDto);
-        await SaveChangesAsync();
-    }
-
-    public async Task AddSpendingAsync(AccountEntry accountEntry, Spending spending, UserId userId)
-    {
-        var accountEntryDto = accountEntry.ToDbDto(userId);
-        
-        await AccountEntries.AddAsync(accountEntryDto);
-        var spendingDto = spending.ToDbDto(userId);
-        await Spendings.AddAsync(spendingDto);
         await SaveChangesAsync();
     }
 
@@ -83,8 +65,6 @@ public class DataContext : DbContext
         var accountEntryDtos = AccountEntries.Where(_ => _.UserId.Equals(userId.Id) && _.AccountId.Equals(accountId.Id));
         return accountEntryDtos.Select(_ => _.ToDomain());
     }
-
-    public IEnumerable<Spending> GetSpendings(UserId userId) => Spendings.Where(_ => _.UserId.Equals(userId.Id)).Select(_ => _.ToDomain());
 
     public async Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId accountEntryId, UserId userId)
     {

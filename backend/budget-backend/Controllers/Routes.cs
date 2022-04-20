@@ -7,8 +7,7 @@ public static class Routes
     
     public const string GetAllAccounts = $"{Base}{Version}/GetAllAccounts";
     public const string GetAllBudgetaryItems = $"{Base}{Version}/GetAllBudgetaryItems";
-    public const string GetSpendings = $"{Base}{Version}/GetSpendings";
-
+    
     public const string AddAccount = $"{Base}{Version}/AddAccount";
     public const string DeleteAccount = $"{Base}{Version}/DeleteAccount";
     
@@ -18,8 +17,7 @@ public static class Routes
     public const string DeleteBudgetryItem = $"{Base}{Version}/DeleteBudgetaryItem";
     
     
-    public const string AddIncome = $"{Base}{Version}/AddIncome";
-    public const string AddSpending = $"{Base}{Version}/AddSpending";
+    public const string AddAccountEntry = $"{Base}{Version}/AddAccountEntry";
     public const string SetBudgetEntry = $"{Base}{Version}/SetBudgetEntry";
     public const string GetAccountEntriesOfAccountBase = $"{Base}{Version}/GetAccountEntriesOfAccount";
     public const string GetAccountEntriesOfAccount = GetAccountEntriesOfAccountBase + "/{accountId}";

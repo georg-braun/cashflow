@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using budget_backend.application;
 using budget_backend.domain;
 using budget_backend.domain.account;
+using budget_backend.domain.budget;
 
 namespace budget_backend.data.dbDto;
 
@@ -15,6 +16,8 @@ public class AccountEntryDto
     public DateOnly Timestamp { get; init;}
     
     public Guid AccountId { get; init; }
+    
+    public Guid BudgetaryItemId { get; init; }
     public Guid UserId { get; init; }
 }
 
@@ -26,6 +29,7 @@ public static class AccountEntryDtoExtensions
         {
             Id = accountEntry.Id.Id,
             AccountId = accountEntry.AccountId.Id,
+            BudgetaryItemId = accountEntry.BudgetaryItemId.Id,
             Amount = accountEntry.Amount,
             Timestamp = accountEntry.Date,
             UserId = userId.Id
@@ -34,6 +38,6 @@ public static class AccountEntryDtoExtensions
 
     public static AccountEntry ToDomain(this AccountEntryDto accountEntryDto)
     {
-        return new AccountEntry(new AccountEntryId(){Id = accountEntryDto.Id}, AccountIdFactory.Create(accountEntryDto.AccountId), accountEntryDto.Amount, accountEntryDto.Timestamp);
+        return new AccountEntry(new AccountEntryId(){Id = accountEntryDto.Id}, AccountIdFactory.Create(accountEntryDto.AccountId), accountEntryDto.Amount, accountEntryDto.Timestamp, BudgetaryItemIdFactory.Create(accountEntryDto.BudgetaryItemId));
     }
 }

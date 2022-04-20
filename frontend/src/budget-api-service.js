@@ -88,7 +88,6 @@ export async function deleteAccount(accountId) {
 	updateStore(accountStore, [], accountExtractId, deletedItemIds);
 }
 
-
 export async function addBudgetaryItem(name) {
 	const response = await sendPost('AddBudgetaryItem', {
 		Name: name
@@ -113,13 +112,15 @@ export async function deleteAccountEntry(accountEntryId) {
 	applyDataChanges(response.data);
 }
 
-export async function addIncome(accountId, date, amount) {
+export async function addAccountEntry(accountId, budgetaryItemId, date, amount, note) {
 	const data = {
 		AccountId: accountId,
+		BudgetaryItemId: budgetaryItemId,
 		Date: date,
-		Amount: amount
+		Amount: amount,
+		Note: note
 	};
-	const response = await sendPost('AddIncome', data);
+	const response = await sendPost('AddAccountEntry', data);
 	applyDataChanges(response.data);
 }
 

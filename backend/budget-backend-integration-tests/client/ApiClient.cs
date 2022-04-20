@@ -7,6 +7,7 @@ using budget_backend.Controllers;
 using budget_backend.Controllers.apiDto;
 using budget_backend.Controllers.apiDto.commands;
 using budget_backend.Controllers.apiDto.datacontainer;
+using budget_backend.domain.budget;
 using Newtonsoft.Json;
 
 namespace budget_backend_integration_tests.backend;
@@ -57,18 +58,22 @@ public class ApiClient
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }
 
-    public async Task<BudgetDataApiDto> AddIncomeAsync(Guid accountId, double amount, DateTime date)
+    public Task<BudgetDataApiDto> AddAccountEntryAsync(Guid accountId, double amount, DateTime date)
+        => AddAccountEntryAsync(accountId, amount, date, Guid.Empty);
+    
+    public async Task<BudgetDataApiDto> AddAccountEntryAsync(Guid accountId, double amount, DateTime date, Guid budgetaryItemId)
     {
-        var income = new AddIncomeDto()
+        var income = new AddAccountEntryCommand()
         {
             AccountId = accountId,
             Amount = amount,
-            Date = date
+            Date = date,
+            BudgetaryItemId = budgetaryItemId
         };
         var json = JsonConvert.SerializeObject(income);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await client.PostAsync(Routes.AddIncome, data);
+        var response = await client.PostAsync(Routes.AddAccountEntry, data);
         
         var responseJson = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
@@ -81,14 +86,7 @@ public class ApiClient
         return JsonConvert.DeserializeObject<AccountEntryApiDto[]>(accountsJson);
     }
 
-
-    public async Task<IEnumerable<SpendingDto>> GetAllSpendingsAsync()
-    {
-        var getAccountResult = await client.GetAsync($"{Routes.GetSpendings}");
-        var spendingsJson = await getAccountResult.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<SpendingDto[]>(spendingsJson);
-    }
-
+    
     public async Task<IEnumerable<AccountApiDto>> GetAllAccountsAsync()
     {
         var getAccountResult = await client.GetAsync(Routes.GetAllAccounts);
@@ -145,34 +143,6 @@ public class ApiClient
         var data = new StringContent(json, Encoding.UTF8, "application/json");
         var response= await client.PostAsync(Routes.AddBudgetaryItem, data);
         
-        var responseJson = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
-    }
-
-    public static async Task<BudgetDataApiDto> AddIncomeAsync(HttpClient client, Guid accountId, double amount, DateOnly date)
-    {
-        var income = new AddIncomeDto()
-        {
-            AccountId = accountId,
-            Amount = amount,
-            Date = date.ToDateTime(TimeOnly.MinValue)
-        };
-        var json = JsonConvert.SerializeObject(income);
-        var data = new StringContent(json, Encoding.UTF8, "application/json");
-        
-        var response = await client.PostAsync(Routes.AddIncome, data);
-        
-        var responseJson = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
-    }
-
-    public async Task<BudgetDataApiDto> AddSpendingAsync(Guid accountId, Guid budgetaryItemId, double amount,
-        DateTime timestamp)
-    {
-        var income = new AddSpending(accountId, budgetaryItemId, amount, timestamp);
-        var json = JsonConvert.SerializeObject(income);
-        var data = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await client.PostAsync(Routes.AddSpending, data);
         var responseJson = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<BudgetDataApiDto>(responseJson);
     }

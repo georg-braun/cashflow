@@ -1,5 +1,5 @@
 <script>
-	import { addIncome } from '../budget-api-service';
+	import { addAccountEntry } from '../budget-api-service';
 	import { accountStore, budgetaryItemStore } from '../store';
 
 	let selectedAccount;
@@ -45,4 +45,8 @@
 	<p>CLI: {selectedAccount.name};{date};{amount};{note}</p>
 {/if}
 
-<button on:click={async () => await addIncome(selectedAccount.id, date, amount)}>New Income</button>
+<button
+	on:click={async () =>
+		await addAccountEntry(selectedAccount.id, selectedBudgetaryItem.id, date, amount)}
+	>Add account antry</button
+>

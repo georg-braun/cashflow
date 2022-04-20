@@ -2,18 +2,15 @@
 	import { onMount } from 'svelte';
 	import auth from './auth-service';
 	import {
-		getAccounts,
-		addAccount,
-		addIncome,
 		deleteAccount,
 		getAllData,
 		deleteAccountEntry,
-deleteBudgetaryItem
+		deleteBudgetaryItem
 	} from './budget-api-service';
 	import { accountStore, accountEntryStore, budgetaryItemStore } from './store';
 	import NewAccount from './components/new-account.svelte';
-	import NewMoneyMovement from './components/new-money-movement.svelte';
-import NewBudget from './components/new-budget.svelte';
+	import NewAccountEntry from './components/new-account-entry.svelte';
+	import NewBudget from './components/new-budget.svelte';
 
 	onMount(async () => {
 		console.log('Mounting app');
@@ -76,7 +73,7 @@ import NewBudget from './components/new-budget.svelte';
 			{/each}
 			<div>
 				<h1>Account Entries</h1>
-				<NewMoneyMovement />
+				<NewAccountEntry />
 				{#each $accountEntryStore as accountEntry}
 					<div>
 						{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
@@ -90,7 +87,9 @@ import NewBudget from './components/new-budget.svelte';
 				{#each $budgetaryItemStore as budgetaryItem}
 					<div>
 						{budgetaryItem.id} - {budgetaryItem.name}
-						<button on:click={async () => await deleteBudgetaryItem(budgetaryItem.id)}>Delete</button>
+						<button on:click={async () => await deleteBudgetaryItem(budgetaryItem.id)}
+							>Delete</button
+						>
 					</div>
 				{/each}
 			</div>
