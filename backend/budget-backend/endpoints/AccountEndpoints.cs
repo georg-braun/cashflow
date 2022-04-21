@@ -97,11 +97,14 @@ public static class AccountEndpoints
     public static async Task<IResult> DeleteAccount(IAccountService accountService, IUserService userService, DeleteAccountDto deleteAccountDto,  ClaimsPrincipal claims)
     {
         var userId = await userService.GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
-        var accountIsDeleted = await accountService.DeleteAccountAsync(userId, deleteAccountDto.AccountId);
+        var changes = await accountService.DeleteAccountAsync(userId, deleteAccountDto.AccountId);
 
-        BudgetDataApiDto budgetDataDto;
-        budgetDataDto = accountIsDeleted ? new BudgetDataApiDto {DeletedAccountIds = new List<Guid>() {deleteAccountDto.AccountId}} : new BudgetDataApiDto();
-            
+        var budgetDataDto = new BudgetDataApiDto()
+        {
+            DeletedAccountIds = changes.Accounts.Select(_ => _.Item1.Id.Id).ToList(),
+            DeletedAccountEntryIds = changes.AccountEntry.Select(_ => _.Item1.Id.Id).ToList()
+        };
+
         return Results.Created("fillUrl", budgetDataDto);
     }  
     

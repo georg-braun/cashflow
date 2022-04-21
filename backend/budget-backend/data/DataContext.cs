@@ -93,15 +93,25 @@ public class DataContext : DbContext
         return UserId.New(addedUserEntity.Entity.Id);
     }
 
-    public async Task<bool> DeleteAccountAsync(Guid accountId, UserId userId)
+    public async Task<ChangesContainer> DeleteAccountAsync(Guid accountId, UserId userId)
     {
+        var changes = new ChangesContainer();
         var account = await Accounts.FirstOrDefaultAsync(_ => _.Id.Equals(accountId) && _.UserId.Equals(userId.Id));
         if (account is null)
-            return false;
+            return changes;
         var removeResult = Accounts.Remove(account);
-        var hResult = removeResult.State == EntityState.Deleted; 
+        
+        var removingAccountEntries = AccountEntries.Where(_ => _.AccountId.Equals(accountId));
+        AccountEntries.RemoveRange(removingAccountEntries);
+        
+        changes.Accounts = new[] {(removeResult.Entity.ToDomain(), ChangeKind.Deleted)};
+        foreach (var accountEntryDto in removingAccountEntries.ToList())
+        {
+            changes.AccountEntry.Add((accountEntryDto.ToDomain(), ChangeKind.Deleted));
+        }
+        
         await SaveChangesAsync();
-        return hResult;
+        return changes;
     }
 
     public async Task<bool> DeleteAccountEntryAsync(Guid accountEntryId, UserId userId)
@@ -125,4 +135,18 @@ public class DataContext : DbContext
         await SaveChangesAsync();
         return hResult;
     }
+}
+
+
+public enum ChangeKind
+{
+    Added,
+    Updated,
+    Deleted
+}
+
+public class ChangesContainer
+{
+    public IList<(Account, ChangeKind)> Accounts = new List<(Account, ChangeKind)>();
+    public IList<(AccountEntry, ChangeKind)> AccountEntry = new List<(AccountEntry, ChangeKind)>();
 }

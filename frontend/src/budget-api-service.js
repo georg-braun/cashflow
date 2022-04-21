@@ -82,7 +82,7 @@ export async function addAccount(name) {
 	const response = await sendPost('AddAccount', {
 		Name: name
 	});
-	updateStore(accountStore, response.data.accounts, accountExtractId, []);
+	applyDataChanges(response.data);
 }
 
 export async function deleteAccount(accountId) {
@@ -90,15 +90,14 @@ export async function deleteAccount(accountId) {
 		AccountId: accountId
 	});
 
-	const deletedItemIds = response.data.deletedAccountIds;
-	updateStore(accountStore, [], accountExtractId, deletedItemIds);
+	applyDataChanges(response.data);
 }
 
 export async function addBudgetaryItem(name) {
 	const response = await sendPost('AddBudgetaryItem', {
 		Name: name
 	});
-	updateStore(budgetaryItemStore, response.data.budgetaryItems, budgetaryItemExtractId, []);
+	applyDataChanges(response.data);
 }
 
 export async function deleteBudgetaryItem(budgetaryItemId) {
@@ -106,8 +105,7 @@ export async function deleteBudgetaryItem(budgetaryItemId) {
 		BudgetaryItemId: budgetaryItemId
 	});
 
-	const deletedItemIds = response.data.deletedBudgetaryItemIds;
-	updateStore(budgetaryItemStore, response.data.budgetaryItems, accountExtractId, deletedItemIds);
+	applyDataChanges(response.data);
 }
 
 export async function deleteAccountEntry(accountEntryId) {
@@ -139,6 +137,7 @@ function applyDataChanges(changes) {
 		accountEntriesExtractId,
 		changes.deletedAccountEntryIds
 	);
+	updateStore(budgetaryItemStore, changes.budgetaryItems, budgetaryItemExtractId, changes.deletedBudgetaryItemIds);
 }
 
 function updateStore(store, newItems, getNewItemFunc, deletedItemIds) {

@@ -21,7 +21,7 @@ public interface IAccountService
     IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId, UserId userId);
     IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId, UserId userId);
     Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId spendingAccountEntryId, UserId userId);
-    Task<bool> DeleteAccountAsync(UserId userId, Guid accountId);
+    Task<ChangesContainer> DeleteAccountAsync(UserId userId, Guid accountId);
     Task<bool> DeleteAccountEntryAsync(UserId userId, Guid accountEntryId);
     Task<bool> DeleteBudgetaryItemAsync(Guid budgetaryItemId, UserId userId);
 }
@@ -95,7 +95,7 @@ public class AccountService : IAccountService
         return _dataContext.GetAccountEntryAsync(spendingAccountEntryId, userId);
     }
 
-    public Task<bool> DeleteAccountAsync(UserId userId, Guid accountId)
+    public Task<ChangesContainer> DeleteAccountAsync(UserId userId, Guid accountId)
     {
         return _dataContext.DeleteAccountAsync(accountId, userId);
     }
@@ -104,7 +104,7 @@ public class AccountService : IAccountService
     {
         return _dataContext.DeleteBudgetaryItemAsync(budgetaryItemId, userId);
     }
-
+    
     public Task<bool> DeleteAccountEntryAsync(UserId userId, Guid accountEntryId)
     {
         return _dataContext.DeleteAccountEntryAsync(accountEntryId, userId);
