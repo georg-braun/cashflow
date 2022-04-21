@@ -28,6 +28,7 @@
 			</option>
 		{/each}
 	</select>
+	<button on:click={() => selectedBudgetaryItem = undefined}>Reset</button>
 </div>
 <div>
 	Amount:
@@ -45,6 +46,29 @@
 
 <button
 	on:click={async () =>
+	{
+		const defaultGuid = "00000000-0000-0000-0000-000000000000";
+		await addAccountEntry(selectedAccount.id, defaultGuid, date, amount)
+	}
+	}
+		
+	>Add income</button
+>
+
+<button
+	on:click={async () => {
+		if (selectedAccount === undefined){
+			console.log("Select an account.");
+			return;
+		}
+
+		if (selectedBudgetaryItem === undefined){
+			console.log("Select an budget.");
+			return;
+		}
+		
 		await addAccountEntry(selectedAccount.id, selectedBudgetaryItem.id, date, amount)}
-	>Add account entry</button
+	}
+		
+	>Add spending</button
 >
