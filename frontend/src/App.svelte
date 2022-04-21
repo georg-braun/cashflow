@@ -27,6 +27,8 @@
 	}
 
 	let { isAuthenticated, user } = auth;
+	let accountMarkedForDeletion;
+	let accountMarkedForDeletionNameTypedByUser;
 </script>
 
 <main>
@@ -68,9 +70,25 @@
 			{#each $accountStore as account}
 				<div>
 					{account.name} ({account.id})
-					<button on:click={async () => await deleteAccount(account.id)}>Delete account</button>
+					<button on:click={() => accountMarkedForDeletion = account}>Delete account</button>
 				</div>
 			{/each}
+
+			{#if accountMarkedForDeletion !== undefined}
+				<p>Do you really wan't to delete the account "{accountMarkedForDeletion.name}"? All associated account entries get deleted.</p>
+				<input type="text" placeholder="Insert account name" bind:value={accountMarkedForDeletionNameTypedByUser}/>
+				<button on:click={async () => {
+					if (accountMarkedForDeletionNameTypedByUser !== accountMarkedForDeletion.name){
+						console.log("Wrong account name.")
+						return;
+					}
+			
+					await deleteAccount(accountMarkedForDeletion.id);
+					accountMarkedForDeletion = undefined;}}>
+					I know what I'm doing 😉</button>
+					
+			{/if}
+			
 			<div>
 				<h1>Account Entries</h1>
 				<NewAccountEntry />
