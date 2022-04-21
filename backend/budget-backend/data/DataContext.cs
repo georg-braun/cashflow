@@ -130,6 +130,12 @@ public class DataContext : DbContext
         var budgetaryItem = await BudgetaryItems.FirstOrDefaultAsync(_ => _.Id.Equals(budgetaryItemId) && _.UserId.Equals(userId.Id));
         if (budgetaryItem is null)
             return false;
+
+        // if an account entry is still associated with the budget, it's not possible to delete the budget.
+        var associatedAccountEntry = AccountEntries.FirstOrDefault(_ => _.BudgetaryItemId.Equals(budgetaryItemId));
+        if (associatedAccountEntry != null)
+            return false;
+        
         var removeResult = BudgetaryItems.Remove(budgetaryItem);
         var hResult = removeResult.State == EntityState.Deleted; 
         await SaveChangesAsync();
