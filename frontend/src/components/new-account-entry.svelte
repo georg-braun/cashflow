@@ -41,12 +41,10 @@
 	Note:
 	<input bind:value={note} />
 </div>
-{#if selectedAccount !== undefined}
-	<p>CLI: {selectedAccount.name};{date};{amount};{note}</p>
-{/if}
+
 
 <button
 	on:click={async () =>
 		await addAccountEntry(selectedAccount.id, selectedBudgetaryItem.id, date, amount)}
-	>Add account antry</button
+	>Add account entry</button
 >
