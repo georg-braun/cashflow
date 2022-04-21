@@ -86,6 +86,23 @@ public class AccountApiTests
     }
     
     [Fact]
+    public async Task DeletionOfAccountDeletesAllAffectedItems()
+    {
+        // Arrange + Act
+        var client = new ApiClient();
+        var changedData = await client.AddAccountAsync( "cash");
+        var account = changedData.Accounts.First();
+        await client.AddAccountEntryAsync(account.Id, 50.50, DateTime.Today);
+
+        await client.DeleteAccount(account.Id);
+        
+        // Assert
+        var allData = await client.GetAll();
+        allData.Accounts.Should().BeEmpty();
+        allData.AccountEntries.Should().BeEmpty();
+    }
+    
+    [Fact]
     public async Task CreateAndGet_OfAccount_IsCorrect()
     {
         // Arrange
