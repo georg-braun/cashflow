@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "budget-backend", "budget-backend\budget-backend.csproj", "{BB051303-0BD2-4A88-9814-9A4823E1778E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cashflow", "cashflow\cashflow.csproj", "{BB051303-0BD2-4A88-9814-9A4823E1778E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "budget-backend-integration-tests", "budget-backend-integration-tests\budget-backend-integration-tests.csproj", "{C57F703B-6D4C-49C9-98E9-9AD6EE769096}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cashflow-integration-tests", "cashflow-integration-tests\cashflow-integration-tests.csproj", "{C57F703B-6D4C-49C9-98E9-9AD6EE769096}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
