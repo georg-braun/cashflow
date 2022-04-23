@@ -5,19 +5,19 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["budget-backend/budget-backend.csproj", "budget-backend/"]
-RUN dotnet restore "budget-backend/budget-backend.csproj"
+COPY ["cashflow/cashflow.csproj", "cashflow/"]
+RUN dotnet restore "cashflow/cashflow.csproj"
 COPY . .
 
 RUN dotnet test
 
-WORKDIR "/src/budget-backend"
-RUN dotnet build "budget-backend.csproj" -c Release -o /app/build
+WORKDIR "/src/cashflow"
+RUN dotnet build "cashflow.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "budget-backend.csproj" -c Release -o /app/publish
+RUN dotnet publish "cashflow.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "budget-backend.dll"]
+ENTRYPOINT ["dotnet", "cashflow.dll"]
