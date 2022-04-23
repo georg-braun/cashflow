@@ -1,16 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
 	import auth from './auth-service';
-	import {
-		deleteAccount,
-		getAllData,
-		deleteAccountEntry,
-		deleteBudgetaryItem
-	} from './budget-api-service';
-	import { accountStore, accountEntryStore, budgetaryItemStore } from './store';
-	import NewAccount from './components/new-account.svelte';
-	import NewAccountEntry from './components/new-account-entry.svelte';
-	import NewBudget from './components/new-budget.svelte';
+	import { deleteCategory, getAllData, deleteMoneyMovement } from './budget-api-service';
+	import { moneyMovementStore, categoryStore } from './store';
+	import NewMoneyMovement from './components/new-money-movement.svelte';
+	import NewCategory from './components/new-category.svelte';
 
 	onMount(async () => {
 		console.log('Mounting app');
@@ -27,31 +21,24 @@
 	}
 
 	let { isAuthenticated, user } = auth;
-	let accountMarkedForDeletion;
-	let accountMarkedForDeletionNameTypedByUser;
+	let categoryMarkedForDeletion;
+	let categoryMarkedForDeletionNameTypedByUser;
 </script>
 
 <main>
 	<!-- App Bar -->
 	<nav>
 		<div>
-			<div>
-				{#if $isAuthenticated}
-					<span>{$user.name} ({$user.email})</span>
-				{:else}<span>Not logged in</span>{/if}
-			</div>
+			{#if $isAuthenticated}
+				<span>{$user.name} ({$user.email})</span>
+			{:else}<span>Not logged in</span>{/if}
+
 			<span>
-				<ul>
-					{#if $isAuthenticated}
-						<li>
-							<a href="/#" on:click={logout}>Log Out</a>
-						</li>
-					{:else}
-						<li>
-							<a href="/#" on:click={login}>Log In</a>
-						</li>
-					{/if}
-				</ul>
+				{#if $isAuthenticated}
+					<a href="/#" on:click={logout}>Log Out</a>
+				{:else}
+					<a href="/#" on:click={login}>Log In</a>
+				{/if}
 			</span>
 		</div>
 	</nav>
@@ -61,56 +48,52 @@
 				<button
 					on:click={async () => {
 						await getAllData();
-					}}>Get all data</button
+					}}>Force refresh</button
 				>
 			</div>
 
-			<h1>Accounts</h1>
-			<NewAccount />
-			{#each $accountStore as account}
+			<h1>Money movements</h1>
+			<NewMoneyMovement />
+			{#each $moneyMovementStore as moneyMovement}
 				<div>
-					{account.name} ({account.id})
-					<button on:click={() => accountMarkedForDeletion = account}>Delete account</button>
+					{moneyMovement.date} | {moneyMovement.amount} | {moneyMovement.note}
+					<button on:click={() => deleteMoneyMovement(moneyMovement.id)}>Delete</button>
 				</div>
 			{/each}
 
-			{#if accountMarkedForDeletion !== undefined}
-				<p>Do you really wan't to delete the account "{accountMarkedForDeletion.name}"? All associated account entries get deleted.</p>
-				<input type="text" placeholder="Insert account name" bind:value={accountMarkedForDeletionNameTypedByUser}/>
-				<button on:click={async () => {
-					if (accountMarkedForDeletionNameTypedByUser !== accountMarkedForDeletion.name){
-						console.log("Wrong account name.")
-						return;
-					}
-			
-					await deleteAccount(accountMarkedForDeletion.id);
-					accountMarkedForDeletion = undefined;}}>
-					I know what I'm doing 😉</button>
-					
+			<h1>Categories</h1>
+			<NewCategory />
+			{#each $categoryStore as category}
+				<div>
+					{category.name}
+					<button on:click={() => (categoryMarkedForDeletion = category)}>Delete category</button>
+				</div>
+			{/each}
+
+			{#if categoryMarkedForDeletion !== undefined}
+				<p>
+					Do you really wan't to delete the category "{categoryMarkedForDeletion.name}"? All
+					associated money movents get deleted.
+				</p>
+				<input
+					type="text"
+					placeholder="Insert category name"
+					bind:value={categoryMarkedForDeletionNameTypedByUser}
+				/>
+				<button
+					on:click={async () => {
+						if (categoryMarkedForDeletionNameTypedByUser !== categoryMarkedForDeletion.name) {
+							console.log('Wrong category name.');
+							return;
+						}
+
+						await deleteCategory(categoryMarkedForDeletion.id);
+						categoryMarkedForDeletion = undefined;
+					}}
+				>
+					I know what I'm doing 😉</button
+				>
 			{/if}
-			
-			<div>
-				<h1>Account Entries</h1>
-				<NewAccountEntry />
-				{#each $accountEntryStore as accountEntry}
-					<div>
-						{accountEntry.accountId} - {accountEntry.date} - {accountEntry.amount}
-						<button on:click={async () => await deleteAccountEntry(accountEntry.id)}>Delete</button>
-					</div>
-				{/each}
-			</div>
-			<div>
-				<h1>Budgets</h1>
-				<NewBudget />
-				{#each $budgetaryItemStore as budgetaryItem}
-					<div>
-						{budgetaryItem.id} - {budgetaryItem.name}
-						<button on:click={async () => await deleteBudgetaryItem(budgetaryItem.id)}
-							>Delete</button
-						>
-					</div>
-				{/each}
-			</div>
 		{/if}
 	</div>
 </main>

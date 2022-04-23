@@ -39,9 +39,10 @@ public static class MoneyMovementEndpoints
     public static async Task<ChangesContainerDto> AddMoneyMovement(AddMoneyMovementCommand command, IMoneyService moneyService,
         IUserService userService, ClaimsPrincipal claims)
     {
+        var utcDate = command.Date.ToUniversalTime();
         var userId = await userService.GetUserIdAsync(claims);
         var categoryId = CategoryIdFactory.Create(command.CategoryId);
-        var changes = await moneyService.AddMoneyMovementAsync(command.Amount, command.Date, command.Note, categoryId, userId);
+        var changes = await moneyService.AddMoneyMovementAsync(command.Amount, utcDate, command.Note, categoryId, userId);
         return ChangesContainerDtoFactory.Create(changes);
     }
 }

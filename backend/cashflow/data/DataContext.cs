@@ -108,15 +108,19 @@ public class DataContext : DbContext
         if (category is null)
             return changesContainer;
 
-        // if an money movement entry is still associated with this category, it's not possible to delete the budget.
-        var categoryMoneyMovements = MoneyMovements.FirstOrDefault(_ => _.CategoryId.Equals(categoryId.Id));
-        if (categoryMoneyMovements != null)
-            return changesContainer;
+        // delete all money movements that are assosicated with this category
+        var categoryMoneyMovements = MoneyMovements.Where(_ => _.CategoryId.Equals(categoryId.Id)).ToList();
         
+        MoneyMovements.RemoveRange(categoryMoneyMovements);
         Categories.Remove(category);
         await SaveChangesAsync();
         
         changesContainer.Categories.Add((category.ToDomain(), ChangeKind.Deleted));
+        foreach (var moneyMovement in categoryMoneyMovements)
+        {
+            changesContainer.MoneyMovements.Add((moneyMovement.ToDomain(), ChangeKind.Deleted));
+        }
+        
         return changesContainer;
     }
 }

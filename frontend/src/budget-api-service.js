@@ -2,9 +2,13 @@ import axios from 'axios';
 import { get } from 'svelte/store';
 
 import auth from './auth-service';
-import { accountStore, accountEntryStore, budgetaryItemStore } from './store';
+import { moneyMovementStore, categoryStore } from './store';
 
 const serverUrl = import.meta.env.VITE_BUDGET_API_SERVER;
+
+const moneyMovementExtractId = (accountEntry) => accountEntry.id;
+const categoryExtractId = (budgetaryItem) => budgetaryItem.id;
+
 
 async function makeRequest(config) {
 	try {
@@ -56,88 +60,52 @@ export async function getAllData() {
 	};
 	const response = await makeRequest(config);
 
-	updateStore(accountStore, response.data.accounts, accountExtractId, []);
-	updateStore(accountEntryStore, response.data.accountEntries, accountEntriesExtractId, []);
-	updateStore(budgetaryItemStore, response.data.budgetaryItems, budgetaryItemExtractId, []);
+	applyDataChanges(response.data);
 }
 
-const accountExtractId = (account) => account.id;
-const accountEntriesExtractId = (accountEntry) => accountEntry.id;
-const budgetaryItemExtractId = (budgetaryItem) => budgetaryItem.id;
-
-export async function getAccounts() {
-	const config = {
-		url: `${serverUrl}/api/GetAllAccounts`,
-		method: 'GET',
-		headers: {
-			'content-type': 'application/json'
-		}
-	};
-
-	const response = await makeRequest(config);
-	accountStore.set(response.data);
-}
-
-export async function addAccount(name) {
-	const response = await sendPost('AddAccount', {
+export async function addCategory(name) {
+	const response = await sendPost('AddCategory', {
 		Name: name
 	});
 	applyDataChanges(response.data);
 }
 
-export async function deleteAccount(accountId) {
-	const response = await sendPost('DeleteAccount', {
-		AccountId: accountId
+export async function deleteCategory(categoryItemId) {
+	const response = await sendPost('DeleteCategory', {
+		categoryId: categoryItemId
 	});
 
 	applyDataChanges(response.data);
 }
 
-export async function addBudgetaryItem(name) {
-	const response = await sendPost('AddBudgetaryItem', {
-		Name: name
-	});
-	applyDataChanges(response.data);
-}
-
-export async function deleteBudgetaryItem(budgetaryItemId) {
-	const response = await sendPost('DeleteBudgetaryItem', {
-		BudgetaryItemId: budgetaryItemId
+export async function deleteMoneyMovement(moneyMovementId) {
+	const response = await sendPost('DeleteMoneyMovement', {
+		moneyMovementId: moneyMovementId
 	});
 
 	applyDataChanges(response.data);
 }
 
-export async function deleteAccountEntry(accountEntryId) {
-	const response = await sendPost('DeleteAccountEntry', {
-		AccountEntryId: accountEntryId
-	});
-
-	applyDataChanges(response.data);
-}
-
-export async function addAccountEntry(accountId, budgetaryItemId, date, amount, note) {
+export async function addMoneyMovement(categoryId, date, amount, note) {
 	const data = {
-		AccountId: accountId,
-		BudgetaryItemId: budgetaryItemId,
+		CategoryId: categoryId,
 		Date: date,
 		Amount: amount,
 		Note: note
 	};
-	const response = await sendPost('AddAccountEntry', data);
-	if (response.status === 201)
+	const response = await sendPost('AddMoneyMovement', data);
+	if (response.status === 201 || response.status === 200) 
 		applyDataChanges(response.data);
 }
 
 function applyDataChanges(changes) {
-	updateStore(accountStore, changes.accounts, accountExtractId, changes.deletedAccountIds);
+	updateStore(categoryStore, changes.categories, categoryExtractId, changes.deletedCategoryIds);
 	updateStore(
-		accountEntryStore,
-		changes.accountEntries,
-		accountEntriesExtractId,
-		changes.deletedAccountEntryIds
+		moneyMovementStore,
+		changes.moneyMovements,
+		moneyMovementExtractId,
+		changes.deletedMoneyMovementIds
 	);
-	updateStore(budgetaryItemStore, changes.budgetaryItems, budgetaryItemExtractId, changes.deletedBudgetaryItemIds);
 }
 
 function updateStore(store, newItems, getNewItemFunc, deletedItemIds) {
