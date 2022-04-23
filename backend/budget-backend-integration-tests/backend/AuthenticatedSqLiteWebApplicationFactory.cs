@@ -1,4 +1,5 @@
 using System.Linq;
+using budet_backend_integration_tests;
 using budget_backend.data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -53,7 +54,7 @@ public class AuthenticatedSqLiteWebApplicationFactory<TStartup>
     {
         var config = new ConfigurationBuilder()
             .AddEnvironmentVariables()
-            .AddUserSecrets<AccountApiTests>()
+            .AddUserSecrets<MoneyMovementTests>()
             .Build();
 
         builder.ConfigureAppConfiguration(_ => _.AddConfiguration(config));

@@ -18,17 +18,17 @@ public class MultipleUserScenarioTests
         var clientB = new ApiClient();
         // Act
 
-        await clientA.AddAccountAsync("cashOfA");
-        await clientB.AddAccountAsync("cashOfB");
+        await clientA.AddCategory("carA");
+        await clientB.AddCategory("carB");
 
         // Assert
-        var accountsOfClientA = (await clientA.GetAll()).Accounts;
-        accountsOfClientA.Count.Should().Be(1);
-        accountsOfClientA.First().Name.Should().Be("cashOfA");
+        var categoriesOfClientA = (await clientA.GetAll()).Categories;
+        categoriesOfClientA.Count.Should().Be(1);
+        categoriesOfClientA.First().Name.Should().Be("carA");
         
-        var accountsOfClientB = (await clientB.GetAll()).Accounts;
-        accountsOfClientB.Count.Should().Be(1);
-        accountsOfClientB.First().Name.Should().Be("cashOfB");
+        var categoriesOfClientB = (await clientB.GetAll()).Categories;
+        categoriesOfClientB.Count.Should().Be(1);
+        categoriesOfClientB.First().Name.Should().Be("carB");
 
     }
     

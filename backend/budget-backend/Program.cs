@@ -38,7 +38,7 @@ builder.Services.AddAuthorization(o =>
 });
 
 builder.Services.AddCors();
-builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IMoneyService, MoneyService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
@@ -63,22 +63,15 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet(Routes.GetAll, AccountEndpoints.GetAll);
+app.MapGet(Routes.GetAll, MoneyMovementEndpoints.GetAll);
 
+app.MapGet(Routes.GetCategories, CategoryEndpoints.GetCategories);
+app.MapPost(Routes.AddCategory, CategoryEndpoints.AddCategory);
+app.MapPost(Routes.DeleteCategory, CategoryEndpoints.DeleteCategory);
 
-app.MapGet(Routes.GetAllAccounts, AccountEndpoints.GetAllAccounts);
-app.MapPost(Routes.AddAccount, AccountEndpoints.AddAccount);
-app.MapPost(Routes.DeleteAccount, AccountEndpoints.DeleteAccount);
-
-app.MapPost(Routes.AddAccountEntry, AccountEndpoints.AddAccountEntry);
-app.MapGet(Routes.GetAccountEntriesOfAccount, AccountEndpoints.GetAccountEntriesOfAccount);
-app.MapPost(Routes.DeleteAccountEntry, AccountEndpoints.DeleteAccountEntry);
-
-app.MapPost(Routes.AddBudgetaryItem, BudgetEndpoints.AddBudgetaryItem);
-app.MapPost(Routes.DeleteBudgetryItem, AccountEndpoints.DeleteBudgetaryItem);
-app.MapGet(Routes.GetAllBudgetaryItems, BudgetEndpoints.GetAllBudgetaryItems);
-app.MapGet(Routes.GetBudgetChanges, BudgetEndpoints.GetBudgetChanges);
-app.MapPost(Routes.SetBudgetEntry, BudgetEndpoints.AddBudgetEntry);
+app.MapGet(Routes.GetMoneyMovements, MoneyMovementEndpoints.GetMoneyMovements);
+app.MapPost(Routes.AddMoneyMovement, MoneyMovementEndpoints.AddMoneyMovement);
+app.MapPost(Routes.DeleteMoneyMovement, MoneyMovementEndpoints.DeleteMoneyMovement);
 
 app.Run();
 

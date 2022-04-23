@@ -1,10 +1,24 @@
+using System.Security.Claims;
 using budget_backend.data;
+using budget_backend.endpoints;
 
 namespace budget_backend.application;
 
 public interface IUserService
 {
-    Task<UserId> GetUserIdAsync(string AuthProviderId);
+    /// <summary>
+    ///     Get a user id. If the user doesn't exist a new one is created.
+    /// </summary>
+    /// <param name="authProviderId"></param>
+    /// <returns></returns>
+    Task<UserId> GetUserIdAsync(string authProviderId);
+
+    /// <summary>
+    ///     Get a user id. If the user doesn't exist a new one is created.
+    /// </summary>
+    /// <param name="authProviderId"></param>
+    /// <returns></returns>
+    Task<UserId> GetUserIdAsync(ClaimsPrincipal claims);
 }
 
 public class UserService : IUserService
@@ -29,6 +43,14 @@ public class UserService : IUserService
 
         return await AddUserAsync(authProviderId);
     }
+    
+    /// <summary>
+    ///     Get a user id. If the user doesn't exist a new one is created.
+    /// </summary>
+    /// <param name="authProviderId"></param>
+    /// <returns></returns>
+    public async Task<UserId> GetUserIdAsync(ClaimsPrincipal claims) => await GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
+
 
     public Task<UserId> AddUserAsync(string authProviderId)
     {

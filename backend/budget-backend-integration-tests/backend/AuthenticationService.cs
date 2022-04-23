@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
+using budet_backend_integration_tests;
 using Microsoft.Extensions.Configuration;
 
 namespace budget_backend_integration_tests.backend;
@@ -18,7 +19,7 @@ public static class AuthenticationService
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
             .AddEnvironmentVariables()
-            .AddUserSecrets<AccountApiTests>()
+            .AddUserSecrets<MoneyMovementTests>()
             .Build()
             .GetSection("Auth0Client");
     }

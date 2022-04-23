@@ -1,10 +1,9 @@
-using System.Linq;
 using budget_backend.application;
-using budget_backend.data.dbDto;
+using budget_backend.data.dbo;
 using budget_backend.domain;
-using budget_backend.domain.account;
 using budget_backend.domain.budget;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace budget_backend.data;
 
@@ -14,63 +13,56 @@ public class DataContext : DbContext
     {
     }
     
-    private DbSet<UserDto> Users { get; set; } = null!;
-    private DbSet<AccountDto> Accounts { get; set; } = null!;
-    private DbSet<AccountEntryDto> AccountEntries { get; set; } = null!;
-
-    private DbSet<AccountTransactionDto> AccountTransactions { get; set; } = null!;
-    private DbSet<BudgetaryItemDto> BudgetaryItems { get; set; } = null!;
-    private DbSet<BudgetEntryDto> BudgetEntries { get; set; } = null!;
-
-    public async Task AddAccountAsync(Account account, UserId userId)
-    {
-        var accountDto = account.ToDbDto(userId);
-        await Accounts.AddAsync(accountDto);
-        await SaveChangesAsync();
-    }
-
-    public async Task AddAccountEntryAsync(AccountEntry accountEntry, UserId userId)
-    {
-        var accountEntryDto = accountEntry.ToDbDto(userId);
-        await AccountEntries.AddAsync(accountEntryDto);
-        await SaveChangesAsync();
-    }
-
-    public async Task AddBudgetaryItemAsync(BudgetaryItem budgetaryItem, UserId userId)
-    {
-        var budgetaryItemDbDto = budgetaryItem.ToDbDto(userId);
-        await BudgetaryItems.AddAsync(budgetaryItemDbDto);
-        await SaveChangesAsync();
-    }
-
-    public IEnumerable<BudgetaryItem> GetBudgetaryItems(UserId userId) => BudgetaryItems.Where(_ => _.UserId.Equals(userId.Id)).Select(_ => _.ToDomain());
-
-    public async Task AddBudgetEntryAsync(BudgetEntry budgetEntry, UserId userId)
-    {
-        await BudgetEntries.AddAsync(budgetEntry.ToDbDto(userId));
-        await SaveChangesAsync();
-    }
-
-    public IEnumerable<BudgetEntry> GetBudgetEntries(BudgetaryItemId budgetaryItemId, UserId userId) => BudgetEntries
-        .Where(_ => _.UserId.Equals(userId.Id) && _.BudgetaryItemId.Equals(budgetaryItemId.Id)).Select(_ => _.ToDomain());
+    private DbSet<UserDbo> Users { get; set; } = null!;
     
+    private DbSet<MoneyMovementDbo> MoneyMovements { get; set; } = null!;
 
-    public IEnumerable<Account> GetAccounts(UserId userId)
+    private DbSet<CategoryDbo> Categories { get; set; } = null!;
+
+
+    private ChangesContainer CreateChangesContainer()
     {
-        return Accounts.Where(_ => _.UserId.Equals(userId.Id)).Select(_ => _.ToDomain());
+        return new ChangesContainer();
     }
 
-    public IEnumerable<AccountEntry> GetAccountEntries(AccountId accountId, UserId userId)
+
+    public async Task<ChangesContainer> AddMoneyMovementAsync(MoneyMovement moneyMovement, UserId userId)
     {
-        var accountEntryDtos = AccountEntries.Where(_ => _.UserId.Equals(userId.Id) && _.AccountId.Equals(accountId.Id));
-        return accountEntryDtos.Select(_ => _.ToDomain());
+        var moneyMovementDto = moneyMovement.ToDbDto(userId);
+        await MoneyMovements.AddAsync(moneyMovementDto);
+        await SaveChangesAsync();
+
+        var changesContainer = CreateChangesContainer();
+        changesContainer.MoneyMovements.Add((moneyMovement, ChangeKind.Created));
+        return changesContainer;
     }
 
-    public async Task<AccountEntry?> GetAccountEntryAsync(AccountEntryId accountEntryId, UserId userId)
+    public async Task<ChangesContainer> AddCategoryAsync(Category category, UserId userId)
     {
-        var accountEntryDto = await AccountEntries.SingleOrDefaultAsync(_ => _.Id.Equals(accountEntryId.Id));
-        if (accountEntryDto != null && accountEntryDto.UserId.Equals(userId.Id))
-            return accountEntryDto.ToDomain();
+        var categoryDto = category.ToDbDto(userId);
+        await Categories.AddAsync(categoryDto);
+        await SaveChangesAsync();
+
+        var changesContainer = CreateChangesContainer();
+        changesContainer.Categories.Add((category, ChangeKind.Created));
+        return changesContainer;
+    }
+
+
+    public IEnumerable<Category> GetCategories(UserId userId) => Categories.Where(_ => _.UserId.Equals(userId.Id)).Select(_ => _.ToDomain());
+
+    
+    public IEnumerable<MoneyMovement> GetMoneyMovements(UserId userId)
+    {
+        var moneyMovementDtos = MoneyMovements.Where(_ => _.UserId.Equals(userId.Id));
+        return moneyMovementDtos.Select(_ => _.ToDomain());
+    }
+
+    public async Task<MoneyMovement?> GetMoneyMovementAsync(MoneyMovementId moneyMovementId, UserId userId)
+    {
+        var moneyMovementDto = await MoneyMovements.SingleOrDefaultAsync(_ => _.Id.Equals(moneyMovementId.Id));
+        if (moneyMovementDto != null && moneyMovementDto.UserId.Equals(userId.Id))
+            return moneyMovementDto.ToDomain();
         return null;
     }
 
@@ -89,70 +81,56 @@ public class DataContext : DbContext
         if (userId.IsValid)
             return userId;
         
-        var addedUserEntity = await Users.AddAsync(new UserDto(Guid.NewGuid(), authProviderId, DateTime.UtcNow));
+        var addedUserEntity = await Users.AddAsync(new UserDbo(Guid.NewGuid(), authProviderId, DateTime.UtcNow));
         return UserId.New(addedUserEntity.Entity.Id);
     }
-
-    public async Task<ChangesContainer> DeleteAccountAsync(Guid accountId, UserId userId)
+    
+    public async Task<ChangesContainer> DeleteMoneyMovementAsync(MoneyMovementId moneyMovementId, UserId userId)
     {
-        var changes = new ChangesContainer();
-        var account = await Accounts.FirstOrDefaultAsync(_ => _.Id.Equals(accountId) && _.UserId.Equals(userId.Id));
-        if (account is null)
-            return changes;
-        var removeResult = Accounts.Remove(account);
+        var changesContainer = CreateChangesContainer();
         
-        var removingAccountEntries = AccountEntries.Where(_ => _.AccountId.Equals(accountId));
-        AccountEntries.RemoveRange(removingAccountEntries);
-        
-        changes.Accounts = new[] {(removeResult.Entity.ToDomain(), ChangeKind.Deleted)};
-        foreach (var accountEntryDto in removingAccountEntries.ToList())
-        {
-            changes.AccountEntry.Add((accountEntryDto.ToDomain(), ChangeKind.Deleted));
-        }
-        
+        var moneyMovement = await MoneyMovements.FirstOrDefaultAsync(_ => _.Id.Equals(moneyMovementId.Id) && _.UserId.Equals(userId.Id));
+        if (moneyMovement is null)
+            return changesContainer;
+        MoneyMovements.Remove(moneyMovement);
+         
         await SaveChangesAsync();
-        return changes;
+        
+        changesContainer.MoneyMovements.Add((moneyMovement.ToDomain(), ChangeKind.Deleted));
+        return changesContainer;
     }
 
-    public async Task<bool> DeleteAccountEntryAsync(Guid accountEntryId, UserId userId)
+    public async Task<ChangesContainer> DeleteCategoryAsync(CategoryId categoryId, UserId userId)
     {
-        var accountEntry = await AccountEntries.FirstOrDefaultAsync(_ => _.Id.Equals(accountEntryId) && _.UserId.Equals(userId.Id));
-        if (accountEntry is null)
-            return false;
-        var removeResult = AccountEntries.Remove(accountEntry);
-        var hResult = removeResult.State == EntityState.Deleted; 
-        await SaveChangesAsync();
-        return hResult;
-    }
+        var changesContainer = CreateChangesContainer();
 
-    public async Task<bool> DeleteBudgetaryItemAsync(Guid budgetaryItemId, UserId userId)
-    {
-        var budgetaryItem = await BudgetaryItems.FirstOrDefaultAsync(_ => _.Id.Equals(budgetaryItemId) && _.UserId.Equals(userId.Id));
-        if (budgetaryItem is null)
-            return false;
+        var category = await Categories.FirstOrDefaultAsync(_ => _.Id.Equals(categoryId.Id) && _.UserId.Equals(userId.Id));
+        if (category is null)
+            return changesContainer;
 
-        // if an account entry is still associated with the budget, it's not possible to delete the budget.
-        var associatedAccountEntry = AccountEntries.FirstOrDefault(_ => _.BudgetaryItemId.Equals(budgetaryItemId));
-        if (associatedAccountEntry != null)
-            return false;
+        // if an money movement entry is still associated with this category, it's not possible to delete the budget.
+        var categoryMoneyMovements = MoneyMovements.FirstOrDefault(_ => _.CategoryId.Equals(categoryId.Id));
+        if (categoryMoneyMovements != null)
+            return changesContainer;
         
-        var removeResult = BudgetaryItems.Remove(budgetaryItem);
-        var hResult = removeResult.State == EntityState.Deleted; 
+        Categories.Remove(category);
         await SaveChangesAsync();
-        return hResult;
+        
+        changesContainer.Categories.Add((category.ToDomain(), ChangeKind.Deleted));
+        return changesContainer;
     }
 }
 
 
 public enum ChangeKind
 {
-    Added,
+    Created,
     Updated,
     Deleted
 }
 
 public class ChangesContainer
 {
-    public IList<(Account, ChangeKind)> Accounts = new List<(Account, ChangeKind)>();
-    public IList<(AccountEntry, ChangeKind)> AccountEntry = new List<(AccountEntry, ChangeKind)>();
+    public IList<(Category, ChangeKind)> Categories = new List<(Category, ChangeKind)>();
+    public IList<(MoneyMovement, ChangeKind)> MoneyMovements = new List<(MoneyMovement, ChangeKind)>();
 }
