@@ -12,6 +12,8 @@
 **Authenication**
 
 - Add Auth0 environment variables.
+  - Auth0:Domain
+  - Auth0:Audienec
 
 # Build for deployment
 
