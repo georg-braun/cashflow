@@ -25,7 +25,8 @@ public class MoneyMovementTests
         // Assert
         allData.Categories.Should().HaveCount(1);
         allData.MoneyMovements.Should().HaveCount(2);
-        allData.MoneyMovements.All(_ => _.CategoryId != Guid.Empty && _.Id != Guid.Empty);
+        allData.MoneyMovements.All(_ => _.CategoryId != Guid.Empty && _.Id != Guid.Empty).Should().BeTrue();
         allData.MoneyMovements.Sum(_ => _.Amount).Should().Be(900.40);
+        allData.MoneyMovements.All(_ => _.Note != string.Empty).Should().BeTrue();
     }
 }

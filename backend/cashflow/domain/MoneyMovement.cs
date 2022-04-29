@@ -10,6 +10,7 @@ public class MoneyMovement
         Id = id;
         Amount = amount;
         Date = date;
+        Note = note;
         CategoryId = categoryId;
     }
 
