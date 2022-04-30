@@ -22,4 +22,4 @@ jobs:
         context: ./backend/
         file: ./backend/Dockerfile
         push: false
-        tags: velox1992/budget-backend:latest
+        tags: velox1992/cashflow:latest
