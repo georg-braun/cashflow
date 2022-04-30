@@ -4,3 +4,6 @@
 *.user
 *Designer.cs
 DataContextModelSnapshot.cs
+**/auth_config.js
+utility-cli/.idea
+.DS_Store
