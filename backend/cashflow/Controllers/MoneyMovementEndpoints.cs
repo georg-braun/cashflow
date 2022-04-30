@@ -13,6 +13,7 @@ public static class MoneyMovementEndpoints
     public static async Task<ChangesContainerDto> GetAll(IMoneyService moneyService, IUserService userService,
         ClaimsPrincipal claims)
     {
+        Console.WriteLine("GetAll");
         var userId = await userService.GetUserIdAsync(claims);
         var moneyMovements = moneyService.GetMoneyMovements(userId);
         var categories = moneyService.GetCategories(userId);
