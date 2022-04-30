@@ -15,9 +15,12 @@ Web app (sveltekit) that authenticates with Auth0 and interact with a API (ASP.N
 ## Backend
 
 Add necessary configuration variables
-- ConnectionStrings:Database
-- Auth0:Domain
-- Auth0:Audience
+```
+ConnectionStrings:Database
+Auth0:Domain
+Auth0:Audience
+```
+In docker `__` as delimiter: `ConnectionString__Database`
 
 Example: Environment variables via secret manager
 
