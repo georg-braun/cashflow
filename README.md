@@ -2,6 +2,7 @@
 
 Log and analyze income and spendings.
 
+Software for managing personal finance with budgets.
 
 # Architecture
 
@@ -9,6 +10,7 @@ Web app (sveltekit) that authenticates with Auth0 and interact with a API (ASP.N
 
 
 # Setup development environment
+
 
 ## Backend
 
