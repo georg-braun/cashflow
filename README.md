@@ -8,6 +8,8 @@ Software for managing personal finance with budgets.
 
 Web app (sveltekit) that authenticates with Auth0 and interact with a API (ASP.NET) that store the data in a postgresql database.
 
+![](./system-overview.excalidraw.png)
+
 
 # Setup development environment
 
@@ -28,6 +30,14 @@ Example: Environment variables via secret manager
 2. `dotnet user-secrets set "ConnectionStrings:Database" "<connection-string>"`
 
 
+## Authentication Auth0
+
+switched from 
+http://localhost:3000
+to
+
+
+
 ## Database migration
 
 In `/utility-cli` you can find a cli tool that help to create and provision the database.
@@ -46,7 +56,11 @@ In `/utility-cli` you can find a cli tool that help to create and provision the 
 
 ## local minikube
 
-1. create Kubernetes deployment + service of the backend`kubectl apply -f backend-deployment.yaml`
-2. access service via NodePort services `minikube service --url backend-api-service`
+1. create Kubernetes deployment + loadbalancer service of the backend`kubectl apply -f backend-deployment.yaml`
+2. Tunnel öffnen `minikube tunnel`
+3. service ip abfragen `kubectl get svc`
+
+
+3. access service via NodePort services `minikube service --url backend-api-service`
 
 *background: https://minikube.sigs.k8s.io/docs/handbook/accessing/*
