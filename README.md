@@ -42,6 +42,9 @@ to
 
 In `/utility-cli` you can find a cli tool that help to create and provision the database.
 
+1. Place the migration scripts in the script directory
+2. run `./utility-cli migrate "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres"`
+
 
 
 # CI/CD
