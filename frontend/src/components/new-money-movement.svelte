@@ -33,7 +33,7 @@
 </div>
 
 
-<button
+<button class="rounded p-1 bg-slate-200"
 	on:click={async () =>
 		{
 			if (selectedCategory === undefined){
