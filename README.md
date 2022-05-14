@@ -21,7 +21,7 @@ Requirements:
 
 1. run postgresql container 
     ```bash
-    cd cashfllow-services
+    cd cashfllow-services/local-postgres
     docker-compose up -d
     ```
 2. create and migrate datbase
