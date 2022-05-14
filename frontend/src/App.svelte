@@ -21,12 +21,12 @@
 		{#if $isAuthenticated}
 		
 
-			<h1>Money movements</h1>
+			<h1>🧾 Log</h1>
 			<NewMoneyMovement />
 			<MoneyMovementsOverview />
 
-			<h1>Categories</h1>
-			
+
+			<h1 class="mt-16">📚 Categories</h1>			
 			<CategoryOverview />
 			<NewCategory />
 		{/if}
