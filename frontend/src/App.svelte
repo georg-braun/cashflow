@@ -3,6 +3,7 @@
 	import auth from './auth-service';
 	import { deleteCategory, getAllData, deleteMoneyMovement } from './budget-api-service';
 	import { moneyMovementStore, categoryStore } from './store';
+	import MoneyMovementsOverview from './MoneyMovementsOverview.svelte';
 	import NewMoneyMovement from './components/new-money-movement.svelte';
 	import NewCategory from './components/new-category.svelte';
 
@@ -45,7 +46,7 @@
 	<div>
 		{#if $isAuthenticated}
 			<div>
-				<button class="text-2xl bg-gray-900"
+				<button class="rounded p-1 bg-slate-200"
 					on:click={async () => {
 						await getAllData();
 					}}>Force refresh</button
@@ -54,19 +55,15 @@
 
 			<h1>Money movements</h1>
 			<NewMoneyMovement />
-			{#each $moneyMovementStore as moneyMovement}
-				<div>
-					{moneyMovement.date} | {moneyMovement.amount} | {moneyMovement.note}
-					<button on:click={() => deleteMoneyMovement(moneyMovement.id)}>Delete</button>
-				</div>
-			{/each}
+			<MoneyMovementsOverview />
+			
 
 			<h1>Categories</h1>
 			<NewCategory />
 			{#each $categoryStore as category}
 				<div>
 					{category.name}
-					<button on:click={() => (categoryMarkedForDeletion = category)}>Delete category</button>
+					<button class="rounded p-1 bg-red-200" on:click={() => (categoryMarkedForDeletion = category)}>Delete category</button>
 				</div>
 			{/each}
 
@@ -80,7 +77,7 @@
 					placeholder="Insert category name"
 					bind:value={categoryMarkedForDeletionNameTypedByUser}
 				/>
-				<button
+				<button class="rounded p-1 bg-red"
 					on:click={async () => {
 						if (categoryMarkedForDeletionNameTypedByUser !== categoryMarkedForDeletion.name) {
 							console.log('Wrong category name.');

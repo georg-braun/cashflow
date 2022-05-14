@@ -5,4 +5,4 @@
 </script>
 
 <input placeholder="category name" bind:value={name} />
-<button on:click={async () => await addCategory(name)}>Add category</button>
+<button class="rounded p-1 bg-slate-200" on:click={async () => await addCategory(name)}>Add category</button>
