@@ -1,11 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
 	import auth from './auth-service';
-	import { deleteCategory, getAllData, deleteMoneyMovement } from './budget-api-service';
-	import { moneyMovementStore, categoryStore } from './store';
+	import { getAllData } from './budget-api-service';	
 	import MoneyMovementsOverview from './components/MoneyMovementsOverview.svelte';
 	import NewMoneyMovement from './components/new-money-movement.svelte';
 	import NewCategory from './components/new-category.svelte';
+	import CategoryOverview from './components/CategoryOverview.svelte';
 
 	onMount(async () => {
 		console.log('Mounting app');
@@ -22,8 +22,7 @@
 	}
 
 	let { isAuthenticated, user } = auth;
-	let categoryMarkedForDeletion;
-	let categoryMarkedForDeletionNameTypedByUser;
+	
 </script>
 
 <main>
@@ -46,7 +45,8 @@
 	<div>
 		{#if $isAuthenticated}
 			<div>
-				<button class="rounded p-1 bg-slate-200"
+				<button
+					class="rounded p-1 bg-slate-200"
 					on:click={async () => {
 						await getAllData();
 					}}>Force refresh</button
@@ -56,41 +56,10 @@
 			<h1>Money movements</h1>
 			<NewMoneyMovement />
 			<MoneyMovementsOverview />
-			
 
 			<h1>Categories</h1>
 			<NewCategory />
-			{#each $categoryStore as category}
-				<div>
-					{category.name}
-					<button class="rounded p-1 bg-red-200" on:click={() => (categoryMarkedForDeletion = category)}>Delete category</button>
-				</div>
-			{/each}
-
-			{#if categoryMarkedForDeletion !== undefined}
-				<p>
-					Do you really wan't to delete the category "{categoryMarkedForDeletion.name}"? All
-					associated money movents get deleted.
-				</p>
-				<input
-					type="text"
-					placeholder="Insert category name"
-					bind:value={categoryMarkedForDeletionNameTypedByUser}
-				/>
-				<button class="rounded p-1 bg-red"
-					on:click={async () => {
-						if (categoryMarkedForDeletionNameTypedByUser !== categoryMarkedForDeletion.name) {
-							console.log('Wrong category name.');
-							return;
-						}
-
-						await deleteCategory(categoryMarkedForDeletion.id);
-						categoryMarkedForDeletion = undefined;
-					}}
-				>
-					I know what I'm doing 😉</button
-				>
-			{/if}
+			<CategoryOverview />
 		{/if}
 	</div>
 </main>
