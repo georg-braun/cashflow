@@ -45,7 +45,7 @@
 	<div>
 		{#if $isAuthenticated}
 			<div>
-				<button
+				<button class="text-2xl bg-gray-900"
 					on:click={async () => {
 						await getAllData();
 					}}>Force refresh</button
