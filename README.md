@@ -26,7 +26,7 @@ Requirements:
     ```
 2. create and migrate datbase
    ```bash
-   ./cashflow-cli migrate "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+   ./utility-cli migrate "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres"
    ```
    
 ## Get the API running
