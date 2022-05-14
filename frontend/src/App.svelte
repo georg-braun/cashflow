@@ -3,7 +3,7 @@
 	import auth from './auth-service';
 	import { deleteCategory, getAllData, deleteMoneyMovement } from './budget-api-service';
 	import { moneyMovementStore, categoryStore } from './store';
-	import MoneyMovementsOverview from './MoneyMovementsOverview.svelte';
+	import MoneyMovementsOverview from './components/MoneyMovementsOverview.svelte';
 	import NewMoneyMovement from './components/new-money-movement.svelte';
 	import NewCategory from './components/new-category.svelte';
 
