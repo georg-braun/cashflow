@@ -5,6 +5,9 @@
 	let categoryMarkedForDeletionNameTypedByUser;
 </script>
 
+
+
+
 {#each $categoryStore as category}
 	<div>
 		{category.name}
