@@ -3,7 +3,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0@sha256:fde93347d1cc74a03f1804f113ce85add00c6f0af15881181165ef04bc76bd00 AS build
 WORKDIR /src
 COPY ["cashflow/cashflow.csproj", "cashflow/"]
 RUN dotnet restore "cashflow/cashflow.csproj"
