@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  cashflow:
+    image: "velox1992/cashflow"
+    #build: .
+    ports:
+      - "8000:80"
+    environment:
+      # necessary for Apple M1. Missing filewatcher.
+      - ASPNETCORE_hostBuilder__reloadConfigOnChange=false
+      - ConnectionStrings__Database=Host=;Port=;Database=;Username=;Password=
+      - Auth0__Domain=
+      - Auth0__Audience=
+

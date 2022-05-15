@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cashflow-deployment
+  labels:
+    app: cashflow-backend
+spec:
+  replicas: 1
+  selector:    
+    matchLabels:                # search for labels
+      app: cashflow-backend
+  template:
+    metadata:
+      labels:
+        app: cashflow-backend    
+    spec:                       # define the pod
+      containers:      
+      - name: cashflow-backend    # container name
+        image: velox1992/cashflow
+        env:
+        - name: ASPNETCORE_hostBuilder__reloadConfigOnChange
+          value: "false"
+        - name: ConnectionStrings__Database
+          value: "Host=Port=;Database=;Username=;Password="
+        - name: Auth0__Domain
+          value: ""
+        - name: Auth0__Audience
+          value: ""
+        ports:
+        - containerPort: 80     
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cashflow-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: cashflow-backend                 # show for pods with this label
+  ports:
+    - protocol: TCP
+      port: 80                  # show for pods with this port
+      targetPort: 80
+    

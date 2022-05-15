@@ -6,7 +6,7 @@ namespace utility_cli.Commands;
 
 public class MigrateInput
 {
-    [Description("The connection string of the postgresql database")]
+    [Description("The connection string of the postgresql database. Something like \"Host=hostUrl;Port=5432;Database=postgres;Username=postgres;Password=password\"")]
     public string ConnectionString;
 }
 

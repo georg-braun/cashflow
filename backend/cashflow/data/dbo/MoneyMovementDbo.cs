@@ -37,6 +37,6 @@ public static class AccountEntryDtoExtensions
 
     public static MoneyMovement ToDomain(this MoneyMovementDbo moneyMovementDbo)
     {
-        return new MoneyMovement( new MoneyMovementId(){Id = moneyMovementDbo.Id}, moneyMovementDbo.Amount, moneyMovementDbo.Timestamp, moneyMovementDbo.Note, CategoryIdFactory.Create(moneyMovementDbo.Id));
+        return new MoneyMovement( new MoneyMovementId(){Id = moneyMovementDbo.Id}, moneyMovementDbo.Amount, moneyMovementDbo.Timestamp, moneyMovementDbo.Note, CategoryIdFactory.Create(moneyMovementDbo.CategoryId));
     }
 }
