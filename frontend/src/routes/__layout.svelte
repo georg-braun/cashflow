@@ -24,7 +24,7 @@
 <!-- App Bar -->
 
 <div>
-    <div class="text-2xl mt-2 mb-2 ml-2" >🪙 Cashflow</div>
+	<div class="text-2xl mt-2 mb-2 ml-2">🪙 Cashflow</div>
 </div>
 <nav class="bg-gray-200">
 	<div class="flex">
@@ -40,6 +40,10 @@
 					<a href="/#" on:click={login}>Log In</a>
 				{/if}
 			</span>
+			<div>
+				<a href="/">🧾 Log</a>
+				<a class="ml-2" href="/categories">📚 Categories</a>
+			</div>
 		</div>
 		<div class="ml-auto">
 			{#if $isAuthenticated}
@@ -47,7 +51,7 @@
 					<button
 						class="rounded p-1 bg-slate-200 text-xl"
 						on:click={async () => {
-                            console.log("Reload data")
+							console.log('Reload data');
 							await getAllData();
 						}}>🔃</button
 					>
@@ -56,7 +60,6 @@
 		</div>
 	</div>
 </nav>
-<div class="container mx-auto mt-4">
-    <slot />
+<div class="container mx-auto mt-10">
+	<slot />
 </div>
-
