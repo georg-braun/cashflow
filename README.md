@@ -17,7 +17,11 @@ Requirements:
 - Auth0 account with configured API and Application
 - Container environment (e.g. docker)
 
+
 ## Setup database
+
+Add necessary configuration variables
+
 
 1. run postgresql container 
     ```bash
