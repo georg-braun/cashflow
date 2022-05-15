@@ -9,7 +9,7 @@
 	let note = '';
 </script>
 
-<div class="flex flex-wrap   h-12 align-middle">
+<div class="flex flex-wrap  align-middle">
 	<div class=" my-auto">
 		<input type="date" bind:value={date} />
 	</div>
@@ -31,16 +31,15 @@
 	</div>
 	<div class="my-auto">
 		<button
-		class="rounded px-2 ml-4  my-auto bg-slate-200"
-		on:click={async () => {
-			if (selectedCategory === undefined) {
-				console.log('Select a category.');
-				return;
-			}
-			await addMoneyMovement(selectedCategory.id, date, amount, note);
-		}}
-		>Add
-	</button>
+			class="rounded px-2 ml-4  my-auto bg-slate-200"
+			on:click={async () => {
+				if (selectedCategory === undefined) {
+					console.log('Select a category.');
+					return;
+				}
+				await addMoneyMovement(selectedCategory.id, date, amount, note);
+			}}
+			>Add
+		</button>
 	</div>
-	
 </div>
