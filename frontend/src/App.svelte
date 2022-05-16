@@ -4,9 +4,7 @@
 	import { getAllData } from './budget-api-service';
 	import MoneyMovementsOverview from './components/MoneyMovementsOverview.svelte';
 	import NewMoneyMovement from './components/new-money-movement.svelte';
-	import NewCategory from './components/new-category.svelte';
-	import CategoryOverview from './components/CategoryOverview.svelte';
-
+	import Report from './routes/reports.svelte';
 	let { isAuthenticated, user } = auth;
 </script>
 
@@ -18,6 +16,7 @@
 			<div class="mt-8">
 				<MoneyMovementsOverview />
 			</div>
+
 		{/if}
 	</div>
 </main>

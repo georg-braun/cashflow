@@ -7,3 +7,16 @@ export function getCategoryName(id){
     const result = categories.find(_ => _.id == id);
     return result.name ?? "";
 }
+
+export function calcSumByCategory(moneyMovements){
+    let sumByCategory = {};
+
+    moneyMovements.forEach(_ => {
+        if (sumByCategory[_.categoryId] == undefined)
+            sumByCategory[_.categoryId] = _.amount;
+        else
+            sumByCategory[_.categoryId] += _.amount;
+    });
+
+    return sumByCategory;
+}

@@ -43,6 +43,7 @@
 			<div>
 				<a href="/">🧾 Log</a>
 				<a class="ml-2" href="/categories">📚 Categories</a>
+				<a class="ml-2" href="/reports">📈 Reports</a>
 			</div>
 		</div>
 		<div class="ml-auto">
