@@ -1,4 +1,4 @@
-import { moneyMovementStore, categoryStore } from './store';
+import { moneyMovementStore, categoryStore } from './store.js';
 import { get } from 'svelte/store';
 
 export function getCategoryName(id){
