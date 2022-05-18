@@ -20,3 +20,20 @@ export function calcSumByCategory(moneyMovements){
 
     return sumByCategory;
 }
+
+export function calcSumByMonthByCategory(moneyMovements){
+    let sum = {};
+
+    moneyMovements.forEach(_ => {
+        const date = new Date(_.date);
+        const month= `${date.getMonth()+1}-${date.getFullYear()}`
+        if (sum[_.categoryId] == undefined) 
+            sum[_.categoryId] = {};
+        if (sum[_.categoryId][month] == undefined)
+            sum[_.categoryId][month] = _.amount;
+        else
+            sum[_.categoryId][month] += _.amount;
+    });
+
+    return sum;
+}
