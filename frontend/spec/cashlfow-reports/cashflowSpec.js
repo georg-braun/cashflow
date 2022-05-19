@@ -24,8 +24,6 @@ describe("cashflow-reports", function () {
 
 		// act
 		const sumByMonthByCategory = calcSumByMonthByCategory(data.moneyMovements);
-		console.log("Result")
-		console.log(sumByMonthByCategory);
 
 		// assert
 		const expectedResult = {
@@ -33,8 +31,6 @@ describe("cashflow-reports", function () {
 			'65073f9d-36eb-426a-9411-8ba0cc790bec': {'5-2022': -100, '4-2022': -90}
 		};
 
-		console.log("Expected")
-		console.log(expectedResult);
 		expect(sumByMonthByCategory).toEqual(expectedResult);
 	});
 

@@ -60,7 +60,6 @@ export async function getAllData() {
 	};
 	const response = await makeRequest(config);
 
-	console.log(response.data);
 	applyDataChanges(response.data);
 }
 
