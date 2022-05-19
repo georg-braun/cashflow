@@ -2,10 +2,16 @@
 	import { deleteCategory, getAllData, deleteMoneyMovement } from '../budget-api-service';
 	import { moneyMovementStore, categoryStore } from '../store';
 	import { getCategoryName } from '../cashflow-utilities';
+
+	function sortByDateDesc(a, b) {
+		// Turn your strings into dates, and then subtract them
+		// to get a value that is either negative, positive, or zero.
+		return new Date(b.date) - new Date(a.date);
+	}
 </script>
 
 <table class="table-auto">
-	<thead >
+	<thead>
 		<th>Date</th>
 		<th>Category</th>
 		<th>Amount</th>
@@ -13,7 +19,7 @@
 		<th>Actions</th>
 	</thead>
 	<tbody>
-		{#each $moneyMovementStore as moneyMovement}
+		{#each $moneyMovementStore.sort(sortByDateDesc) as moneyMovement}
 			<tr>
 				<td>{new Date(moneyMovement.date).toLocaleDateString()}</td>
 				<td> {getCategoryName(moneyMovement.categoryId)}</td>
