@@ -33,7 +33,7 @@
 
 <h1>📈 Reports</h1>
 
-<h2>Per month</h2>
+<h2>Per month ({currentYear})</h2>
 <table>
 	<thead>
 		<th class="bg-slate-300" />
