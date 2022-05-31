@@ -9,7 +9,6 @@ namespace budget_backend.Controllers;
 
 public static class MoneyMovementEndpoints
 {
-    
     public static async Task<ChangesContainerDto> GetAll(IMoneyService moneyService, IUserService userService,
         ClaimsPrincipal claims)
     {
@@ -19,8 +18,9 @@ public static class MoneyMovementEndpoints
         var categories = moneyService.GetCategories(userId);
         return ChangesContainerDtoFactory.Create(moneyMovements, categories);
     }
-    
-    public static async Task<ChangesContainerDto> GetMoneyMovements(IMoneyService moneyService, IUserService userService,
+
+    public static async Task<ChangesContainerDto> GetMoneyMovements(IMoneyService moneyService,
+        IUserService userService,
         ClaimsPrincipal claims)
     {
         var userId = await userService.GetUserIdAsync(claims);
@@ -37,13 +37,15 @@ public static class MoneyMovementEndpoints
         return ChangesContainerDtoFactory.Create(changes);
     }
 
-    public static async Task<ChangesContainerDto> AddMoneyMovement(AddMoneyMovementCommand command, IMoneyService moneyService,
+    public static async Task<ChangesContainerDto> AddMoneyMovement(AddMoneyMovementCommand command,
+        IMoneyService moneyService,
         IUserService userService, ClaimsPrincipal claims)
     {
         var utcDate = command.Date.ToUniversalTime();
         var userId = await userService.GetUserIdAsync(claims);
         var categoryId = CategoryIdFactory.Create(command.CategoryId);
-        var changes = await moneyService.AddMoneyMovementAsync(command.Amount, utcDate, command.Note, categoryId, userId);
+        var changes =
+            await moneyService.AddMoneyMovementAsync(command.Amount, utcDate, command.Note, categoryId, userId);
         return ChangesContainerDtoFactory.Create(changes);
     }
 }

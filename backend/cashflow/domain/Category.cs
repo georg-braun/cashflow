@@ -20,7 +20,13 @@ public class CategoryId
 
 public static class CategoryIdFactory
 {
-    public static CategoryId Create(Guid id) => new CategoryId {Id = id};
+    public static CategoryId Create(Guid id)
+    {
+        return new() {Id = id};
+    }
 
-    public static CategoryId CreateNew() => Create(Guid.NewGuid());
+    public static CategoryId CreateNew()
+    {
+        return Create(Guid.NewGuid());
+    }
 }

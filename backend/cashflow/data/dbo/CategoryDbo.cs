@@ -17,7 +17,7 @@ public static class CategoryDtoExtensions
         return new CategoryDbo()
         {
             Id = category.Id.Id,
-            Name =category.Name,
+            Name = category.Name,
             UserId = userId.Id
         };
     }

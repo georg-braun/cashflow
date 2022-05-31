@@ -2,7 +2,6 @@ using budget_backend.domain.budget;
 
 namespace budget_backend.domain;
 
-
 public class MoneyMovement
 {
     public MoneyMovement(MoneyMovementId id, double amount, DateTime date, string note, CategoryId categoryId)
@@ -17,7 +16,7 @@ public class MoneyMovement
     public MoneyMovementId Id { get; }
     public double Amount { get; }
     public DateTime Date { get; }
-    
+
     public string Note { get; } = string.Empty;
     public CategoryId CategoryId { get; }
 }
@@ -29,7 +28,13 @@ public class MoneyMovementId
 
 public static class MoneyMovementIdFactory
 {
-    public static MoneyMovementId Create(Guid id) => new MoneyMovementId {Id = id};
+    public static MoneyMovementId Create(Guid id)
+    {
+        return new() {Id = id};
+    }
 
-    public static MoneyMovementId CreateNew() => Create(Guid.NewGuid());
+    public static MoneyMovementId CreateNew()
+    {
+        return Create(Guid.NewGuid());
+    }
 }

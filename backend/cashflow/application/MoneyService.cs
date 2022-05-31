@@ -33,7 +33,7 @@ public class MoneyService : IMoneyService
         CategoryId categoryId, UserId userId)
     {
         var moneyMovement = MoneyMovementFactory.Create(amount, date, note, categoryId);
-     
+
         var changes = await _dataContext.AddMoneyMovementAsync(moneyMovement, userId);
         return changes;
     }
@@ -45,13 +45,25 @@ public class MoneyService : IMoneyService
         return changes;
     }
 
-    public IEnumerable<Category> GetCategories(UserId userId) => _dataContext.GetCategories(userId);
+    public IEnumerable<Category> GetCategories(UserId userId)
+    {
+        return _dataContext.GetCategories(userId);
+    }
 
 
-    public IEnumerable<MoneyMovement> GetMoneyMovements(UserId userId) => _dataContext.GetMoneyMovements(userId);
+    public IEnumerable<MoneyMovement> GetMoneyMovements(UserId userId)
+    {
+        return _dataContext.GetMoneyMovements(userId);
+    }
 
 
-    public Task<ChangesContainer> DeleteCategoryAsync(CategoryId categoryId, UserId userId) => _dataContext.DeleteCategoryAsync(categoryId, userId);
+    public Task<ChangesContainer> DeleteCategoryAsync(CategoryId categoryId, UserId userId)
+    {
+        return _dataContext.DeleteCategoryAsync(categoryId, userId);
+    }
 
-    public Task<ChangesContainer> DeleteMoneyMovementAsync(MoneyMovementId moneyMovementId, UserId userId) => _dataContext.DeleteMoneyMovementAsync(moneyMovementId, userId);
+    public Task<ChangesContainer> DeleteMoneyMovementAsync(MoneyMovementId moneyMovementId, UserId userId)
+    {
+        return _dataContext.DeleteMoneyMovementAsync(moneyMovementId, userId);
+    }
 }

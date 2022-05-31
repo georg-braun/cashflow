@@ -25,11 +25,9 @@ public class MultipleUserScenarioTests
         var categoriesOfClientA = (await clientA.GetAll()).Categories;
         categoriesOfClientA.Count.Should().Be(1);
         categoriesOfClientA.First().Name.Should().Be("carA");
-        
+
         var categoriesOfClientB = (await clientB.GetAll()).Categories;
         categoriesOfClientB.Count.Should().Be(1);
         categoriesOfClientB.First().Name.Should().Be("carB");
-
     }
-    
 }

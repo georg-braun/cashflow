@@ -27,8 +27,8 @@ public static class AuthenticationService
     private static async Task<string> GetFakeAccessTokenAsync()
     {
         return await Task.FromResult(FakeJwtManager.GenerateJwtToken());
-    }    
-    
+    }
+
     private static async Task<string> GetAuth0AccessTokenAsync()
     {
         var authSettings = GetAuth0Settings();
@@ -40,7 +40,7 @@ public static class AuthenticationService
             Audience = authSettings["Audience"]
         };
         var tokenResponse = await auth0Client.GetTokenAsync(tokenRequest);
-        
+
         return tokenResponse.AccessToken;
     }
 }

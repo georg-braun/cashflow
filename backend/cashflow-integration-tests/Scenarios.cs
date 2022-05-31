@@ -12,7 +12,6 @@ public class Scenarios
     /// <summary>
     ///     This test demonstrates a normal month with income, budgeted money and spendings.
     /// </summary>
-    
     [Fact]
     public Task RegularMonthSceanario()
     {
@@ -88,5 +87,4 @@ public class Scenarios
         // availableBudget.Should().Be(1000);
         return Task.CompletedTask;
     }
-    
 }

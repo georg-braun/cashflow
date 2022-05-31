@@ -7,7 +7,9 @@ public class UserId
     public bool IsEmpty => Id.Equals(Guid.Empty);
     public bool IsValid => !IsEmpty;
     public static UserId Empty => new();
-    public static UserId New(Guid id) => new() {Id= id};
 
-    
+    public static UserId New(Guid id)
+    {
+        return new() {Id = id};
+    }
 }

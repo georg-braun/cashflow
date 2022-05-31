@@ -5,7 +5,6 @@ using Microsoft.Data.Sqlite;
 
 namespace budget_backend_integration_tests.backend;
 
-
 /// <summary>
 ///     Create a backend and offer a client for interaction.
 /// </summary>
@@ -19,7 +18,7 @@ public class IntegrationTestBackend : IDisposable
 
         var appFactory = new AuthenticatedSqLiteWebApplicationFactory<Program>(_connection);
         client = appFactory.CreateClient();
-        
+
         // add the bearer token
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", AuthenticationService.AccessToken);
