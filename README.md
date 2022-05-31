@@ -30,7 +30,7 @@ Add necessary configuration variables
     ```
 2. create and migrate datbase
    ```bash
-   ./utility-cli migrate "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+   ./utility-cli migrate "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres"  "~/Repositories/budget/cashflow-cli/Scripts"
    ```
    
 ## Get the API running
