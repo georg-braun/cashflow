@@ -32,7 +32,6 @@ public class MigrateCommand : OaktonCommand<MigrateInput>
             DeployChanges.To
                 .PostgresqlDatabase(connectionString)
                 .WithScriptsFromFileSystem(scriptPath)
-                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
                 .LogToConsole()
                 .Build();
 
