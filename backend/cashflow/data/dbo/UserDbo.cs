@@ -13,9 +13,9 @@ internal class UserDbo
     ///  Id that is associated with the datasets and independent of a provider
     /// </summary>
     public Guid Id { get; set; }
-    
+
     public string AuthProviderId { get; set; }
-    
+
     /// <summary>
     ///     Date of the user creation
     /// </summary>

@@ -17,7 +17,7 @@ public class FakeJwtManager
     {
         var key = new byte[32];
         RandomNumberGenerator.Create().GetBytes(key);
-        SecurityKey = new SymmetricSecurityKey(key) { KeyId = Guid.NewGuid().ToString() };
+        SecurityKey = new SymmetricSecurityKey(key) {KeyId = Guid.NewGuid().ToString()};
         SigningCredentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
     }
 
@@ -25,6 +25,7 @@ public class FakeJwtManager
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var claim = new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString());
-        return tokenHandler.WriteToken(new JwtSecurityToken(Issuer, Audience, new []{claim}, null, DateTime.UtcNow.AddMinutes(60), SigningCredentials));
+        return tokenHandler.WriteToken(new JwtSecurityToken(Issuer, Audience, new[] {claim}, null,
+            DateTime.UtcNow.AddMinutes(60), SigningCredentials));
     }
 }

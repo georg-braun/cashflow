@@ -40,6 +40,7 @@ builder.Services.AddAuthorization(o =>
 builder.Services.AddCors();
 builder.Services.AddScoped<IMoneyService, MoneyService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
     builder.Configuration["ConnectionStrings:Database"]));
@@ -72,6 +73,9 @@ app.MapPost(Routes.DeleteCategory, CategoryEndpoints.DeleteCategory);
 app.MapGet(Routes.GetMoneyMovements, MoneyMovementEndpoints.GetMoneyMovements);
 app.MapPost(Routes.AddMoneyMovement, MoneyMovementEndpoints.AddMoneyMovement);
 app.MapPost(Routes.DeleteMoneyMovement, MoneyMovementEndpoints.DeleteMoneyMovement);
+
+app.MapGet(Routes.GetTemplates, TemplateEndpoints.GetTemplates);
+app.MapPost(Routes.AddTemplate, TemplateEndpoints.AddTemplate);
 
 app.Run();
 

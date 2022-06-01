@@ -19,11 +19,4 @@
         <None Remove="Scripts\Test.sql" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="Scripts\Initial-Setup.sql" />
-      <EmbeddedResource Include="Scripts\Initial-Setup.sql">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
-    </ItemGroup>
-
 </Project>

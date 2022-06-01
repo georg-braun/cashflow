@@ -14,14 +14,14 @@ public class MoneyMovementTests
     {
         // Arrange + Act
         var client = new ApiClient();
-        var result = await client.AddCategory( "car");
+        var result = await client.AddCategory("car");
         var carCategoryId = result.Categories.First().Id;
 
         await client.AddMoneyMovement(500.20, new DateTime(2022, 2, 1), "Insurance", carCategoryId);
         await client.AddMoneyMovement(400.20, new DateTime(2022, 2, 1), "Fuel", carCategoryId);
 
         var allData = await client.GetAll();
-     
+
         // Assert
         allData.Categories.Should().HaveCount(1);
         allData.MoneyMovements.Should().HaveCount(2);

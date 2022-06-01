@@ -37,19 +37,22 @@ public class UserService : IUserService
     /// <returns></returns>
     public async Task<UserId> GetUserIdAsync(string authProviderId)
     {
-        var userId =  _dataContext.GetUserIdByAuthProviderId(authProviderId);
+        var userId = _dataContext.GetUserIdByAuthProviderId(authProviderId);
         if (userId.IsValid)
             return userId;
 
         return await AddUserAsync(authProviderId);
     }
-    
+
     /// <summary>
     ///     Get a user id. If the user doesn't exist a new one is created.
     /// </summary>
     /// <param name="authProviderId"></param>
     /// <returns></returns>
-    public async Task<UserId> GetUserIdAsync(ClaimsPrincipal claims) => await GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
+    public async Task<UserId> GetUserIdAsync(ClaimsPrincipal claims)
+    {
+        return await GetUserIdAsync(EndpointUtilities.ExtractAuthUserId(claims));
+    }
 
 
     public Task<UserId> AddUserAsync(string authProviderId)

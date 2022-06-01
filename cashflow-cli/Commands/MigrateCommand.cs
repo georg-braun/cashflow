@@ -8,6 +8,9 @@ public class MigrateInput
 {
     [Description("The connection string of the postgresql database. Something like \"Host=hostUrl;Port=5432;Database=postgres;Username=postgres;Password=password\"")]
     public string ConnectionString;
+
+    [Description("Path to the scripts directory.")]
+    public string ScriptPath;
 }
 
 public class MigrateCommand : OaktonCommand<MigrateInput>
@@ -15,14 +18,20 @@ public class MigrateCommand : OaktonCommand<MigrateInput>
     public override bool Execute(MigrateInput input)
     {
         var connectionString = input.ConnectionString;
+        var scriptPath = input.ScriptPath;
+
+        if (!Directory.Exists(scriptPath))
+        {
+            Console.WriteLine($"The directory {scriptPath} doesn't exist.");
+            return false;
+        }
         
         EnsureDatabase.For.PostgresqlDatabase(connectionString);
-
-        // set the .sql file as embedded resource and copy
+        
         var upgrader =
             DeployChanges.To
                 .PostgresqlDatabase(connectionString)
-                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+                .WithScriptsFromFileSystem(scriptPath)
                 .LogToConsole()
                 .Build();
 

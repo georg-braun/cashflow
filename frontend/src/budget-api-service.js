@@ -2,7 +2,7 @@ import axios from 'axios';
 import { get } from 'svelte/store';
 
 import auth from './auth-service';
-import { moneyMovementStore, categoryStore } from './store';
+import { moneyMovementStore, categoryStore, templateStore } from './store';
 
 const serverUrl = import.meta.env.VITE_BUDGET_API_SERVER;
 
@@ -61,6 +61,25 @@ export async function getAllData() {
 	const response = await makeRequest(config);
 
 	applyDataChanges(response.data);
+	await getTemplates();
+}
+
+export async function getTemplates() {
+	try {
+		const config = {
+			url: `${serverUrl}/api/GetTemplates`,
+			method: 'GET',
+			headers: {
+				'content-type': 'application/json'
+			}
+		};
+		const response = await makeRequest(config);
+	
+		if (response.data !== undefined)
+			templateStore.set(Object.values(response.data));
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 export async function addCategory(name) {
@@ -96,6 +115,15 @@ export async function addMoneyMovement(categoryId, date, amount, note) {
 	const response = await sendPost('AddMoneyMovement', data);
 	if (response.status === 201 || response.status === 200) 
 		applyDataChanges(response.data);
+}
+
+export async function addTemplate(categoryId, amount, note) {
+	const data = {
+		CategoryId: categoryId,
+		Amount: amount,
+		Note: note
+	};
+	const response = await sendPost('AddTemplate', data);
 }
 
 function applyDataChanges(changes) {

@@ -47,7 +47,10 @@
 				<td class="bg-slate-300">{getCategoryName(category.id)}</td>
 				{#each Array.from(Array(12).keys()) as month}
 					<td class="w-30 text-right">
-						{sumByMonthByCategory[category.id][`${month + 1}-${currentYear}`] ?? ''}</td
+						{
+							sumByMonthByCategory[category.id] == undefined
+							? "~"
+							: sumByMonthByCategory[category.id][`${month + 1}-${currentYear}`] ?? ''}</td
 					>
 				{/each}
 			</tr>
