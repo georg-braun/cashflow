@@ -27,3 +27,5 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
       working-directory: ./cashflow-cli
+    - name: Publish
+      run: dotnet publish
