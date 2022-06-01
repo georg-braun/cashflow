@@ -65,18 +65,21 @@ export async function getAllData() {
 }
 
 export async function getTemplates() {
-	const config = {
-		url: `${serverUrl}/api/GetTemplates`,
-		method: 'GET',
-		headers: {
-			'content-type': 'application/json'
-		}
-	};
-	const response = await makeRequest(config);
-
-	console.log(response.data)
-	if (response.data !== undefined)
-		templateStore.set(Object.values(response.data));
+	try {
+		const config = {
+			url: `${serverUrl}/api/GetTemplates`,
+			method: 'GET',
+			headers: {
+				'content-type': 'application/json'
+			}
+		};
+		const response = await makeRequest(config);
+	
+		if (response.data !== undefined)
+			templateStore.set(Object.values(response.data));
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 export async function addCategory(name) {
