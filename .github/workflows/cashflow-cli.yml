@@ -30,3 +30,8 @@ jobs:
     - name: Publish
       run: dotnet publish
       working-directory: ./cashflow-cli      
+    - name: Archive cli tool
+      uses: actions/upload-artifact@v3      
+      with:
+        name: cli-tool
+        path: ./cashflow-cli/bin/Debug/net6.0/publish/
