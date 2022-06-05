@@ -102,6 +102,7 @@ public class CashflowDataContext : DbContext
             return changesContainer;
     
         // delete all money movements that are assosicated with this category
+        // todo: maybe this implicit behaviour should be separated as "domain logic". The repository shouldn't be responsible for that.
         var categoryMoneyMovements = MoneyMovements.Where(_ => _.CategoryId.Equals(categoryId.Id)).ToList();
     
         MoneyMovements.RemoveRange(categoryMoneyMovements);
