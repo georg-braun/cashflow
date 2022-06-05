@@ -35,7 +35,6 @@ public class CashflowDataContext : DbContext
     public async Task<ChangesContainer> AddCategoryAsync(Category category)
     {
         await Categories.AddAsync(category);
-        await SaveChangesAsync();
 
         var changesContainer = CreateChangesContainer();
         changesContainer.Categories.Add((category, ChangeKind.Created));
@@ -85,9 +84,7 @@ public class CashflowDataContext : DbContext
         if (moneyMovement is null)
             return changesContainer;
         MoneyMovements.Remove(moneyMovement);
-    
-        await SaveChangesAsync();
-    
+        
         changesContainer.MoneyMovements.Add((moneyMovement, ChangeKind.Deleted));
         return changesContainer;
     }
@@ -100,26 +97,30 @@ public class CashflowDataContext : DbContext
             await Categories.FirstOrDefaultAsync(_ => _.Id.Equals(categoryId.Id) && _.UserId.Equals(userId.Id));
         if (category is null)
             return changesContainer;
-    
-        // delete all money movements that are assosicated with this category
-        // todo: maybe this implicit behaviour should be separated as "domain logic". The repository shouldn't be responsible for that.
-        var categoryMoneyMovements = MoneyMovements.Where(_ => _.CategoryId.Equals(categoryId.Id)).ToList();
-    
-        MoneyMovements.RemoveRange(categoryMoneyMovements);
+        
         Categories.Remove(category);
-        await SaveChangesAsync();
-    
+
         changesContainer.Categories.Add((category, ChangeKind.Deleted));
+
+        return changesContainer;
+    }
+
+    public Task<ChangesContainer> DeleteMoneyMovementsForCategory(CategoryId categoryId)
+    {
+        var changesContainer = CreateChangesContainer();
+        
+        var categoryMoneyMovements = MoneyMovements.Where(_ => _.CategoryId.Equals(categoryId.Id)).ToList();
+        MoneyMovements.RemoveRange(categoryMoneyMovements);
+        
         foreach (var moneyMovement in categoryMoneyMovements)
             changesContainer.MoneyMovements.Add((moneyMovement, ChangeKind.Deleted));
-    
-        return changesContainer;
+
+        return Task.FromResult(changesContainer);
     }
     
     public async Task AddTemplateAsync(Template template)
     {
         await Templates.AddAsync(template);
-        await SaveChangesAsync();
     }
     
     public Task<List<Template>> GetTemplates(UserId userId)
@@ -139,4 +140,24 @@ public class ChangesContainer
 {
     public IList<(Category, ChangeKind)> Categories = new List<(Category, ChangeKind)>();
     public IList<(MoneyMovement, ChangeKind)> MoneyMovements = new List<(MoneyMovement, ChangeKind)>();
+}
+
+public static class ChangesContainerExtensions{
+
+    public static ChangesContainer Union(this ChangesContainer baseContainer, ChangesContainer container)
+    {
+        var newContainer = new ChangesContainer();
+        
+        foreach (var _ in baseContainer.Categories.Union(container.Categories))
+        {
+            newContainer.Categories.Add(_);
+        }
+        
+        foreach (var _ in baseContainer.MoneyMovements.Union(container.MoneyMovements))
+        {
+            newContainer.MoneyMovements.Add(_);
+        }
+
+        return newContainer;
+    }
 }

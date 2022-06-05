@@ -25,6 +25,7 @@ public class CreateTemplateCommandHandler : IRequestHandler<CreateTemplateComman
     public async Task<Unit> Handle(CreateTemplateCommand request, CancellationToken cancellationToken)
     {
         await _cashflowDataContext.AddTemplateAsync(request.Template);
+        await _cashflowDataContext.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
 }

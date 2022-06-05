@@ -28,6 +28,11 @@ public class DeleteMoneyMovementCommandHandler : IRequestHandler<DeleteMoneyMove
 
     public async Task<ChangesContainer> Handle(DeleteMoneyMovementCommand request, CancellationToken cancellationToken)
     {
-        return await _cashflowDataContext.DeleteMoneyMovementAsync(request.Id, request.UserId);
+        var changes = await _cashflowDataContext.DeleteMoneyMovementAsync(request.Id, request.UserId);
+        
+        
+        await _cashflowDataContext.SaveChangesAsync(cancellationToken);
+        return changes;
+
     }
 }

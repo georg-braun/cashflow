@@ -17,17 +17,21 @@ public class DeleteCategoryCommand : IRequest<ChangesContainer> {
     public UserId UserId { get; init; }
 }
 
-public class DeleteCategorydCommandHandler : IRequestHandler<DeleteCategoryCommand, ChangesContainer>
+public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, ChangesContainer>
 {
     private readonly CashflowDataContext _cashflowDataContext;
 
-    public DeleteCategorydCommandHandler(CashflowDataContext cashflowDataContext)
+    public DeleteCategoryCommandHandler(CashflowDataContext cashflowDataContext)
     {
         _cashflowDataContext = cashflowDataContext;
     }
 
     public async Task<ChangesContainer> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
-        return await _cashflowDataContext.DeleteCategoryAsync(request.Id, request.UserId);
+        var deleteCategoryChanges = await _cashflowDataContext.DeleteCategoryAsync(request.Id, request.UserId);
+        var deleteMoneyMovementsChanges = await _cashflowDataContext.DeleteMoneyMovementsForCategory(request.Id);
+        await _cashflowDataContext.SaveChangesAsync(cancellationToken);
+        
+        return deleteCategoryChanges.Union(deleteMoneyMovementsChanges);
     }
 }

@@ -24,6 +24,8 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
 
     public async Task<ChangesContainer> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        return await _cashflowDataContext.AddCategoryAsync(request.Category);
+        var changes = await _cashflowDataContext.AddCategoryAsync(request.Category);
+        await _cashflowDataContext.SaveChangesAsync(cancellationToken);
+        return changes;
     }
 }
