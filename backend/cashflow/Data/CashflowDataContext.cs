@@ -1,22 +1,19 @@
 using budget_backend.application;
 using budget_backend.data.dbo;
-using budget_backend.domain;
-using budget_backend.domain.budget;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace budget_backend.data;
 
-public class DataContext : DbContext
+public class CashflowDataContext : DbContext
 {
-    public DataContext(DbContextOptions options) : base(options)
+    public CashflowDataContext(DbContextOptions options) : base(options)
     {
     }
 
-    private DbSet<UserDbo> Users { get; set; } = null!;
-    private DbSet<MoneyMovementDbo> MoneyMovements { get; set; } = null!;
-    private DbSet<CategoryDbo> Categories { get; set; } = null!;
-    private DbSet<TemplateDbo> Templates { get; set; } = null!;
+    private DbSet<User> Users { get; set; } = null!;
+    private DbSet<MoneyMovement> MoneyMovements { get; set; } = null!;
+    private DbSet<Category> Categories { get; set; } = null!;
+    private DbSet<Template> Templates { get; set; } = null!;
 
 
     private ChangesContainer CreateChangesContainer()
@@ -25,21 +22,19 @@ public class DataContext : DbContext
     }
 
 
-    public async Task<ChangesContainer> AddMoneyMovementAsync(MoneyMovement moneyMovement, UserId userId)
+    public async Task<ChangesContainer> AddMoneyMovementAsync(MoneyMovement moneyMovement)
     {
-        var moneyMovementDto = moneyMovement.ToDbDto(userId);
-        await MoneyMovements.AddAsync(moneyMovementDto);
+        await MoneyMovements.AddAsync(moneyMovement);
         await SaveChangesAsync();
-
+    
         var changesContainer = CreateChangesContainer();
         changesContainer.MoneyMovements.Add((moneyMovement, ChangeKind.Created));
         return changesContainer;
     }
 
-    public async Task<ChangesContainer> AddCategoryAsync(Category category, UserId userId)
+    public async Task<ChangesContainer> AddCategoryAsync(Category category)
     {
-        var categoryDto = category.ToDbDto(userId);
-        await Categories.AddAsync(categoryDto);
+        await Categories.AddAsync(category);
         await SaveChangesAsync();
 
         var changesContainer = CreateChangesContainer();
@@ -48,26 +43,19 @@ public class DataContext : DbContext
     }
 
 
-    public IEnumerable<Category> GetCategories(UserId userId)
+    public Task<List<Category>> GetCategories(UserId userId)
     {
-        return Categories.Where(_ => _.UserId.Equals(userId.Id)).Select(_ => _.ToDomain());
+        return Task.FromResult(Categories.Where(_ => _.UserId.Equals(userId.Id)).ToList());
     }
-
-
-    public IEnumerable<MoneyMovement> GetMoneyMovements(UserId userId)
+    
+    
+    public Task<List<MoneyMovement>> GetMoneyMovements(UserId userId)
     {
         var moneyMovementDtos = MoneyMovements.Where(_ => _.UserId.Equals(userId.Id));
-        return moneyMovementDtos.Select(_ => _.ToDomain());
+        return Task.FromResult(moneyMovementDtos.ToList());
     }
-
-    public async Task<MoneyMovement?> GetMoneyMovementAsync(MoneyMovementId moneyMovementId, UserId userId)
-    {
-        var moneyMovementDto = await MoneyMovements.SingleOrDefaultAsync(_ => _.Id.Equals(moneyMovementId.Id));
-        if (moneyMovementDto != null && moneyMovementDto.UserId.Equals(userId.Id))
-            return moneyMovementDto.ToDomain();
-        return null;
-    }
-
+    
+   
     public UserId GetUserIdByAuthProviderId(string authProviderId)
     {
         var hFoundUserId = Users.FirstOrDefault(_ => _.AuthProviderId.Equals(authProviderId))?.Id;
@@ -75,68 +63,67 @@ public class DataContext : DbContext
             return UserId.Empty;
         return UserId.New(hFoundUserId.Value);
     }
-
+    
     public async Task<UserId> AddUserAsync(string authProviderId)
     {
         var userId = GetUserIdByAuthProviderId(authProviderId);
-
+    
         if (userId.IsValid)
             return userId;
-
-        var addedUserEntity = await Users.AddAsync(new UserDbo(Guid.NewGuid(), authProviderId, DateTime.UtcNow));
+    
+        var addedUserEntity = await Users.AddAsync(new User(Guid.NewGuid(), authProviderId, DateTime.UtcNow));
         return UserId.New(addedUserEntity.Entity.Id);
     }
-
+    
     public async Task<ChangesContainer> DeleteMoneyMovementAsync(MoneyMovementId moneyMovementId, UserId userId)
     {
         var changesContainer = CreateChangesContainer();
-
+    
         var moneyMovement =
             await MoneyMovements.FirstOrDefaultAsync(_ =>
                 _.Id.Equals(moneyMovementId.Id) && _.UserId.Equals(userId.Id));
         if (moneyMovement is null)
             return changesContainer;
         MoneyMovements.Remove(moneyMovement);
-
+    
         await SaveChangesAsync();
-
-        changesContainer.MoneyMovements.Add((moneyMovement.ToDomain(), ChangeKind.Deleted));
+    
+        changesContainer.MoneyMovements.Add((moneyMovement, ChangeKind.Deleted));
         return changesContainer;
     }
-
+    
     public async Task<ChangesContainer> DeleteCategoryAsync(CategoryId categoryId, UserId userId)
     {
         var changesContainer = CreateChangesContainer();
-
+    
         var category =
             await Categories.FirstOrDefaultAsync(_ => _.Id.Equals(categoryId.Id) && _.UserId.Equals(userId.Id));
         if (category is null)
             return changesContainer;
-
+    
         // delete all money movements that are assosicated with this category
         var categoryMoneyMovements = MoneyMovements.Where(_ => _.CategoryId.Equals(categoryId.Id)).ToList();
-
+    
         MoneyMovements.RemoveRange(categoryMoneyMovements);
         Categories.Remove(category);
         await SaveChangesAsync();
-
-        changesContainer.Categories.Add((category.ToDomain(), ChangeKind.Deleted));
+    
+        changesContainer.Categories.Add((category, ChangeKind.Deleted));
         foreach (var moneyMovement in categoryMoneyMovements)
-            changesContainer.MoneyMovements.Add((moneyMovement.ToDomain(), ChangeKind.Deleted));
-
+            changesContainer.MoneyMovements.Add((moneyMovement, ChangeKind.Deleted));
+    
         return changesContainer;
     }
-
-    public async Task AddTemplateAsync(Template template, UserId userId)
+    
+    public async Task AddTemplateAsync(Template template)
     {
-        var templateDto = template.ToDbo(userId);
-        await Templates.AddAsync(templateDto);
+        await Templates.AddAsync(template);
         await SaveChangesAsync();
     }
-
-    public IEnumerable<Template> GetTemplates()
+    
+    public Task<List<Template>> GetTemplates(UserId userId)
     {
-        return Templates.Select(_ => _.ToDomain()).ToList();
+        return Task.FromResult(Templates.Where(_ => _.UserId.Equals(userId.Id)).ToList());
     }
 }
 

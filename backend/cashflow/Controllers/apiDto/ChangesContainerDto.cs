@@ -1,6 +1,6 @@
+
 using budget_backend.data;
-using budget_backend.domain;
-using budget_backend.domain.budget;
+using budget_backend.data.dbo;
 
 namespace budget_backend.Controllers.apiDto;
 
@@ -65,13 +65,13 @@ public static class ChangesContainerDtoFactory
             if (changeKind == ChangeKind.Created)
                 container.Categories.Add(category.ToApiDto());
             else
-                container.DeletedCategoryIds.Add(category.Id.Id);
+                container.DeletedCategoryIds.Add(category.Id);
 
         foreach (var (moneyMovement, changeKind) in changesContainer.MoneyMovements)
             if (changeKind == ChangeKind.Created)
                 container.MoneyMovements.Add(moneyMovement.ToApiDto());
             else
-                container.DeletedMoneyMovementIds.Add(moneyMovement.Id.Id);
+                container.DeletedMoneyMovementIds.Add(moneyMovement.Id);
         return container;
     }
 }

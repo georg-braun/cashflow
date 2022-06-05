@@ -31,7 +31,7 @@ public class AuthenticatedSqLiteWebApplicationFactory<TStartup>
     {
         var descriptor = services.SingleOrDefault(
             d => d.ServiceType ==
-                 typeof(DbContextOptions<DataContext>));
+                 typeof(DbContextOptions<CashflowDataContext>));
 
         if (descriptor is null) return;
         services.Remove(descriptor);
@@ -82,13 +82,13 @@ public class AuthenticatedSqLiteWebApplicationFactory<TStartup>
 
         using var scope = sp.CreateScope();
         var scopedServices = scope.ServiceProvider;
-        var db = scopedServices.GetRequiredService<DataContext>();
+        var db = scopedServices.GetRequiredService<CashflowDataContext>();
 
         db.Database.EnsureCreated();
     }
 
     private void AddSqliteDbContext(IServiceCollection services)
     {
-        services.AddDbContext<DataContext>(options => { options.UseSqlite(_connection); });
+        services.AddDbContext<CashflowDataContext>(options => { options.UseSqlite(_connection); });
     }
 }

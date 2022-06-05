@@ -1,4 +1,6 @@
-using budget_backend.domain.budget;
+
+
+using budget_backend.data.dbo;
 
 namespace budget_backend.Controllers.apiDto;
 
@@ -8,6 +10,6 @@ public static class BudgetaryItemDtoExtensions
 {
     public static CategoryDto ToApiDto(this Category item)
     {
-        return new(item.Id.Id, item.Name);
+        return new(item.Id, item.Name);
     }
 }

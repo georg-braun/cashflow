@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace budget_backend.endpoints;
+namespace budget_backend.Controllers;
 
 public class EndpointUtilities
 {

@@ -1,8 +1,8 @@
 namespace budget_backend.data.dbo;
 
-internal class UserDbo
+internal class User
 {
-    public UserDbo(Guid id, string authProviderId, DateTime created)
+    public User(Guid id, string authProviderId, DateTime created)
     {
         Id = id;
         AuthProviderId = authProviderId;

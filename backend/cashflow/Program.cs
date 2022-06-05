@@ -1,9 +1,9 @@
 using budget_backend.application;
 using budget_backend.Controllers;
 using budget_backend.data;
-using budget_backend.endpoints;
 using budget_backend.middleware;
 using budget_backend.Options;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddMediatR(typeof(Program));
 
 var jwtSettings = new JwtSettings();
 builder.Configuration.Bind(nameof(jwtSettings), jwtSettings);
@@ -38,11 +39,10 @@ builder.Services.AddAuthorization(o =>
 });
 
 builder.Services.AddCors();
-builder.Services.AddScoped<IMoneyService, MoneyService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ITemplateService, TemplateService>();
 
-builder.Services.AddDbContext<DataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
+
+builder.Services.AddDbContext<CashflowDataContext>(optionsBuilder => optionsBuilder.UseNpgsql(
     builder.Configuration["ConnectionStrings:Database"]));
 
 builder.Services.AddEndpointsApiExplorer();
