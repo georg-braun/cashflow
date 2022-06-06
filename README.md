@@ -25,7 +25,7 @@ Add necessary configuration variables
 
 1. run postgresql container 
     ```bash
-    cd cashfllow-services/local-postgres
+    cd cashflow-services/local-postgres
     docker-compose up -d
     ```
 2. create and migrate datbase
@@ -49,7 +49,7 @@ Example: Environment variables via secret manager
 2. `dotnet user-secrets set "ConnectionStrings:Database" "<connection-string>"`
 
 ### Container
-You can use the `/backend/docker-compose.yml`to build and run the API. But you have to comment out the build step and insert the necessary environment variables.
+You can use the `/backend/docker-compose.yml` to build and run the API. But you have to comment out the build step and insert the necessary environment variables.
 
 
 ## Get the frontend running
@@ -64,15 +64,20 @@ You can use the `/backend/docker-compose.yml`to build and run the API. But you h
 # I wan't do deploy this
 
 ## Database
-It's up to you. Use a managed postgresql database or run your own database server.
+It's up to you. Use a managed postgresql database or run your own PostgreSQL database server.
 
 ## Backend
 The Github CI build creates a docker image that can be published on DockerHub. My image is deployed to `velox1992/cashflow`.
 
-You can use the `/backend/docker-compose.yml`to deploy the backend as docker container. 
+You can use the `/backend/docker-compose.yml` to deploy the backend as docker container. 
 
 
 ## Frontend
 There are a lot of possibilities. 
 - Create vercel account, link repository and add environment variables.
 
+# Backup database
+
+The easiest (manual) to do this is using `pg_dump`.
+
+`pg_dump postgres://user:password@host/database > backup-file`
