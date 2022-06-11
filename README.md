@@ -80,4 +80,4 @@ There are a lot of possibilities.
 
 The easiest (manual) to do this is using `pg_dump`.
 
-`pg_dump postgres://user:password@host/database > backup-file`
+`pg_dump postgres://user:password@host:5432/database > backup-file`
