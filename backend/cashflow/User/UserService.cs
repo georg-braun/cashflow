@@ -1,6 +1,6 @@
 using System.Security.Claims;
+using budget_backend.Controllers;
 using budget_backend.data;
-using budget_backend.endpoints;
 
 namespace budget_backend.application;
 
@@ -23,11 +23,11 @@ public interface IUserService
 
 public class UserService : IUserService
 {
-    private readonly DataContext _dataContext;
+    private readonly CashflowDataContext _cashflowDataContext;
 
-    public UserService(DataContext dataContext)
+    public UserService(CashflowDataContext cashflowDataContext)
     {
-        _dataContext = dataContext;
+        _cashflowDataContext = cashflowDataContext;
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ public class UserService : IUserService
     /// <returns></returns>
     public async Task<UserId> GetUserIdAsync(string authProviderId)
     {
-        var userId = _dataContext.GetUserIdByAuthProviderId(authProviderId);
+        var userId = _cashflowDataContext.GetUserIdByAuthProviderId(authProviderId);
         if (userId.IsValid)
             return userId;
 
@@ -57,6 +57,6 @@ public class UserService : IUserService
 
     public Task<UserId> AddUserAsync(string authProviderId)
     {
-        return _dataContext.AddUserAsync(authProviderId);
+        return _cashflowDataContext.AddUserAsync(authProviderId);
     }
 }

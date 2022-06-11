@@ -1,4 +1,4 @@
-using budget_backend.domain;
+using budget_backend.data.dbo;
 
 namespace budget_backend.Controllers.apiDto;
 
@@ -9,10 +9,10 @@ public static class MoneyMovementDtoExtensions
     public static MoneyMovementDto ToApiDto(this MoneyMovement moneyMovement)
     {
         return new MoneyMovementDto(
-            moneyMovement.Id.Id,
+            moneyMovement.Id,
             moneyMovement.Amount,
-            moneyMovement.Date,
+            moneyMovement.Timestamp,
             moneyMovement.Note,
-            moneyMovement.CategoryId.Id);
+            moneyMovement.CategoryId);
     }
 }

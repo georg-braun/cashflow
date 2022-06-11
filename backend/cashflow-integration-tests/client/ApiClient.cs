@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using budget_backend.Controllers;
 using budget_backend.Controllers.apiDto;
 using budget_backend.Controllers.apiDto.commands;
-using budget_backend.domain.budget;
 using Newtonsoft.Json;
 
 namespace budget_backend_integration_tests.backend;

@@ -1,4 +1,4 @@
-using budget_backend.domain;
+using budget_backend.data.dbo;
 
 namespace budget_backend.Controllers.apiDto;
 
@@ -9,9 +9,9 @@ public static class TemplateDtoExtensions
     public static TemplateDto ToApiDto(this Template template)
     {
         return new TemplateDto(
-            template.Id.Id,
+            template.Id,
             template.Interval,
-            template.CategoryId.Id,
+            template.CategoryId,
             template.Amount,
             template.Note);
     }
