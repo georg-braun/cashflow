@@ -1,0 +1,13 @@
+postgres-backup:
+  image: annixa/docker-pg_dump
+  container_name: postgres-backup
+  environment:
+    - PGUSER=postgres
+    - PGPASSWORD=postgres
+    - CRON_SCHEDULE=* * * * * #Every minute
+    - DELETE_OLDER_THAN=1 #Optionally delete files older than $DELETE_OLDER_THAN minutes.
+    - PGDB=postgres # The name of the database to dump
+    - PGHOST=127.0.0.1 # The hostname of the PostgreSQL database to dump
+  volumes:
+    - /dump
+  command: dump-cron
