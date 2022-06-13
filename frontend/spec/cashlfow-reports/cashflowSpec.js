@@ -1,4 +1,4 @@
-import { calcSumByCategory, calcSumByMonthByCategory } from "../../src/cashflow-utilities.js"
+import { calcSumByCategory, calcSumByMonthByCategory, calcSumByMonth } from "../../src/cashflow-utilities.js"
 
 describe("cashflow-reports", function () {
 
@@ -33,6 +33,23 @@ describe("cashflow-reports", function () {
 
 		expect(sumByMonthByCategory).toEqual(expectedResult);
 	});
+
+	it("calculates correct total sum per month", function () {
+		// arrange
+		const data = getTestScenario();
+
+		// act
+		const sumByMonth = calcSumByMonth(data.moneyMovements);
+
+		// assert
+		const expectedResult = {
+			 '5-2022': -250,
+			 '4-2022': -90
+		};
+
+		expect(sumByMonth).toEqual(expectedResult);
+	});
+
 
 
 });

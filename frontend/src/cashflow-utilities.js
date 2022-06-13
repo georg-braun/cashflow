@@ -37,3 +37,18 @@ export function calcSumByMonthByCategory(moneyMovements){
 
     return sum;
 }
+
+export function calcSumByMonth(moneyMovements){
+    let sum = {};
+
+    moneyMovements.forEach(_ => {
+        const date = new Date(_.date);
+        const month= `${date.getMonth()+1}-${date.getFullYear()}`
+        if (sum[month] == undefined)
+            sum[month] = _.amount;
+        else
+            sum[month] += _.amount;
+    });
+
+    return sum;
+}
