@@ -11,9 +11,9 @@ Web app (sveltekit) that authenticates with Auth0 and interact with a API (ASP.N
 ![](./system-overview.excalidraw.png)
 
 
-# I wan't to develop local
+# Setup
 
-Requirements:
+## Requirements
 - Auth0 account with configured API and Application
 - Container environment (e.g. docker)
 
@@ -28,14 +28,14 @@ Add necessary configuration variables
     cd cashflow-services/local-postgres
     docker-compose up -d
     ```
-2. create and migrate datbase
+2. create and migrate database
    ```bash
    ./utility-cli migrate "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres"  "~/Repositories/budget/cashflow-cli/Scripts"
    ```
    
 ## Get the API running
 
-### IDE
+### Local Development
 1. Go to the `/backend/cashflow` folder 
 2. Add necessary configuration for the ASP.NET API in `appsettings.json`
    - `ConnectionStrings:Database`
@@ -61,23 +61,8 @@ You can use the `/backend/docker-compose.yml` to build and run the API. But you 
    - `VITE_BUDGET_API_SERVER=<CASHFLOW-API-ADDRESS>`
 
 
-# I wan't do deploy this
-
-## Database
-It's up to you. Use a managed postgresql database or run your own PostgreSQL database server.
-
-## Backend
-The Github CI build creates a docker image that can be published on DockerHub. My image is deployed to `velox1992/cashflow`.
-
-You can use the `/backend/docker-compose.yml` to deploy the backend as docker container. 
-
-
-## Frontend
-There are a lot of possibilities. 
-- Create vercel account, link repository and add environment variables.
-
 # Backup database
 
-The easiest (manual) to do this is using `pg_dump`.
+The easiest (manual) way to do this is using `pg_dump`.
 
 `pg_dump postgres://user:password@host:5432/database > backup-file`
