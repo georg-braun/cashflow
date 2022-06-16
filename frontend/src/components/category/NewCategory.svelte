@@ -1,5 +1,5 @@
 <script>
-	import { addCategory } from '../budget-api-service';
+	import { addCategory } from '../../budget-api-service';
 
 	let name = '';
 </script>

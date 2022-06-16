@@ -1,7 +1,7 @@
 <script>
-	import { deleteCategory, getAllData, deleteMoneyMovement } from '../budget-api-service';
-	import { moneyMovementStore, categoryStore } from '../store';
-	import { getCategoryName } from '../cashflow-utilities';
+	import { deleteCategory, getAllData, deleteMoneyMovement } from '../../budget-api-service';
+	import { moneyMovementStore, categoryStore } from '../../store';
+	import { getCategoryName } from '../../cashflow-utilities';
 
 	function sortByDateDesc(a, b) {
 		// Turn your strings into dates, and then subtract them

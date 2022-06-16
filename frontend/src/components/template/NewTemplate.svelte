@@ -1,18 +1,13 @@
-<script>
-	import { get } from 'svelte/store';
-	import { addMoneyMovement } from '../budget-api-service';
-	import { categoryStore } from '../store';
+<script>	
+	import { addTemplate } from '../../budget-api-service';
+	import { categoryStore } from '../../store';
 
 	let selectedCategory;
-	let date = new Date().toISOString().split('T')[0];
 	let amount = 0;
 	let note = '';
 </script>
 
 <div class="flex flex-wrap  align-middle">
-	<div class=" my-auto">
-		<input type="date" bind:value={date} />
-	</div>
 	<div class="ml-4 my-auto">
 		<select bind:value={selectedCategory}>
 			{#each $categoryStore as category}
@@ -37,7 +32,7 @@
 					console.log('Select a category.');
 					return;
 				}
-				await addMoneyMovement(selectedCategory.id, date, amount, note);
+				await addTemplate(selectedCategory.id, amount, note);
 			}}
 			>Add
 		</button>

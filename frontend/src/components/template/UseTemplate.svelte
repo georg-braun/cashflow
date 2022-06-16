@@ -1,8 +1,8 @@
 <script>
 	import { get } from 'svelte/store';
-	import { addMoneyMovement } from '../budget-api-service';
-	import { getCategoryName } from '../cashflow-utilities';
-	import { templateStore } from '../store';
+	import { addMoneyMovement } from '../../budget-api-service';
+	import { getCategoryName } from '../../cashflow-utilities';
+	import { templateStore } from '../../store';
 
 	let selectedTemplate;
 	let date = new Date().toISOString().split('T')[0];

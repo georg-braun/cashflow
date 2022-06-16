@@ -1,6 +1,6 @@
 <script>
-	import NewTemplate from '../components/new-template.svelte';
-	import TemplateOverview from '../components/template-overview.svelte';
+	import NewTemplate from '../components/template/NewTemplate.svelte';
+	import TemplateOverview from '../components/template/TemplateOverview.svelte';
 	
 </script>
 

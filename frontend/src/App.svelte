@@ -1,10 +1,8 @@
-<script>
-	import { onMount } from 'svelte';
-	import auth from './auth-service';
-	import { getAllData } from './budget-api-service';
-	import MoneyMovementsOverview from './components/MoneyMovementsOverview.svelte';
-	import NewMoneyMovement from './components/new-money-movement.svelte';
-	import UseTemplate from './components/use-template.svelte';
+<script>	
+	import auth from './auth-service';	
+	import MoneyMovementsOverview from './components/money-movement/MoneyMovementsOverview.svelte';
+	import NewMoneyMovement from './components/money-movement/AddMoneyMovement.svelte';
+	import UseTemplate from './components/template/UseTemplate.svelte';
 	let { isAuthenticated, user } = auth;
 </script>
 

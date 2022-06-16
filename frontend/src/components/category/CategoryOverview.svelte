@@ -1,6 +1,6 @@
 <script>
-	import { categoryStore } from '../store';
-	import { deleteCategory } from '../budget-api-service';
+	import { categoryStore } from '../../store';
+	import { deleteCategory } from '../../budget-api-service';
 
 	function sortyByNameAsc(a, b) {
 		return a.name.localeCompare(b.name);

@@ -1,7 +1,7 @@
 <script>
-	import { templateStore } from '../store';
-	import { getCategoryName } from '../cashflow-utilities';
-	import { getTemplates } from '../budget-api-service';
+	import { templateStore } from '../../store';
+	import { getCategoryName } from '../../cashflow-utilities';
+	import { getTemplates } from '../../budget-api-service';
 
 	getTemplates();
 </script>
