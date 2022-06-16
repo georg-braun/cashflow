@@ -1,10 +1,10 @@
 <script>
-	import { getCategoryName } from '../../cashflow-utilities';
+	import { getCategoryName, showMoneyValue } from '../../cashflow-utilities';
 
 	import {
 		calcSumByMonth,
 		calcSumByMonthByCategory,
-		getColor,
+		getAlternatingColor,
 		getBalanceColor
 	} from './report-utilities';
 
@@ -28,13 +28,13 @@
 	<tbody>
 		<!-- Row per category -->
 		{#each categories as category, i}
-			<tr class={getColor(i)}>
+			<tr class={getAlternatingColor(i)}>
 				<td>{getCategoryName(category.id)}</td>
 				{#each Array.from(Array(12).keys()) as month}
 					<td class="w-30 text-right">
 						{sumByMonthByCategory[category.id] == undefined
 							? '~'
-							: sumByMonthByCategory[category.id][`${month + 1}-${currentYear}`] ?? ''}</td
+							: showMoneyValue(sumByMonthByCategory[category.id][`${month + 1}-${currentYear}`]) ?? ''}</td
 					>
 				{/each}
 			</tr>
@@ -47,7 +47,7 @@
 					<b>
 						{sumByMonth[`${month + 1}-${currentYear}`] == undefined
 							? '~'
-							: sumByMonth[`${month + 1}-${currentYear}`] ?? ''}
+							: showMoneyValue(sumByMonth[`${month + 1}-${currentYear}`]) ?? ''}
 					</b>
 				</td>
 			{/each}

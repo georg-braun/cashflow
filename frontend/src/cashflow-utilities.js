@@ -7,3 +7,9 @@ export function getCategoryName(id){
     const result = categories.find(_ => _.id == id);
     return result.name ?? "";
 }
+
+export function showMoneyValue(value){
+    if (value === undefined)
+        return "~";
+    return `${value.toFixed(2)} €`;
+}

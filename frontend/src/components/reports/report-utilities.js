@@ -1,4 +1,4 @@
-export function getColor(index) {
+export function getAlternatingColor(index) {
     return index % 2 == 0 ? 'bg-slate-300' : 'white';
 }
 

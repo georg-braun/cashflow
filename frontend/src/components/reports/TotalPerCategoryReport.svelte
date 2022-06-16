@@ -1,9 +1,9 @@
 <script>
-	import { getCategoryName } from '../../cashflow-utilities';
+	import { getCategoryName, showMoneyValue } from '../../cashflow-utilities';
 
 	import {
 		calcSumByCategory,
-		getColor,
+		getAlternatingColor,
 	} from './report-utilities';
 
 	export let categories = [];
@@ -26,11 +26,11 @@
 	</thead>
 	<tbody>
 		{#each categories as category, i}
-			<tr class={getColor(i)}>
+			<tr class={getAlternatingColor(i)}>
 				<td>{getCategoryName(category.id)}</td>
-				<td class="w-40 text-right">{sumByCategory[category.id]}</td>
+				<td class="w-40 text-right">{showMoneyValue(sumByCategory[category.id])}</td>
 			</tr>
 		{/each}
 	</tbody>
 </table>
-<b class="mt-8">Total: </b>{sum}
+<b class="mt-8">Total: </b>{showMoneyValue(sum)}

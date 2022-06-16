@@ -1,7 +1,8 @@
 <script>
-	import { deleteCategory, getAllData, deleteMoneyMovement } from '../../budget-api-service';
-	import { moneyMovementStore, categoryStore } from '../../store';
-	import { getCategoryName } from '../../cashflow-utilities';
+	import { deleteMoneyMovement } from '../../budget-api-service';
+	import { moneyMovementStore } from '../../store';
+	import { getAlternatingColor } from '../reports/report-utilities';
+	import { getCategoryName, showMoneyValue } from '../../cashflow-utilities';
 
 	function sortByDateDesc(a, b) {
 		// Turn your strings into dates, and then subtract them
@@ -19,11 +20,11 @@
 		<th>Actions</th>
 	</thead>
 	<tbody>
-		{#each $moneyMovementStore.sort(sortByDateDesc) as moneyMovement}
-			<tr>
+		{#each $moneyMovementStore.sort(sortByDateDesc) as moneyMovement, i}
+			<tr class="{getAlternatingColor(i)}">
 				<td>{new Date(moneyMovement.date).toLocaleDateString()}</td>
 				<td> {getCategoryName(moneyMovement.categoryId)}</td>
-				<td>{moneyMovement.amount}</td>
+				<td>{showMoneyValue(moneyMovement.amount)}</td>
 				<td>{moneyMovement.note}</td>
 				<td
 					><button
