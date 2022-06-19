@@ -1,7 +1,18 @@
 # cash flow 💰
 
-Log and report income and spendings.
+Analyze your spendings.
 
+I built this app to track my spendings and create the features I need.
+
+# Features
+- Associate income/spending with a category
+- Show the monthly spending per category
+- Use templates to simplify recurring events. Manual trigger
+
+## Roadmap
+- Sankey diagram per month
+- Automated template trigger per day of month
+- Automated template trigger per day of year
 
 
 # Architecture
